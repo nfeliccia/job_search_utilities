@@ -1,18 +1,28 @@
 import argparse
 import os
 
+import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 import reference_values
 
-CURRENT_VALUES = reference_values.actual_values
+ACTUAL_VALUES = reference_values.actual_values
 DUMMY_VALUES = reference_values.dummy_values
+"""
+The purpose of this script is to automate the job application process for Motion Recruitment. This script will open
+the Tech in Motion job search page and the Tech in Motion events page. It will also fill out the candidate resume
+submission form and submit it. The form is not submitted by default. You must pass the --submit flag to submit the
+form. The form will not be submitted if the captcha is not solved. The captcha must be solved manually. The form
+will not be submitted if the captcha is not solved. The captcha must be solved manually. 
 
+
+
+"""
 
 def open_tech_in_motion_urls(driver: webdriver.Chrome):
     """
-    Opens the Tech in Motion URLs for job search.
+    Opens the Tech in Motion URLs for job search. Note motion recruitment uses url based search parameters.
 
     Args:
         driver (webdriver.Chrome): The Chrome driver instance.
@@ -35,7 +45,20 @@ def open_tech_in_motion_urls(driver: webdriver.Chrome):
         driver.execute_script(f"window.open('{url}','_blank');")
 
 
-def fill_form_and_submit(driver, user_data, submit: bool = False):
+def fill_form_and_submit(driver: selenium.webdriver, user_data: reference_values.ReferenceValues, submit: bool = False):
+    """
+    The purpose of this function is to fill out the form and submit it. BY It we mean the candidate resume submitssion
+    form on the Motion Recruitment website. This function will not work if the form has changed. The dropdowns do not
+    work but that doesnt stop you from submitting the form..
+
+    Args:
+        driver: selenium.webdriver
+        user_data: User data in the form of a ReferenceValues dataclass
+        submit: Boolean whether or not to submit. Here for testing purposes.
+
+    Returns:
+
+    """
     driver.get('https://motionrecruitment.com/candidates')
     # Click on submit a resume button
     submit_resume_button = driver.find_element(By.XPATH, value='//button[text()="Submit a resume"]')
@@ -70,9 +93,9 @@ def fill_form_and_submit(driver, user_data, submit: bool = False):
 
 
 def main(use_real_data: bool, submit: bool):
-    user_data = CURRENT_VALUES if use_real_data else DUMMY_VALUES
+    user_data = ACTUAL_VALUES if use_real_data else DUMMY_VALUES
     driver = webdriver.Chrome()
-    # open_tech_in_motion_urls(driver)
+    open_tech_in_motion_urls(driver)
     fill_form_and_submit(driver, user_data, submit)
 
 
@@ -80,6 +103,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Automation for Motion Recruitment job applications.')
     parser.add_argument('--use_real_data', action='store_true', help='Use real user data for submission')
     parser.add_argument('--submit', action='store_true', help='Actually submit the application form')
+
+    parser.add_argument('--open-urls', action='store_true',
+                        help='Open Tech in Motion URLs for job search without any other action.')
     args = parser.parse_args()
+    if args.open_urls:
+        driver = webdriver.Chrome()
+        open_tech_in_motion_urls(driver)
+        input("Press enter when done. ")
+        driver.quit()
+        exit()
 
     main(args.use_real_data, args.submit)
