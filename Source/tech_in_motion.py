@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 import reference_values
+from tech_in_motion_reader import open_tech_in_motion_urls
 
 ACTUAL_VALUES = reference_values.actual_values
 DUMMY_VALUES = reference_values.dummy_values
@@ -15,34 +16,8 @@ the Tech in Motion job search page and the Tech in Motion events page. It will a
 submission form and submit it. The form is not submitted by default. You must pass the --submit flag to submit the
 form. The form will not be submitted if the captcha is not solved. The captcha must be solved manually. The form
 will not be submitted if the captcha is not solved. The captcha must be solved manually. 
-
-
-
 """
 
-def open_tech_in_motion_urls(driver: webdriver.Chrome):
-    """
-    Opens the Tech in Motion URLs for job search. Note motion recruitment uses url based search parameters.
-
-    Args:
-        driver (webdriver.Chrome): The Chrome driver instance.
-
-    Returns:
-        None
-    """
-    # Base URL
-    BASE_URL = ("https://motionrecruitment.com/tech-jobs?radius=25&search-city=19124&postalcode=19124&remote=true"
-                "&location-display-name=Philadelphia%2C+Pennsylvania+19124%2C+United+States&start=0")
-
-    # Keywords for different job types
-    KEYWORDS = ["Machine+Learning", "Data+Science", "Python"]
-
-    # URLs to open
-    urls = [f"{BASE_URL}&keywords={keyword}" for keyword in KEYWORDS]
-    urls.append("https://techinmotion.com/upcoming-events")
-
-    for url in urls:
-        driver.execute_script(f"window.open('{url}','_blank');")
 
 
 def fill_form_and_submit(driver: selenium.webdriver, user_data: reference_values.ReferenceValues, submit: bool = False):
@@ -65,17 +40,12 @@ def fill_form_and_submit(driver: selenium.webdriver, user_data: reference_values
     submit_resume_button.click()
     try:
         # Fill out the form
-        first_name_input = driver.find_element(By.XPATH, '//*[@id="first-name"]')
-        last_name_input = driver.find_element(By.XPATH, '//*[@id="last-name"]')
-        email_input = driver.find_element(By.XPATH, '//*[@id="email"]')
-        phone_input = driver.find_element(By.XPATH, '//*[@id="phone"]')
-        resume_input = driver.find_element(By.XPATH, '//*[@id="resumeInput"]')
-
-        first_name_input.send_keys(user_data.first_name)
-        last_name_input.send_keys(user_data.last_name)
-        email_input.send_keys(user_data.email)
-        phone_input.send_keys(user_data.phone)
-        resume_input.send_keys(str(os.path.abspath(user_data.current_resume_path)))
+        driver.find_element(By.XPATH, '//*[@id="first-name"]').send_keys(user_data.first_name)
+        driver.find_element(By.XPATH, '//*[@id="last-name"]').send_keys(user_data.last_name)
+        driver.find_element(By.XPATH, '//*[@id="email"]').send_keys(user_data.email)
+        driver.find_element(By.XPATH, '//*[@id="phone"]').send_keys(user_data.phone)
+        crp = os.path.abspath(user_data.current_resume_path)
+        driver.find_element(By.XPATH, '//*[@id="resumeInput"]').send_keys(str(crp))
 
         print("Click the Captcha Box and solve the Captcha. Then press Enter to continue...")
         input()

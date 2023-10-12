@@ -1,0 +1,45 @@
+I want to reply to this email from Don, he was my director 13 years ago. We still keep in touch and talk about ham radil. 
+
+
+
+
+I’m more amazed Butternut is still around, considering all the other companies from way back that are now gone. I was trying to recall what I paid for my 80-10 B’nut vertical…maybe150 bucks? 
+
+I’ve been holding off on the cobweb hoping to get thru the rest of the hurricane season. Weather is getting cooler, so easier to work outside, so hoping to have it up between now and Thanksgiving. I’ve got everything I need to move forward, will likely leave the random wire in place, at least initially, and have the two antennas to chose from. 
+
+I got as far as 3D printing a case for the panadapter; need to decide whether it will go in a rig or be a standalone cheap SDR. Once it’s in it’s final resting place I’ll get some shots of it in action. 
+
+So you’re still thinking some sort of contract arrangement for this next adventure, or willing to hop on as an FTE if the situation is right? You’re growing versatility amazes me. I look out at that landscape you work in, and barely have a clue as to the complexity. With what we’re doing at puloli, on the software side, it’s everything from custom python on devices, to dockers and containers and all that “stuff” on the side that interfaces with the customer. I know enough to be dangerous, working on a few things in Udemy to help me hopefully understand better, but it’s truly a world where I feel relatively clueless.
+
+On my side, based on some discussions I’ve had with our CEO, looks like I’ll continue to lead the charge on network design/build/ops…with some staff to be added. And finally, after 3 years, some salary adjustment to go with it. We’re scheduled to be convening in SF in a couple weeks, to talk thru all those details, headcount, org, build plan, the usual. For me, at this point, as much as I love the job and the company, there needs to be some steps taken as far as role and comp to keep me going. End of the year will be that point where I decide..update resume..or continue as is. 
+
+Stay tuned..lol.
+
+Don
+
+
+Here's my reply things I want to include. Can you organize it by topic better and make it flow more smoothly. In not too formal of a tone. Keep summarization to a while. I want to include 
+everything here, it's just needs to be rearranged
+Regarding Butternut. They got bought by DX Engineering. Which I have found that they make quality parts. I have an unun from them in the box waiting for project time. 
+cooler weather in florida is a relief, here in Philly it's just a reminder of crap to come.  
+
+Congrats on continuing to lead the charge on network design/buildouts. 
+
+I still thinking contract for a specific reason, and that reason being I see the value of Python development , softare development in general , and to some degree machine learning decreasing over the next few years. 
+Despite my fighting with it today, chat GPT 4 is a darn good programmer.  I had it write a program for me to automatically upload my resume to motion recruitment. IT was more of a Proof of concept than anything else. Controlling websites with Python can be really tricky. When I had CHATGPT4 edit my code, it wound up dropping out large chunks.  
+But overall , again, it was still the 25 MPH mailman. especially since I'm not super familar with the syntax of Selenium; its helpful. Selenium allows you to control a browser with Python.
+I think Data Science is high paid now, because it used to , and to some degree still is challenging, but its being automated, through the cloud into turnkey systems. Interesting contrast.
+One of the homeworks on the Coursera Course - was to make a classifier to classify pictures of cats vs. dogs. Back in 2013, this was a "Kaggle" competition. (Kaggle is a data science website) In this competition, top researchers at places like stanford and MIT 
+competed with their models to recognize cats v dogs. Now, with the Python tools, it's a homework in an intermediate class. 
+
+
+Thanks for your kind words. On the tech. I'm struggling to stay afloat.  It's been a long 6 weeks; I'm finally at the point of Burnout on coursera courses. I've done about a dozen. There's still much to cover, but its definitely to move on to practial application. 
+
+In 12-18 months I'd like to transition to Applications Engineering for AI. Like the telecom Applications engineer from ERicsson who would come in and say you need this box, that box, etc.
+I see myself going into companies and making recoomendations adn building specs for Machine Learning , Dashboard and other systems. Helping people realize the value of AI and sharing in their value capture is where its at. 
+
+In that vein. Do you think there'd be any receptiveness to your Puoli folks at the SF meeting being open to taking an hour plus and brainstorming  potential use of Machine Learning and / or improved
+dashboarding. I'd be happy to sit in as a guest SME at no charge.  WIIFM (not a low powered FM translator, but Whats In IT for me) is that if I can find a dashboarding or machine learning or other 
+opportunity - even if its small, I get commission from Boxplot Analytics (My parter company) www.boxplotanalytics.com Check them out.  If not, that's understanable - no complaints. 
+
+

@@ -20,7 +20,7 @@ actual_values = ReferenceValues(
         first_name="Nicholas",
         last_name="Feliccia",
         linkedin_url="https://www.linkedin.com/in/nicfeliccia/",
-        phone="215550s1642"
+        phone="2155501642"
 )
 
 dummy_values = ReferenceValues(

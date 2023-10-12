@@ -1,0 +1,13 @@
+Greetings. 
+
+Today I need a Python script using Selenium which will open the browser to the following URL 
+https://tandymtech.com/job-seekers/tech-search-results/?keyword=&where=19124,%20Philadelphia,%20Pennsylvania
+
+If the button with the XPath of //*[@id="hs-eu-confirmation-button"] exists. 
+The name of the script should be tandymtech.py
+
+No. I have all of the requirements installed.  
+
+How about the following changes
+1) in the exception we put a Print("Something went wrong")
+2) In the main clause, put a press enter to continue input line. 

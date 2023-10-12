@@ -1,0 +1,72 @@
+Here's some code I wrote yesterday. 
+The purpose of this code is twofold.
+
+
+First, open_tech_in_motion_urls funciton
+It is to open the job search urls for 3 jobs I am intersted in at motion recruitment. 
+Can you add a google style docstring to this function? 
+
+The second function is submit resume.  This opens a path to my resume kept in reference_values.py and uploads it to the recruitment website.
+Can you add a google style docstring to this function? 
+
+
+I also need some advice. I store my information in values in the reference_values.py
+Generally this information will not change, or change very slowly. SUch as the path to my current resume. 
+I also however want to add the option to my code to put in a second set of dummy values that I could use in testing the website. 
+Because I don't want to spam the website with my real name.  
+
+What would be the best way to do this? Make 2 dictionaries? Make 2 Data Classes? 
+What are your thoughts? 
+
+
+Lets use data classes all the way. 
+The following variables will be string. 
+first_name, last_name, phone, email 
+
+Current resume path will be type of windows Path. 
+
+
+Create two instances of the data class. First with the current reference values. 
+
+
+current_resume_path = Path(r"C:\Users\nfeli\OneDrive\2023_career\resumes\Feliccia_0x57_000044.docx")
+first_name = "Nicholas"
+last_name = "Feliccia"
+phone = "215-550-1642"
+email = "nic@secretsmokestack.com"
+
+
+Second with dummy values.
+first_name = "Bart"
+last_name = "Simpson"
+phone "800-555-1212"
+email ="bart_simpson@aol.com"
+
+
+Two things. 
+First we have to refactor tech_in_motion.py to be able to use the data classes in reference_values 
+
+Second  what I want to do is to be able to run this from the command line.  It will need a if __name__ ==__main__ 
+If I run tech_in_motion.py, then I just want to run open_tech_in_motion_urls function.
+IF I add the command -upload_resume from the command line; then I want it to run both the open_tech_in_motion_urls and the submit_resume. 
+I want to add a command line argument called use_real_data and default it to false. IF it's false it uses the dummy reference values,  else it uses the actual values
+I want to add a command line argument called submit and default it to false. If it's false it does not execute  
+   # Clicking the submit button
+    submit_button_path = '//*[@id="hs_cos_wrapper_widget_1672155533981"]/div/div/div[1]/form/div/div[5]/input'
+    submit_button = driver.find_element(By.XPATH, submit_button_path)
+    if not submit_button.get_attribute("disabled"):
+        submit_button.click()
+    else:
+        print("Submit button is disabled. Form might not be filled out correctly or captcha was not solved.")
+
+if it is true it does execute 
+   # Clicking the submit button
+    submit_button_path = '//*[@id="hs_cos_wrapper_widget_1672155533981"]/div/div/div[1]/form/div/div[5]/input'
+    submit_button = driver.find_element(By.XPATH, submit_button_path)
+    if not submit_button.get_attribute("disabled"):
+        submit_button.click()
+    else:
+        print("Submit button is disabled. Form might not be filled out correctly or captcha was not solved.")
+
+
+

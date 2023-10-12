@@ -1,0 +1,137 @@
+Today we're going to write some python code in Selenium that will open specific URLS for us and keep them open until we close them in the browser.
+
+
+I want to open a browser with the follwoing URLS
+https://motionrecruitment.com/tech-jobs?radius=25&search-city=19124&keywords=Machine+Learning&postalcode=19124&remote=true&location-display-name=Philadelphia%2C+Pennsylvania+19124%2C+United+States&start=0
+https://motionrecruitment.com/tech-jobs?radius=25&search-city=19124&postalcode=19124&remote=true&location-display-name=Philadelphia%2C+Pennsylvania+19124%2C+United+States&start=0&keywords=Data+Science
+https://motionrecruitment.com/tech-jobs?radius=25&search-city=19124&postalcode=19124&remote=true&location-display-name=Philadelphia%2C+Pennsylvania+19124%2C+United+States&start=0&keywords=Python
+https://techinmotion.com/upcoming-events
+
+You can probably save the common stuff in a variable.
+
+I need a function called submit resume which does the following.
+
+
+imports values from reference_values.py
+
+Uses selenium to open https://motionrecruitment.com/candidates
+Clicks on the button at this xpath. //*[@id="hs_cos_wrapper_widget_1672155533981"]/button
+
+Sets this dropdown to "Philadelphia" 
+<div class="form-custom-single-select-container relative cursor-pointer">
+                <label for="custom-location-select" aria-hidden="true" class="hidden">Location</label>
+                
+                <select class="form-custom-single-select opacity-0 z-[-1] absolute" id="custom-location-select" name="location" required="">
+                  <option value="">Location *</option>
+                  
+                  
+                  
+                  <option value="30326">Atlanta</option>
+                  
+                  <option value="02116">Boston</option>
+                  
+                  <option value="28226">Charlotte</option>
+                  
+                  <option value="60603">Chicago</option>
+                  
+                  <option value="75219">Dallas</option>
+                  
+                  <option value="29615">Greenville</option>
+                  
+                  <option value="90024">Los Angeles</option>
+                  
+                  <option value="10036">New York</option>
+                  
+                  <option value="92614">Orange County</option>
+                  
+                  <option value="19107">Philadelphia</option>
+                  
+                  <option value="85281">Phoenix</option>
+                  
+                  <option value="94105">San Francisco</option>
+                  
+                  <option value="95113">Silicon Valley</option>
+                  
+                  <option value="M5C2W7">Toronto</option>
+                  
+                  <option value="22201">Washington, DC</option>
+                  
+                  
+                </select><div class="form-custom-selected-item rounded bg-white border-2 border-grey1 p-2 hover:border-blue1 flex items-center justify-between gap-1">
+                  <p class="text-grey4 text-sm">Philadelphia</p>
+                  <div class=""><svg class="fill-grey1" viewBox="0 0 18 18" xml:space="preserve" width="18" height="18"><path d="M3.8 2.5c-.6 0-1.3.7-1.3 1.3 0 .3.2.7.5.8L7.2 9 3 13.2c-.3.3-.5.7-.5 1 0 .6.7 1.3 1.3 1.3.3 0 .7-.2 1-.5L9 10.8l4.2 4.2c.2.3.7.3 1 .3.6 0 1.3-.7 1.3-1.3 0-.3-.2-.7-.3-1l-4.4-4L15 4.6c.3-.2.5-.5.5-.8 0-.7-.7-1.3-1.3-1.3-.3 0-.7.2-1 .3L9 7.1 4.8 2.8c-.3-.1-.7-.3-1-.3z"></path></svg></div>
+                </div>
+                <div class="hide-scrollbar form-custom-select-options rounded max-h-[200px] overflow-scroll z-10 absolute top-[calc(100%-1px)] w-full flex-col bg-white border-2 border-grey1 hidden">
+                <div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Atlanta</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Boston</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Charlotte</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Chicago</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Dallas</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Greenville</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Los Angeles</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">New York</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Orange County</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer text-blue1">Philadelphia</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Phoenix</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">San Francisco</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Silicon Valley</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Toronto</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Washington, DC</div></div>
+              </div>
+
+Sets This dropdown to Data
+<div class="form-custom-single-select-container relative cursor-pointer">
+                <label for="custom-category-select" aria-hidden="true" class="hidden">Tech Sector</label>
+                <select class="form-custom-single-select opacity-0 z-[-1] absolute" id="custom-category-select" name="category" required="">
+                  <option value="">Tech Sector *</option>
+                  
+                  
+                  
+                  <option value="C# / .Net">C# / .Net</option>
+                  
+                  <option value="Cybersecurity">Cybersecurity</option>
+                  
+                  <option value="Data">Data</option>
+                  
+                  <option value="DevOps / SRE">DevOps / SRE</option>
+                  
+                  <option value="Functional">Functional</option>
+                  
+                  <option value="GoLang">GoLang</option>
+                  
+                  <option value="Infrastructure">Infrastructure</option>
+                  
+                  <option value="Java">Java</option>
+                  
+                  <option value="Javascript">Javascript</option>
+                  
+                  <option value="Mobile">Mobile</option>
+                  
+                  <option value="Node">Node</option>
+                  
+                  <option value="Product &amp; UX">Product &amp; UX</option>
+                  
+                  <option value="Python">Python</option>
+                  
+                  <option value="Quality Assurance">Quality Assurance</option>
+                  
+                  <option value="Software - Other">Software - Other</option>
+                  
+                  <option value="Tech Leadership">Tech Leadership</option>
+                  
+                  
+                </select>
+                <div class="form-custom-selected-item rounded bg-white border-2 border-grey1 p-2 hover:border-blue1 flex items-center justify-between gap-1">
+                  <p class="text-grey4 text-sm">Data</p>
+                  <div class=""><svg class="fill-grey1" viewBox="0 0 18 18" xml:space="preserve" width="18" height="18"><path d="M3.8 2.5c-.6 0-1.3.7-1.3 1.3 0 .3.2.7.5.8L7.2 9 3 13.2c-.3.3-.5.7-.5 1 0 .6.7 1.3 1.3 1.3.3 0 .7-.2 1-.5L9 10.8l4.2 4.2c.2.3.7.3 1 .3.6 0 1.3-.7 1.3-1.3 0-.3-.2-.7-.3-1l-4.4-4L15 4.6c.3-.2.5-.5.5-.8 0-.7-.7-1.3-1.3-1.3-.3 0-.7.2-1 .3L9 7.1 4.8 2.8c-.3-.1-.7-.3-1-.3z"></path></svg></div>
+                </div>
+                <div class="hide-scrollbar form-custom-select-options rounded max-h-[200px] overflow-scroll z-10 absolute top-[calc(100%-1px)] w-full flex-col bg-white border-2 border-grey1 hidden">
+                <div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">C# / .Net</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Cybersecurity</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer text-blue1">Data</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">DevOps / SRE</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Functional</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">GoLang</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Infrastructure</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Java</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Javascript</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Mobile</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Node</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Product &amp; UX</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Python</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Quality Assurance</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Software - Other</div><div class="option py-1 px-[10px] text-xs hover:bg-grey cursor-pointer">Tech Leadership</div></div>
+              </div>
+
+with a 3 second delay between each action.
+Puts the value reference_values.first_name into  the xpath //*[@id="first-name"]
+Puts the value reference_values.last_name "Feliccia" into the xpath //*[@id="last-name"]
+puts the value reference_values.email  into the xpath //*[@id="email"]
+puts the value reference_values.phone into the xpath at //*[@id="phone"]
+
+clicks on the box at //*[@id="resumeInput"] and loads in the file found at the path in reference_values.current_resume_path
+
+//*[@id="recaptcha-anchor"]/div[4]
+
+try to click on //*[@id="recaptcha-anchor"] the captcha box.  
+If that box isn't there and there's a captcha challenge, wait till its automatically filled. 
+Then click on the submit button contained in the code here. 
+//*[@id="hs_cos_wrapper_widget_1672155533981"]/div/div/div[1]/form/div/div[5]/input
+
+<input class="submit-button button mx-auto disabled:hover:bg-[#d0d0d0] disabled:hover:text-[#e6e6e6]" type="submit" disabled="">
+
+T
+
+F:\job_search_utilities\Source\reference_values.py

@@ -1,0 +1,43 @@
+Greetings. I have a file called tandymtech_reader.py which I just uploaded for you.
+
+Right now it only opens one URL 
+I wish to add the following functionality.
+s
+Open this URL in an additional tab. https://tandymtech.com/job-seekers/tech-search-results/?keyword=(Remote)&where=
+Also click eu_conf_button = //*[@id="hs-eu-confirmation-button"]
+If the button with the following xpath /html/body/section/section/div/aside/section/section/div[10]/div[1]/input    is not checked, then check it.
+Quit everything after the user hits enter. 
+
+
+that is working! 
+Re read the code and baseline yourself. 
+Lets do this.
+Add parameter types to the function inputs.
+Add parameter types to the docstrings google style.
+
+In this HTML 
+<p class="load-more-data ng-binding" data-ng-click="list.loadMoreData();" data-ng-show="list.SearchService.helper.hasMore &amp;&amp; list.SearchService.currentListData.length" style="">Load more...</p>
+there is text that says load more. 
+Iteratively click on it until it is no longer there. 
+
+
+
+
+Ok. I need a python script called tandym_resume_uploader.py
+The script will do the following
+
+Open this url. https://tandym-portal.bullhorncloud.com/#/signup/000/init
+I've attached the contents of that URL in the attached file called The Tandym Group Candidate Portal.html in the zip file. 
+
+have a command line argument called use_actual_data which defaults to false.
+if use actual data is true, it will load the variable actual_values of type ReferenceValues form the reference_values.py file.
+
+Wait one second.
+print("Website successfully opened")
+
+In the area called "Drop file here, or click here to upload file, I want to upload the file at the path indicated by current_resume_path in either actual_values or dummy_values
+Then when that is done, click on <span class="nextSectionIcon glyphicon glyphicon-arrow-right"></span>
+Wait until we get the phrase  
+Your resume was parsed successfully! Please click the next button to start editing the form!
+the html for the form is in 
+The Tandym Group Candidate Porta_bl.html and folder The Tandym Group Candidate Porta_bl 
