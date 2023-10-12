@@ -26,3 +26,24 @@ Please use as much of tech_in_motion.py as a template for what you need to do.
 
 
 //*[@id="wpcf7-f8654-o1"]/div[7]/p/button
+
+
+I need a script called collabera_reader.py
+Uisng Selenium, it needs to open the following URLS
+
+
+This is the format of the URLS 
+https://collabera.com/job-search/?sort_by=dateposted&industry=&keyword={keyword}&location=19124&Posteddays=0
+Where keyword is a variable.  
+Mutiple words are joined together with a '+' character. 
+Example is machine learning
+https://collabera.com/job-search/?sort_by=dateposted&industry=&keyword=Machine+Learning&location=19124&Posteddays=0
+
+
+I need the URL Created for the following keywords.
+1) Python
+2) Machine Learning
+3) Data Science
+
+Then I need each URL open in a new tab. 
+
