@@ -4,12 +4,15 @@ from selenium import webdriver
 
 
 def create_url(keyword):
-    base_url = "https://collabera.com/job-search/?sort_by=dateposted&industry=&keyword={keyword}&location=19124&Posteddays=0"
-    formatted_keyword = '+'.join(keyword.split())
-    return base_url.format(keyword=formatted_keyword)
+    base_url = ("https://collabera.com/job-search/?sort_by=dateposted&industry=&keyword={"
+                "keyword}&location=19124&Posteddays=0")
+    split = keyword.split()
+    formatted_keyword = '+'.join(split)
+    url_format = base_url.format(keyword=formatted_keyword)
+    return url_format
 
 
-def main():
+def collabera_reader():
     keywords = ["Python", "Machine Learning", "Data Science"]
     urls = [create_url(keyword) for keyword in keywords]
 
@@ -27,4 +30,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    collabera_reader()

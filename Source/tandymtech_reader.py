@@ -57,7 +57,7 @@ def open_url_in_new_tab(driver: webdriver.Chrome, url: str) -> None:
     driver.get(url)
 
 
-def main() -> None:
+def tandym_tech_reader() -> None:
     driver = configure_webdriver()
 
     # Navigate to the first URL and click the confirmation button
@@ -113,4 +113,4 @@ def click_load_more_until_end(driver: webdriver.Chrome, load_more_text: str) -> 
 
 
 if __name__ == "__main__":
-    main()
+    tandym_tech_reader()
