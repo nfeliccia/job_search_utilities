@@ -4,7 +4,7 @@ The purpose of this script is to open pages of interest on the Tech in Motion we
 from selenium import webdriver
 
 
-def open_tech_in_motion_urls():
+def tech_in_motion_reader(testmode=False):
     """
     Opens the Tech in Motion URLs for job search. Note motion recruitment uses url based search parameters.
 
@@ -32,9 +32,10 @@ def open_tech_in_motion_urls():
     for url in urls:
         driver.execute_script(f"window.open('{url}','_blank');")
 
-    input("Press Enter to continue...")
+    if not testmode:
+        input("Press Enter to continue...")
     driver.quit()
 
 
 if __name__ == "__main__":
-    open_tech_in_motion_urls()
+    tech_in_motion_reader(testmode=False)

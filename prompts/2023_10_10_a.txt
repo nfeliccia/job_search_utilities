@@ -2,7 +2,7 @@ Here's some code I wrote yesterday.
 The purpose of this code is twofold.
 
 
-First, open_tech_in_motion_urls funciton
+First, tech_in_motion_reader funciton
 It is to open the job search urls for 3 jobs I am intersted in at motion recruitment. 
 Can you add a google style docstring to this function? 
 
@@ -47,8 +47,8 @@ Two things.
 First we have to refactor tech_in_motion.py to be able to use the data classes in reference_values 
 
 Second  what I want to do is to be able to run this from the command line.  It will need a if __name__ ==__main__ 
-If I run tech_in_motion.py, then I just want to run open_tech_in_motion_urls function.
-IF I add the command -upload_resume from the command line; then I want it to run both the open_tech_in_motion_urls and the submit_resume. 
+If I run tech_in_motion.py, then I just want to run tech_in_motion_reader function.
+IF I add the command -upload_resume from the command line; then I want it to run both the tech_in_motion_reader and the submit_resume.
 I want to add a command line argument called use_real_data and default it to false. IF it's false it uses the dummy reference values,  else it uses the actual values
 I want to add a command line argument called submit and default it to false. If it's false it does not execute  
    # Clicking the submit button

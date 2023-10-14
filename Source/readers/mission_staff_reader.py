@@ -2,9 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 
-def mission_staff_reader() -> None:
+def mission_staff_reader(testmode=False) -> None:
     """
     Reads the Mission Staff job listings.
+
+    Args:
+        testmode: Run in test mode or user mode. Test mode will auto close the browser window.
     """
     # Set up the Selenium driver (you might need to adjust the path and options based on your setup)
     driver = webdriver.Chrome()
@@ -20,10 +23,12 @@ def mission_staff_reader() -> None:
     technology_button = driver.find_element(By.CSS_SELECTOR, '[data-automation-id="Technology (9)"]')
     technology_button.click()
 
-    print("Press any key to continue...")
+    if not testmode:
+        # Prompt the user to press Enter to keep the window open
+        input("Press any key to continue...")
     # Close the driver when done
     driver.quit()
 
 
 if __name__ == "main":
-    mission_staff_reader()
+    mission_staff_reader(testmode=False)

@@ -19,7 +19,6 @@ will not be submitted if the captcha is not solved. The captcha must be solved m
 """
 
 
-
 def fill_form_and_submit(driver: selenium.webdriver, user_data: reference_values.ReferenceValues, submit: bool = False):
     """
     The purpose of this function is to fill out the form and submit it. BY It we mean the candidate resume submitssion
