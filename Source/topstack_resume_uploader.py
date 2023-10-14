@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from reference_values import actual_values
+from Data.reference_values import actual_values
 
 """
 Note. This is incomplete. When the resume is on file we have to select "Upload Resume" 

@@ -1,9 +1,9 @@
-from readers import sig_reader, collabera_reader
+from readers import susquehanna_international, collabera_reader
 
 
 def test_susquehanna_international_reader():
     try:
-        sig_reader.susquehanna_international_reader(testmode=True)
+        susquehanna_international.susquehanna_international_reader(testmode=True)
     except Exception as e:
         print(e)
         assert False

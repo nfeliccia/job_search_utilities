@@ -4,9 +4,9 @@ import os
 import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
-import reference_values
 from tech_in_motion_reader import open_tech_in_motion_urls
+
+from Data import reference_values
 
 ACTUAL_VALUES = reference_values.actual_values
 DUMMY_VALUES = reference_values.dummy_values

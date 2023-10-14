@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from reference_values import actual_values, dummy_values
+from Data.reference_values import actual_values, dummy_values
 
 
 def main(use_actual_data):

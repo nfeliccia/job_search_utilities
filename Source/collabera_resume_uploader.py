@@ -14,7 +14,7 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
-import reference_values
+from Data import reference_values
 
 ACTUAL_VALUES = reference_values.actual_values
 DUMMY_VALUES = reference_values.dummy_values
