@@ -1,8 +1,4 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-
+from . import webdriver, By, EC, WebDriverWait
 
 def create_collabera_url(keyword):
     website_job_search = "https://collabera.com/job-search/"

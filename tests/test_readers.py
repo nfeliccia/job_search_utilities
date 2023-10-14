@@ -1,5 +1,5 @@
 from readers import collabera_reader, mission_staff_reader, tandymtech_reader, \
-    tech_in_motion_reader, susquehanna_international as susquehanna_international_reader
+    tech_in_motion_reader, susquehanna_international as susquehanna_international_reader, jacobs_reader
 
 
 def universal_tester(reader):
@@ -40,6 +40,10 @@ def test_tech_in_motion_reader():
 
 def test_tandym_tech_reader():
     universal_tester(tandymtech_reader.tandym_tech_reader)
+
+
+def test_jacobs_reader():
+    universal_tester(jacobs_reader.jacobs_reader)
 
 
 if __name__ == '__main__':

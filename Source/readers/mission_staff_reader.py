@@ -1,5 +1,4 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+from . import webdriver, By
 
 
 def mission_staff_reader(testmode=False) -> None:

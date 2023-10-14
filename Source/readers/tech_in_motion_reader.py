@@ -1,7 +1,7 @@
 """
 The purpose of this script is to open pages of interest on the Tech in Motion website. This script will open the Tech"""
 
-from selenium import webdriver
+from . import webdriver
 
 
 def tech_in_motion_reader(testmode=False):
@@ -9,7 +9,7 @@ def tech_in_motion_reader(testmode=False):
     Opens the Tech in Motion URLs for job search. Note motion recruitment uses url based search parameters.
 
     Args:
-        driver (webdriver.Chrome): The Chrome driver instance.
+        testmode: Operate in test mode and close the browser window automatically.
 
     Returns:
         None

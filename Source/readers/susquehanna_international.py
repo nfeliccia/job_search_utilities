@@ -8,11 +8,9 @@ Keywords for job searches are defined within the script, and the WebDriver will 
 tab for each keyword, perform the search, and interact with the page as defined in the script."""
 import urllib.parse
 
-from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+
+from . import webdriver, By, EC, WebDriverWait
 
 
 def susquehanna_international_reader(testmode=False):
