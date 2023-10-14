@@ -9,10 +9,7 @@ For each URL, the script performs the following actions:
 
 import time
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from . import webdriver, By, EC, WebDriverWait
 
 
 def configure_webdriver() -> webdriver.Chrome:
@@ -57,7 +54,23 @@ def open_url_in_new_tab(driver: webdriver.Chrome, url: str) -> None:
     driver.get(url)
 
 
-def tandym_tech_reader() -> None:
+def tandym_tech_reader(testmode=True) -> None:
+    """
+
+    This script automates the process of navigating to two specific URLs using Selenium.
+    For each URL, the script performs the following actions:
+    1. Opens the URL in a Chrome browser.
+    2. Waits for and clicks on the 'hs-eu-confirmation-button'.
+    3. For the second URL, checks a specific checkbox if it's not already checked.
+    4. Waits for the user to press Enter and then quits the browser.
+
+
+    Args:
+        testmode: RUn in test mode.
+
+    Returns:
+
+    """
     driver = configure_webdriver()
 
     # Navigate to the first URL and click the confirmation button
@@ -74,7 +87,12 @@ def tandym_tech_reader() -> None:
 
     scroll_to_bottom_of_section(driver, ".cards")
     click_load_more_until_end(driver, "Load more")
-    input("Press Enter to quit...")
+
+    if not testmode:
+        input("Press Enter to quit...")
+
+    else:
+        driver.quit()
 
 
 def scroll_to_bottom_of_section(driver: webdriver.Chrome, css_selector: str) -> None:

@@ -4,9 +4,9 @@ import os
 import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
-import reference_values
 from tech_in_motion_reader import open_tech_in_motion_urls
+
+from Data import reference_values
 
 ACTUAL_VALUES = reference_values.actual_values
 DUMMY_VALUES = reference_values.dummy_values
@@ -17,7 +17,6 @@ submission form and submit it. The form is not submitted by default. You must pa
 form. The form will not be submitted if the captcha is not solved. The captcha must be solved manually. The form
 will not be submitted if the captcha is not solved. The captcha must be solved manually. 
 """
-
 
 
 def fill_form_and_submit(driver: selenium.webdriver, user_data: reference_values.ReferenceValues, submit: bool = False):

@@ -5,7 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from reference_values import actual_values
+import Data.reference_values
+from Data.reference_values import actual_values
 
 """
 Note. This is incomplete. When the resume is on file we have to select "Upload Resume" 
@@ -48,7 +49,8 @@ def main():
                 EC.presence_of_element_located((By.ID, "password"))
         )
         print("Entering the password...")
-        password_input.send_keys("g6r^53#sDvf3HLXk")
+        password_input = Data.reference_values.password_dictionary["topstack"]
+        password_input.send_keys(password_input)
         sleep(SLEEPTIME * 3)
 
         # Enter the email address
