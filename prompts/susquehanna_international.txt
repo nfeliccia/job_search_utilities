@@ -1,0 +1,21 @@
+Chat! How are your neural networks today? 
+I want to create a python script using selenium. 
+
+I want to open the careers website at susquehanna international group. 
+I have attached a zip file called sig_job_results.zip which has the extracted HTML from a search.
+
+The webstie takes  queries in the url according to the following format https://careers.sig.com/search-results?keywords=%22Data%20Science%22
+
+I want to open a chrome browser in selenium, and open three tabs, with the following keywords
+"Data Science"
+"Machine Learning"
+"Python"
+
+
+Examine all three open tabs.  If there is a checkbox in there that says Bala Cynwyd (Philadelphia Area), Pennsylvania United States, click it. 
+Prompt user to hit enter to continue so the window doesn't close
+
+I'm uploading a copy of the script as I have it workign on MY machine. 
+Ok. Checking the box that says Bala Cynwyd is  working on the first page , where its checking the box It is working on the second page where There is no box.
+However the script is not working on the third page. I am uploading another zip. this zip file This zip file has thrid_page.html and third_page_files.
+prehaps you could examine the HTML there and see if there's anything different which would make the css selector not work. 

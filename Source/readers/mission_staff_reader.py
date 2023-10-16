@@ -1,4 +1,4 @@
-from . import webdriver, By
+from readers import webdriver, By
 
 
 def mission_staff_reader(testmode=False) -> None:
@@ -19,7 +19,8 @@ def mission_staff_reader(testmode=False) -> None:
     driver.implicitly_wait(3)
 
     # Find the "Technology" button using the data-automation-id attribute and click it
-    technology_button = driver.find_element(By.CSS_SELECTOR, '[data-automation-id="Technology (9)"]')
+    technology_ = '[data-automation-id="Technology (9)"]'
+    technology_button = driver.find_element(By.CSS_SELECTOR, value=technology_)
     technology_button.click()
 
     if not testmode:
@@ -29,5 +30,7 @@ def mission_staff_reader(testmode=False) -> None:
     driver.quit()
 
 
-if __name__ == "main":
+if __name__ == "__main__":
+    print(f"Starting...{__file__}")
     mission_staff_reader(testmode=False)
+    print(f"Finished {__file__} !")

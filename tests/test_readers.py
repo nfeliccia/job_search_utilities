@@ -1,5 +1,5 @@
 from readers import collabera_reader, mission_staff_reader, tandymtech_reader, \
-    tech_in_motion_reader, susquehanna_international as susquehanna_international_reader, jacobs_reader
+    tech_in_motion_reader, susquehanna_international as susquehanna_international_reader, jacobs_reader, captech_reader
 
 
 def universal_tester(reader):
@@ -20,6 +20,10 @@ def universal_tester(reader):
         print(e)
         assertion_value = False
     assert assertion_value
+
+
+def test_captech_reader():
+    universal_tester(captech_reader.captech_reader)
 
 
 def test_collabera_reader():
@@ -47,8 +51,10 @@ def test_jacobs_reader():
 
 
 if __name__ == '__main__':
+    test_captech_reader()
     test_collabera_reader()
+    test_jacobs_reader()
     test_mission_staff_reader()
     test_susquehanna_international_reader()
-    test_tech_in_motion_reader()
     test_tandym_tech_reader()
+    test_tech_in_motion_reader()

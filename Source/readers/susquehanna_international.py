@@ -10,7 +10,7 @@ import urllib.parse
 
 from selenium.common import NoSuchElementException, TimeoutException
 
-from . import webdriver, By, EC, WebDriverWait
+from readers import webdriver, By, EC, WebDriverWait
 
 
 def susquehanna_international_reader(testmode=False):
