@@ -2,6 +2,10 @@ import os
 
 import pandas as pd
 
+"""
+Note - included in the git repository is a mock file called 'time_tracking_data.csv' which is a mock of the CSV file
+"""
+
 
 # Function to find the latest CSV file in the specified directory
 def find_latest_csv(flc_directory: str) -> str:
@@ -9,12 +13,7 @@ def find_latest_csv(flc_directory: str) -> str:
     Process the CSV file from Clockify and generate an Excel report showing the total hours worked per week.
     The report is saved in the same directory as the script.
 
-    Args:
-        csv_file_path: The path to the CSV file to process.
 
-    Returns:
-        None. The function saves the report in Excel format.
-    
     Find the latest CSV file in the specified directory
     Args:
         flc_directory: Directory where the CSV files are located output from Clockify

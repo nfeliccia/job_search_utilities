@@ -1,4 +1,6 @@
-from readers import webdriver, By
+from selenium.webdriver.common.by import By
+
+from readers import initialize_webdriver
 
 
 def mission_staff_reader(testmode=False) -> None:
@@ -9,8 +11,7 @@ def mission_staff_reader(testmode=False) -> None:
         testmode: Run in test mode or user mode. Test mode will auto close the browser window.
     """
     # Set up the Selenium driver (you might need to adjust the path and options based on your setup)
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+    driver = initialize_webdriver()
 
     # Open the website
     driver.get('https://missionstaff.com/careers/#/')

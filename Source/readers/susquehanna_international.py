@@ -9,8 +9,12 @@ tab for each keyword, perform the search, and interact with the page as defined 
 import urllib.parse
 
 from selenium.common import NoSuchElementException, TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
-from readers import webdriver, By, EC, WebDriverWait
+from readers import initialize_webdriver
+from readers.readers_common import close_with_test
 
 
 def susquehanna_international_reader(testmode=False):
@@ -26,8 +30,7 @@ def susquehanna_international_reader(testmode=False):
     """
 
     # Initialize the Chrome driver
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+    driver = initialize_webdriver()
 
     # Define the base URL and keywords
     base_url = "https://careers.sig.com/search-results?keywords={}"
@@ -64,12 +67,7 @@ def susquehanna_international_reader(testmode=False):
         except NoSuchElementException as _:
             print(f"Checkbox not found in tab with keyword: {keyword} ")
 
-    if not testmode:
-        # Prompt the user to press Enter to keep the window open
-        input("Press Enter to close the browser...")
-
-    # Close the browser
-    driver.quit()
+    close_with_test(driver=driver, testmode=testmode)
 
 
 if __name__ == '__main__':

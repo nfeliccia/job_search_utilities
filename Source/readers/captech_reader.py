@@ -1,46 +1,34 @@
-from selenium import webdriver
+from typing import Iterable
+
+from readers import initialize_webdriver
+from readers.readers_common import construct_url, close_with_test
 
 
-def create_captech_url(keyword=None, location=None):
-    base_url = "https://www.captechconsulting.com/careers/current-openings?"
+def captech_executer(parameters: Iterable[dict] = None, testmode=False):
+    # Initialize the web driver
+    driver = initialize_webdriver()
 
-    if keyword:
-        keyword = "%20".join(keyword.split())
-        base_url += f"keywords={keyword}&"
+    # set base url
+    base_url = "https://www.captechconsulting.com/careers/current-openings/"
 
-    if location:
-        base_url += f"location={location}&"
+    # Open the job openings page for Philadelphia (location=253788)
 
-    return base_url + "page=1"
+    urls = [construct_url(base_url=base_url, query_params=x) for x in parameters]
+    for url in urls:
+        # Open a new tab
+        print(url)
+        window_open_script = f"window.open('{url}', '_blank');"
+        driver.execute_script(window_open_script)
+
+    close_with_test(driver=driver, testmode=testmode)
 
 
 def captech_reader(testmode=False):
-    # Initialize the web driver
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-
-    # Open the main job openings page
-    driver.get(create_captech_url())
-
-    # Open the job openings page for Philadelphia (location=253788)
-    blank_ = "window.open('', '_blank');"
-    handles_ = driver.window_handles[-1]
-    driver.execute_script(blank_)
-    driver.switch_to.window(handles_)
-    driver.get(create_captech_url(location="253788"))
-
-    # Open tabs for specified keywords
-    keywords = ["Machine Learning", "Data Science", "Python"]
-    for keyword in keywords:
-        driver.execute_script(blank_)
-        driver.switch_to.window(handles_)
-        url = create_captech_url(keyword=keyword)
-        driver.get(url)
-
-    if not testmode:
-        input("Press Enter to close the browser...")
-
-    driver.quit()
+    parameters = [{"keywords": "", "location": "253788", "page": "1", },
+                  {"keywords": "Machine Learning", "page": "1", },
+                  {"keywords": "Data Science", "page": "1", },
+                  {"keywords": "Python", "page": "1", }]
+    captech_executer(parameters, testmode=testmode)
 
 
 # Uncomment the below line when you want to execute the script

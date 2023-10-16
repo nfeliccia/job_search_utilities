@@ -1,2 +1,1 @@
-
-
+from readers.readers_common import initialize_webdriver, construct_url

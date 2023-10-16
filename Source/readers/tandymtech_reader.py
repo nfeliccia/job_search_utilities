@@ -9,19 +9,12 @@ For each URL, the script performs the following actions:
 
 import time
 
-from . import webdriver, By, EC, WebDriverWait
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
-
-def configure_webdriver() -> webdriver.Chrome:
-    """
-    Configures and returns the Selenium webdriver for Chrome.
-    
-    Returns:
-        webdriver.Chrome: Configured Chrome webdriver instance.
-    """
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    return driver
+from readers import initialize_webdriver
 
 
 def click_confirmation_button(driver: webdriver.Chrome, eu_conf_button_xpath: str) -> None:
@@ -71,7 +64,7 @@ def tandym_tech_reader(testmode=True) -> None:
     Returns:
 
     """
-    driver = configure_webdriver()
+    driver = initialize_webdriver()
 
     # Navigate to the first URL and click the confirmation button
     pennsylvania = ("https://tandymtech.com/job-seekers/tech-search-results/?keyword=&where=19124,%20Philadelphia,"

@@ -1,7 +1,6 @@
 """
 The purpose of this script is to open pages of interest on the Tech in Motion website. This script will open the Tech"""
-
-from . import webdriver
+from readers import initialize_webdriver
 
 
 def tech_in_motion_reader(testmode=False):
@@ -14,8 +13,7 @@ def tech_in_motion_reader(testmode=False):
     Returns:
         None
     """
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+    driver = initialize_webdriver()
 
     # Base URL
     BASE_URL = ("https://motionrecruitment.com/tech-jobs?radius=25&search-city=19124&postalcode=19124&remote=true"
