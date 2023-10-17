@@ -1,33 +1,25 @@
-from selenium.webdriver.common.by import By
+from readers_common import GeneralReader
 
-from readers import GeneralReader
+MISSION_STAFF_URL = "https://missionstaff.com/careers/#/"
 
 
-def mission_staff_reader(testmode=False) -> None:
-    """
-    Reads the Mission Staff job listings.
+class MissionStaffReader(GeneralReader):
+    def __init__(self, base_url: str = None, testmode: bool = False):
+        super().__init__()
+        self.testmode = testmode
 
-    Args:
-        testmode: Run in test mode or user mode. Test mode will auto close the browser window.
-    """
+        # Loadable Base URL
+        if base_url is not None:
+            self.base_url = base_url
+        else:
+            self.base_url = MISSION_STAFF_URL
 
-    # Create a GeneralReader object.
-    reader = GeneralReader()
-
-    # Open the Mission Staff website.
-    reader.webdriver.get('https://missionstaff.com/careers/#/')
-
-    # Wait for 3 seconds.
-    reader.webdriver.implicitly_wait(3)
-
-    # Find the "Technology" button using the data-automation-id attribute and click it.
-    technology_ = '[data-automation-id="Technology (9)"]'
-    technology_button = reader.webdriver.find_element(By.CSS_SELECTOR, value=technology_)
-    technology_button.click()
-
-    # Close the web browser.
-    reader.close_with_test(testmode=testmode)
+    def open_base_url(self):
+        self.open_a_tab(self.base_url)
 
 
 if __name__ == "__main__":
-    mission_staff_reader(testmode=False)
+    with MissionStaffReader() as msr:
+        msr.open_base_url()  # This ensures the base URL is opened
+        print(msr.webdriver.title)
+        msr.close_with_test(testmode=False)

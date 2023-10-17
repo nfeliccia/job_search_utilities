@@ -1,51 +1,32 @@
-import typing
+from typing import Iterable
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
+from readers_common import GeneralReader
 
-from readers import initialize_webdriver, construct_url
-from readers.readers_common import close_with_test
-
-
-def topgolf_executer(parameters: typing.Iterable[dict], testmode=False):
-    """
-
-    Args:
-        parameters: parameters for the strings
-        testmode: boolean to determine if the browser should be closed after the test is complete
-
-    Returns:
-        None
-
-    """
-    # Initialize the web driver. Make sure the chromedriver executable is in your PATH.
-    driver = initialize_webdriver()
-    base_url = "https://careers.topgolf.com/jobs/"
-    urls = [construct_url(base_url=base_url, query_params=x) for x in parameters]
-
-    for url in urls:
-        print(url)
-        window_open_script = f"window.open('{url}', '_blank');"
-        driver.execute_script(window_open_script)
-
-        try:
-            # Wait for the cookie consent button to be clickable, and click it
-            wait = WebDriverWait(driver, 3)
-            cookie_button = wait.until(EC.element_to_be_clickable((By.ID, "cookie-consent-accept-button")))
-            cookie_button.click()
-        except Exception as e:
-            print(f"An error occurred while waiting for the cookie consent button: {e}")
-
-    close_with_test(testmode=testmode, driver=driver)
+TOPGOLF_URL = "https://careers.topgolf.com/jobs/"
+TOPGOLF_PARAMETERS = [
+    {"page": "1", "categories": "Technology Innovation / IT"},
+    {"lat": "40.0228352", "lng": "-75.0911", "radius": "15", "page": "1", "radiusUnit": "MILES"}
+]
 
 
-def topgolf_reader():
-    parameters = [{"page": "1", "categories": "Technology Innovation / IT"},
-                  {"lat": "40.0228352", "lng": "-75.0911", "radius": "15", "page": "1", "radiusUnit": "MILES"}]
+class TopGolfReader(GeneralReader):
+    def __init__(self, base_url: str = None, parameters: Iterable[dict] = None, testmode: bool = False):
+        super().__init__()
+        self.testmode = testmode
 
-    topgolf_executer(parameters, testmode=False)
+        # Loadable Base URL
+        if base_url is not None:
+            self.base_url = base_url
+        else:
+            self.base_url = TOPGOLF_URL
 
+        if parameters is not None:
+            self.parameters = parameters
+        else:
+            self.parameters = TOPGOLF_PARAMETERS
 
 if __name__ == "__main__":
-    topgolf_reader()
+    with TopGolfReader() as tgr:
+        tgr.open_job_pages(base_url=tgr.base_url, parameters=tgr.parameters, testmode=tgr.testmode)
+        print(tgr.webdriver.title)
+        tgr.close_with_test(testmode=False)

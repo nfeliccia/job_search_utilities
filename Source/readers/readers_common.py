@@ -1,27 +1,40 @@
+import logging
 from urllib.parse import urlencode
 
 from selenium import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
 
 
 class GeneralReader:
-    """
-    A class for reading web pages.
-
-    This class provides a number of methods for constructing URLs, opening web pages, and reading the contents of web pages.
-
-    Attributes:
-        webdriver (webdriver.Chrome): A Selenium WebDriver object.
-    """
 
     def __init__(self):
-        """
-        Initializes a new GeneralReader object.
+        self.webdriver = None
 
-        This method initializes the Selenium WebDriver object.
-        """
-
+    def __enter__(self):
         self.webdriver = self.start_webdriver()
+        logging.info("WebDriver has started.")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close_webdriver()
+        logging.info("WebDriver has closed.")
+        if exc_type:
+            # Log the exception with traceback
+            logging.error("An exception occurred", exc_info=(exc_type, exc_value, traceback))
+            # Or you can log the exception details explicitly
+            logging.error(f"Exception type: {exc_type}, Exception value: {exc_value}, Traceback: {traceback}")
+
+    def open_job_pages(self, base_url, parameters):
+        """
+        Opens job pages based on the provided base URL and query parameters. Handles cookie consent popups if necessary.
+
+        Args:
+            base_url (str): The base URL for the job search page.
+            parameters (Iterable[dict]): An iterable of query parameters for URL construction.
+        """
+        urls = [self.construct_url(base_url=base_url, query_params=param) for param in parameters]
+
+        for url in urls:
+            self.open_a_tab(url)
 
     def start_webdriver(self):
         """
@@ -34,8 +47,30 @@ class GeneralReader:
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")
         driver = webdriver.Chrome(options=options)
-
+        logging.info("WebDriver started with window maximized.")
         return driver
+
+    def close_webdriver(self):
+        if self.webdriver:
+            self.webdriver.quit()
+            logging.info("WebDriver has quit.")
+
+    def close_with_test(self, testmode=False):
+        """
+        Closes the Selenium WebDriver object.
+
+        Args:
+            testmode (bool, optional): Whether the test mode is enabled. Defaults to False.
+
+        Returns:
+            None
+        """
+
+        if not testmode:
+            input("Press Enter to close the browser...")
+
+        self.webdriver.quit()
+        logging.info("WebDriver has quit after user prompt.")
 
     def construct_url(self, base_url, query_params=None):
         """
@@ -55,53 +90,8 @@ class GeneralReader:
         else:
             url = base_url
 
+        logging.info(f"URL constructed: {url}")
         return url
-
-    def close_with_test(self, testmode=False):
-        """
-        Closes the Selenium WebDriver object.
-
-        Args:
-            testmode (bool, optional): Whether the test mode is enabled. Defaults to False.
-
-        Returns:
-            None
-        """
-
-        if not testmode:
-            input("Press Enter to close the browser...")
-
-        self.webdriver.quit()
-
-    def wait_for_element(self, element_locator, timeout=10):
-        """
-        Waits for a specific element to appear on the web page before returning.
-
-        Args:
-            element_locator (str): The locator for the element to wait for.
-            timeout (int, optional): The maximum amount of time to wait in seconds. Defaults to 10.
-
-        Raises:
-            TimeoutException: If the element does not appear within the timeout period.
-        """
-
-        wait = WebDriverWait(self.webdriver, timeout)
-        wait.until(lambda driver: driver.find_element(by=element_locator))
-
-    def read_web_page(self, url):
-        """
-        Reads the contents of a web page.
-
-        Args:
-            url (str): The URL of the web page to read.
-
-        Returns:
-            str: The contents of the web page.
-        """
-        self.wait_for_element("body")
-        self.webdriver.get(url)
-        content = self.webdriver.page_source
-        return content
 
     def open_a_tab(self, url):
         """
@@ -112,4 +102,36 @@ class GeneralReader:
         Returns:
 
         """
-        self.webdriver.execute_script(f"window.open('{url}','_blank');")
+        try:
+            self.webdriver.execute_script(f"window.open('{url}','_blank');")
+            logging.info(f"Opened a new tab with URL: {url}")
+        except Exception as e:
+            logging.error(f"An error occurred while opening a new tab at {url}: {e}")
+
+    def open_a_list_of_urls_in_tabs(self, urls):
+        """
+        Opens a list of URLs in new browser tabs.
+
+        Args:
+            urls (list): A list of URLs to open in new tabs.
+
+        Returns:
+            None
+        """
+        for url in urls:
+            self.open_a_tab(url=url)
+
+    def navigate_to_page(self, url):
+        try:
+            self.webdriver.get(url)
+            logging.info(f"Navigated to URL: {url}")
+        except Exception as e:
+            logging.error(f"An error occurred while navigating to {url}: {e}")
+
+    def get_page_content(self):
+        try:
+            content = self.webdriver.page_source
+            logging.info("Retrieved the page content.")
+            return content
+        except Exception as e:
+            logging.error(f"An error occurred while retrieving the page content: {e}")

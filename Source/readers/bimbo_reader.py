@@ -1,38 +1,33 @@
-import typing
+from typing import Iterable
 
-from readers import GeneralReader
+from readers_common import GeneralReader  # Correcting the import statement
 
-
-def bimbo_reader(parameters: typing.Iterable[dict], testmode=False):
-    """
-
-    Args:
-        parameters: parameters for the strings
-        testmode: boolean to determine if the browser should be closed after the test is complete
-
-    Returns:
-        None
-
-    """
-    # Create a GeneralReader object.
-    reader = GeneralReader()
-
-    # Construct the URLs for the job postings.
-    base_url = "https://careers.bimbobakeriesusa.com/en-US/search"
-    urls = [reader.construct_url(base_url=base_url, query_params=x) for x in parameters]
-
-    # Open the web pages in new tabs.
-    for url in urls:
-        reader.webdriver.open_new_tab(url=url)
-
-    # Close the web browser.
-    reader.close_with_test(testmode=testmode)
+BIMBO_URL = "https://careers.bimbobakeriesusa.com/en-US/search"
+BIMBO_PARAMETERS = parameters = [{"Keywords": '"Python"'}, {"Keywords": '"Data Science"'},
+                                 {"Keywords": '"Machine Learning"'}]
 
 
-def bimbo_executer():
-    parameters = [{"Keywords": '"Python"'}, {"Keywords": '"Data Science"'}, {"Keywords": '"Machine Learning"'}]
-    bimbo_reader(parameters, testmode=False)
+class BimboReader(GeneralReader):  # Correcting the class name
+
+    def __init__(self, base_url: str = None, parameters: Iterable[dict] = None, testmode: bool = False):
+        super().__init__()
+
+        self.testmode = testmode
+
+        # Loadable Base URL
+        if base_url is not None:
+            self.base_url = base_url
+        else:
+            self.base_url = BIMBO_URL
+
+        if parameters is not None:
+            self.parameters = parameters
+        else:
+            self.parameters = BIMBO_PARAMETERS
 
 
 if __name__ == "__main__":
-    bimbo_executer()
+    with BimboReader() as br:
+        br.open_job_pages(base_url=br.base_url, parameters=br.parameters, testmode=br.testmode)
+        print(br.webdriver.title)
+        br.close_with_test(testmode=False)

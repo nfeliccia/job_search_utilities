@@ -1,65 +1,52 @@
-import typing
+from typing import Iterable
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
+from readers_common import GeneralReader
 
-from readers import GeneralReader
-
-
-def collabera_executer(parameters: typing.Iterable[dict] = None, testmode=False):
-    """
-    Opens the Collabera job search page for the specified parameters in new tabs.
-
-    Args:
-        parameters (Iterable[dict], optional): A list of dictionaries containing the query parameters for the job search page. Defaults to None.
-        testmode (bool, optional): Whether the test mode is enabled. Defaults to False.
-
-    Returns:
-        None
-    """
-
-    # Create a GeneralReader object.
-    reader = GeneralReader()
-
-    # Set the base URL.
-    base_url = "https://collabera.com/job-search/"
-
-    # Construct the URLs for the job search pages.
-    urls = [reader.construct_url(base_url=base_url, query_params=x) for x in parameters]
-
-    # Open the web pages in new tabs.
-    for url in urls:
-        print(url)
-        window_open_script = f"window.open('{url}', '_blank');"
-        reader.webdriver.execute_script(window_open_script)
-
-        # Wait for the page to load.
-        WebDriverWait(reader.webdriver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "header.header a.navbar-brand")))
-
-    # Close the web browser.
-    reader.close_with_test(testmode=testmode)
+COLLABERA_URL = "https://www.collabera.com/find-a-job/search-jobs/"
+COLLABERA_PARAMETERS = [
+    {
+        "sort_by": "",  # Specify sorting if needed
+        "industry": "",  # Specify industry if needed
+        "keyword": '"Python"',
+        "location": "",  # Specify location if needed
+        "Posteddays": "0"  # Jobs posted any time
+    },
+    {
+        "sort_by": "",
+        "industry": "",
+        "keyword": '"Data Science"',
+        "location": "",
+        "Posteddays": "0"
+    },
+    {
+        "sort_by": "",
+        "industry": "",
+        "keyword": '"Machine Learning"',
+        "location": "",
+        "Posteddays": "0"
+    }
+]
 
 
-def collabera_reader(testmode=False):
-    """
-    Opens the Collabera job search page for the specified parameters in new tabs.
+class CollaberaReader(GeneralReader):
+    def __init__(self, base_url: str = None, parameters: Iterable[dict] = None, testmode: bool = False):
+        super().__init__()
+        self.testmode = testmode
 
-    Args:
-        testmode (bool, optional): Whether the test mode is enabled. Defaults to False.
+        # Loadable Base URL
+        if base_url is not None:
+            self.base_url = base_url
+        else:
+            self.base_url = COLLABERA_URL
 
-    Returns:
-        None
-    """
-
-    parameters = [
-        {"sort_by": "dateposted", "industry": "", "keyword": "Python", "Posteddays": "0"},
-        {"sort_by": "dateposted", "industry": "", "keyword": "Data+Science", "Posteddays": "0"},
-        {"sort_by": "dateposted", "industry": "", "keyword": "Machine+Learning", "Posteddays": "0"}]
-
-    collabera_executer(parameters, testmode=testmode)
+        if parameters is not None:
+            self.parameters = parameters
+        else:
+            self.parameters = COLLABERA_PARAMETERS
 
 
-if __name__ == '__main__':
-    collabera_reader(testmode=False)
+if __name__ == "__main__":
+    with CollaberaReader() as cr:
+        cr.open_job_pages(base_url=cr.base_url, parameters=cr.parameters, testmode=cr.testmode)
+        print(cr.webdriver.title)
+        cr.close_with_test(testmode=False)
