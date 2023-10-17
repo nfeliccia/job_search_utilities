@@ -1,72 +1,115 @@
 from urllib.parse import urlencode
 
 from selenium import webdriver
-
-"""
-This module contains common functions for all readers. 
-"""
+from selenium.webdriver.support.wait import WebDriverWait
 
 
-def initialize_webdriver(options=None):
+class GeneralReader:
     """
-    Initializes a Selenium WebDriver with optional settings.
+    A class for reading web pages.
 
-    Args:
-    options (webdriver.ChromeOptions, optional): Optional ChromeOptions object. Defaults to None.
+    This class provides a number of methods for constructing URLs, opening web pages, and reading the contents of web pages.
 
-    Returns:
-    webdriver.Chrome: Initialized Chrome WebDriver.
+    Attributes:
+        webdriver (webdriver.Chrome): A Selenium WebDriver object.
     """
-    # Set up the default options if none are provided
-    if options is None:
+
+    def __init__(self):
+        """
+        Initializes a new GeneralReader object.
+
+        This method initializes the Selenium WebDriver object.
+        """
+
+        self.webdriver = self.start_webdriver()
+
+    def start_webdriver(self):
+        """
+        Starts a new Selenium WebDriver object and maximizes the window.
+
+        Returns:
+            webdriver.Chrome: A Selenium WebDriver object.
+        """
+
         options = webdriver.ChromeOptions()
-        # Add any default options you want; for example:
-        # options.add_argument('--headless')
+        options.add_argument("--start-maximized")
+        driver = webdriver.Chrome(options=options)
 
-    # Initialize the WebDriver with the options
-    driver = webdriver.Chrome(options=options)
-    # Open a blank tab
-    driver.get("about:blank")
-    # Common setup for all WebDrivers
-    driver.maximize_window()
+        return driver
 
-    return driver
+    def construct_url(self, base_url, query_params=None):
+        """
+        Constructs a URL by appending query parameters to the base URL.
 
+        Args:
+            base_url (str): The base URL that the query parameters should be appended to.
+            query_params (dict, optional): A dictionary containing the query parameters. Defaults to None.
 
-def construct_url(base_url, query_params=None):
-    """
-    Constructs a URL by appending query parameters to the base URL.
+        Returns:
+            str: The constructed URL.
+        """
 
-    Args:
-    base_url (str): The base URL that the query parameters should be appended to.
-    query_params (dict, optional): A dictionary containing the query parameters. Defaults to None.
+        if query_params:
+            query_string = urlencode(query_params)
+            url = f"{base_url}?{query_string}"
+        else:
+            url = base_url
 
-    Returns:
-    str: The constructed URL.
-    """
-    if query_params:
-        # Construct the query string from the dictionary
-        query_string = urlencode(query_params)
+        return url
 
-        # Append the query string to the base URL
-        url = f"{base_url}?{query_string}"
-    else:
-        url = base_url
+    def close_with_test(self, testmode=False):
+        """
+        Closes the Selenium WebDriver object.
 
-    return url
+        Args:
+            testmode (bool, optional): Whether the test mode is enabled. Defaults to False.
 
+        Returns:
+            None
+        """
 
-def close_with_test(driver=None, testmode=False):
-    """
-    THeh purpose of this function is to close the browser after the test is complete.
-    Args:
-        driver: Chrome Drive
-        testmode: Boolean for test mode
+        if not testmode:
+            input("Press Enter to close the browser...")
 
-    Returns:
+        self.webdriver.quit()
 
-    """
-    if not testmode:
-        input("Press Enter to close the browser...")
+    def wait_for_element(self, element_locator, timeout=10):
+        """
+        Waits for a specific element to appear on the web page before returning.
 
-    driver.quit()
+        Args:
+            element_locator (str): The locator for the element to wait for.
+            timeout (int, optional): The maximum amount of time to wait in seconds. Defaults to 10.
+
+        Raises:
+            TimeoutException: If the element does not appear within the timeout period.
+        """
+
+        wait = WebDriverWait(self.webdriver, timeout)
+        wait.until(lambda driver: driver.find_element(by=element_locator))
+
+    def read_web_page(self, url):
+        """
+        Reads the contents of a web page.
+
+        Args:
+            url (str): The URL of the web page to read.
+
+        Returns:
+            str: The contents of the web page.
+        """
+        self.wait_for_element("body")
+        self.webdriver.get(url)
+        content = self.webdriver.page_source
+        return content
+
+    def open_a_tab(self, url):
+        """
+        Opens just one tab.
+        Args:
+            url:
+
+        Returns:
+
+        """
+        self.webdriver.execute_script(f"window.open('{url}','_blank');")

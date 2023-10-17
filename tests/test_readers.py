@@ -1,5 +1,6 @@
 from readers import collabera_reader, mission_staff_reader, tandymtech_reader, \
-    tech_in_motion_reader, susquehanna_international as susquehanna_international_reader, jacobs_reader, captech_reader
+    tech_in_motion_reader, susquehanna_international_ok as susquehanna_international_reader, jacobs_reader, \
+    captech_reader
 
 
 def universal_tester(reader):

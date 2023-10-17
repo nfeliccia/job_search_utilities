@@ -1,38 +1,39 @@
-"""
-The purpose of this script is to open pages of interest on the Tech in Motion website. This script will open the Tech"""
-from readers import initialize_webdriver
+import typing
+
+from readers import GeneralReader
 
 
-def tech_in_motion_reader(testmode=False):
+def tech_in_motion_executer(base_url: str, parameters: typing.Iterable[dict], testmode=False):
     """
-    Opens the Tech in Motion URLs for job search. Note motion recruitment uses url based search parameters.
+    Opens the web pages for the given job postings.
 
     Args:
-        testmode: Operate in test mode and close the browser window automatically.
+        base_url: The base URL for the job postings.
+        parameters: A list of dictionaries containing the query parameters for each job posting.
+        testmode: Whether to operate in test mode and close the browser window automatically.
 
     Returns:
         None
     """
-    driver = initialize_webdriver()
 
-    # Base URL
-    BASE_URL = ("https://motionrecruitment.com/tech-jobs?radius=25&search-city=19124&postalcode=19124&remote=true"
-                "&location-display-name=Philadelphia%2C+Pennsylvania+19124%2C+United+States&start=0")
+    reader = GeneralReader()
 
-    # Keywords for different job types
-    KEYWORDS = ["Machine+Learning", "Data+Science", "Python"]
-
-    # URLs to open
-    urls = [f"{BASE_URL}&keywords={keyword}" for keyword in KEYWORDS]
-    urls.append("https://motionrecruitment.com/tech-jobs?specialties=machine-learning-data-science&remote=true")
-    urls.append("https://techinmotion.com/upcoming-events")
+    urls = [reader.construct_url(base_url=base_url, query_params=x) for x in parameters]
 
     for url in urls:
-        driver.execute_script(f"window.open('{url}','_blank');")
+        reader.open_a_tab(url)
 
-    if not testmode:
-        input("Press Enter to continue...")
-    driver.quit()
+    reader.close_with_test(testmode)
+
+
+def tech_in_motion_reader(testmode=False):
+    base_url = "https://motionrecruitment.com/tech-jobs"
+    parameters = [
+        {"radius": "25", "search-city": "19124", "postalcode": "19124", "remote": "true", "keywords": keyword}
+        for keyword in ["Machine+Learning", "Data+Science", "Python"]
+    ]
+
+    tech_in_motion_executer(base_url, parameters, testmode=testmode)
 
 
 if __name__ == "__main__":

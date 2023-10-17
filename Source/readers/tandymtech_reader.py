@@ -1,61 +1,82 @@
-"""
-This script automates the process of navigating to two specific URLs using Selenium.
-For each URL, the script performs the following actions:
-1. Opens the URL in a Chrome browser.
-2. Waits for and clicks on the 'hs-eu-confirmation-button'.
-3. For the second URL, checks a specific checkbox if it's not already checked.
-4. Waits for the user to press Enter and then quits the browser.
-"""
+from time import sleep
 
-import time
-
-from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 
-from readers import initialize_webdriver
+from readers import GeneralReader
+
+"""
+10/17/2023 - Still needs some work. 
+"""
 
 
-def click_confirmation_button(driver: webdriver.Chrome, eu_conf_button_xpath: str) -> None:
+def build_tandym_tech_urls(keyword: str, where: str) -> str:
     """
-    Waits for and clicks on the 'hs-eu-confirmation-button' using the provided webdriver.
-    
+    Builds a URL for the Tandym Tech job search results page.
+
     Args:
-        driver (webdriver.Chrome): The Chrome webdriver instance.
-        eu_conf_button_xpath (str): The XPATH for the 'hs-eu-confirmation-button'.
+        keyword (str): The keyword to search for.
+        where (str): The location to search in.
+
+    Returns:
+        str: The URL for the Tandym Tech job search results page.
     """
+
+    base_url = "https://tandymtech.com/job-seekers/tech-search-results/"
+    query_params = {
+        "keyword": keyword,
+        "where": where,
+    }
+
+    return GeneralReader().construct_url(base_url=base_url, query_params=query_params)
+
+
+def click_cookies_button(reader: GeneralReader, url: str) -> None:
+    """
+    Clicks the cookies button on the specified URL.
+
+    Args:
+        reader (GeneralReader): The GeneralReader instance.
+        url (str): The URL to click the cookies button on.
+    """
+
     try:
-        located = EC.presence_of_element_located((By.XPATH, eu_conf_button_xpath))
-        button = WebDriverWait(driver, 10).until(located)
-        time.sleep(2)  # Give the button a moment to be clickable
-        button.click()
-    except Exception as e:
-        print(f"Error clicking hs-eu-confirmation-button: {e}")
+        cookies_button = reader.webdriver.find_element_by_css_selector(".hs-eu-confirmation-button")
+        cookies_button.click()
+    except Exception:
+        print(f"Error clicking cookies button on {url}")
 
 
-def open_url_in_new_tab(driver: webdriver.Chrome, url: str) -> None:
+def scroll_to_bottom_of_section_and_click_load_more(reader: GeneralReader, url: str) -> None:
     """
-    Opens a new browser tab and navigates to the specified URL.
-    
+    Scrolls to the bottom of the section and clicks the 'Load more' button on the specified URL.
+
     Args:
-        driver (webdriver.Chrome): The Chrome webdriver instance.
-        url (str): URL to navigate to.
+        reader (GeneralReader): The GeneralReader instance.
+        url (str): The URL to scroll to the bottom of and click the 'Load more' button on.
     """
-    driver.execute_script("window.open('', '_blank');")
-    driver.switch_to.window(driver.window_handles[-1])  # Switch to the last opened tab
-    driver.get(url)
+
+    reader.webdriver.get(url)
+    sleep(3)
+    try:
+        reader.webdriver.find_element(by=By.CSS_SELECTOR, value=".cards").execute_script(
+                "arguments[0].scrollTop = arguments[0].scrollHeight;")
+        reader.webdriver.find_element_by_xpath("//*[contains(text(), 'Load more')]").click()
+    except NoSuchElementException:
+        print(f"Error scrolling to bottom of section and clicking 'Load more' button on {url}")
 
 
-def tandym_tech_reader(testmode=True) -> None:
+def tandym_tech_reader(testmode=False) -> None:
     """
 
     This script automates the process of navigating to two specific URLs using Selenium.
     For each URL, the script performs the following actions:
     1. Opens the URL in a Chrome browser.
-    2. Waits for and clicks on the 'hs-eu-confirmation-button'.
-    3. For the second URL, checks a specific checkbox if it's not already checked.
-    4. Waits for the user to press Enter and then quits the browser.
+    2. Clicks the cookies button.
+    3. Waits for and clicks on the 'hs-eu-confirmation-button'.
+    4. For the second URL, checks a specific checkbox if it's not already checked.
+    5. Scrolls to the bottom of the section and clicks the 'Load more' button.
+    6. Waits for the user to press Enter and then quits the browser.
 
 
     Args:
@@ -64,63 +85,25 @@ def tandym_tech_reader(testmode=True) -> None:
     Returns:
 
     """
-    driver = initialize_webdriver()
 
-    # Navigate to the first URL and click the confirmation button
-    pennsylvania = ("https://tandymtech.com/job-seekers/tech-search-results/?keyword=&where=19124,%20Philadelphia,"
-                    "%20Pennsylvania")
-    driver.get(pennsylvania)
-    time.sleep(3)
-    eu_button = '//*[@id="hs-eu-confirmation-button"]'
-    click_confirmation_button(driver, eu_button)
+    reader = GeneralReader()
 
-    # Navigate to the second URL in a new tab and click the confirmation button
-    open_url_in_new_tab(driver, "https://tandymtech.com/job-seekers/tech-search-results/?keyword=(Remote)&where=")
-    click_confirmation_button(driver, eu_button)
+    # Build the URLs for the job postings.
+    pennsylvania_url = build_tandym_tech_urls(keyword="", where="19124,%20Philadelphia,%20Pennsylvania")
+    remote_url = build_tandym_tech_urls(keyword="Remote", where="")
 
-    scroll_to_bottom_of_section(driver, ".cards")
-    click_load_more_until_end(driver, "Load more")
+    # Open the web pages in new tabs and click the cookies button.
+    reader.webdriver.execute_script(f"window.open('{pennsylvania_url}', '_blank');")
+    click_cookies_button(reader, pennsylvania_url)
+    reader.webdriver.execute_script(f"window.open('{remote_url}', '_blank');")
+    click_cookies_button(reader, remote_url)
 
-    if not testmode:
-        input("Press Enter to quit...")
+    # Scroll to the bottom of the section and click the 'Load more' button.
+    scroll_to_bottom_of_section_and_click_load_more(reader, pennsylvania_url)
+    scroll_to_bottom_of_section_and_click_load_more(reader, remote_url)
 
-    else:
-        driver.quit()
-
-
-def scroll_to_bottom_of_section(driver: webdriver.Chrome, css_selector: str) -> None:
-    """
-    Scrolls to the bottom of a specified section using its CSS selector.
-
-    Args:
-        driver (webdriver.Chrome): The Chrome webdriver instance.
-        css_selector (str): CSS selector of the section to scroll.
-    """
-    try:
-        element = driver.find_element_by_css_selector(css_selector)
-        driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight;", element)
-    except Exception as e:
-        print(f"Error scrolling to the bottom of the section: {e}")
-
-
-def click_load_more_until_end(driver: webdriver.Chrome, load_more_text: str) -> None:
-    """
-    Continuously clicks on an element with the specified text until it's no longer present or clickable.
-
-    Args:
-        driver (webdriver.Chrome): The Chrome webdriver instance.
-        load_more_text (str): Text of the element to click.
-    """
-    while True:
-        try:
-            load_more_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, f"//*[contains(text(), '{load_more_text}')]"))
-            )
-            load_more_button.click()
-            time.sleep(2)  # Wait for the page to load new content
-        except Exception:
-            # If the button is not found or not clickable, break the loop
-            break
+    # Close the web browser.
+    reader.close_with_test(testmode=testmode)
 
 
 if __name__ == "__main__":
