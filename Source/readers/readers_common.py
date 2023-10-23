@@ -23,7 +23,7 @@ class GeneralReader:
             # Or you can log the exception details explicitly
             logging.error(f"Exception type: {exc_type}, Exception value: {exc_value}, Traceback: {traceback}")
 
-    def open_job_pages(self, base_url, parameters):
+    def open_job_pages(self, base_url, parameters: list[dict] = None):
         """
         Opens job pages based on the provided base URL and query parameters. Handles cookie consent popups if necessary.
 

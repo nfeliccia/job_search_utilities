@@ -32,7 +32,7 @@ class TechInMotionReader(GeneralReader):
 
 if __name__ == "__main__":
     with TechInMotionReader() as timr:
-        timr.open_job_pages(base_url=timr.base_url, parameters=timr.parameters, testmode=timr.testmode)
+        timr.open_job_pages(base_url=timr.base_url, parameters=timr.parameters)
         timr.open_events_page()  # Open the events page
         print(timr.webdriver.title)  # This will print the title of the current tab, which will be the events page
         timr.close_with_test(testmode=False)

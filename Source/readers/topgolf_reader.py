@@ -27,6 +27,5 @@ class TopGolfReader(GeneralReader):
 
 if __name__ == "__main__":
     with TopGolfReader() as tgr:
-        tgr.open_job_pages(base_url=tgr.base_url, parameters=tgr.parameters, testmode=tgr.testmode)
-        print(tgr.webdriver.title)
+        tgr.open_job_pages(base_url=tgr.base_url, parameters=tgr.parameters)
         tgr.close_with_test(testmode=False)

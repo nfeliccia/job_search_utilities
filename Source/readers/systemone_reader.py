@@ -9,12 +9,12 @@ STATIC_HASH = "f40610d2-abe2-11ed-9711-42010a8a0fd9"  # This is the static hash 
 FULL_BASE_URL = f"{BASE_URL}{PATH}/{STATIC_HASH}/false"
 
 SYSTEMONE_PARAMETERS = [
-    {"sortBy": "beginTime", "term": "Data Science", "title": "", "postalCode": ""},
-    {"sortBy": "beginTime", "term": "Machine Learning", "title": "", "postalCode": ""},
-    {"sortBy": "beginTime", "term": "Python", "title": "", "postalCode": ""},
-    {"sortBy": "beginTime", "term": "Data Science", "title": "", "postalCode": "19124"},
-    {"sortBy": "beginTime", "term": "Machine Learning", "title": "", "postalCode": "19124"},
-    {"sortBy": "beginTime", "term": "Python", "title": "", "postalCode": "19124"}
+    {"sortBy": "beginTime", "term": '"Data Science"', "title": "", "postalCode": ""},
+    {"sortBy": "beginTime", "term": '"Machine Learning"', "title": "", "postalCode": ""},
+    {"sortBy": "beginTime", "term": '"Python"', "title": "", "postalCode": ""},
+    {"sortBy": "beginTime", "term": '"Data Science"', "title": "", "postalCode": "19124"},
+    {"sortBy": "beginTime", "term": '"Machine Learning"', "title": "", "postalCode": "19124"},
+    {"sortBy": "beginTime", "term": '"Python"', "title": "", "postalCode": "19124"}
 ]
 
 
@@ -37,6 +37,6 @@ class SystemOneReader(GeneralReader):
 
 if __name__ == "__main__":
     with SystemOneReader() as sor:
-        sor.open_job_pages(base_url=sor.base_url, parameters=sor.parameters, testmode=sor.testmode)
+        sor.open_job_pages(base_url=sor.base_url, parameters=sor.parameters)
         print(sor.webdriver.title)
         sor.close_with_test(testmode=False)

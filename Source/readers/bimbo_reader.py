@@ -1,6 +1,8 @@
 from typing import Iterable
 
-from readers_common import GeneralReader  # Correcting the import statement
+from readers import GeneralReader
+
+# Correcting the import statement
 
 BIMBO_URL = "https://careers.bimbobakeriesusa.com/en-US/search"
 BIMBO_PARAMETERS = parameters = [{"Keywords": '"Python"'}, {"Keywords": '"Data Science"'},
@@ -28,6 +30,6 @@ class BimboReader(GeneralReader):  # Correcting the class name
 
 if __name__ == "__main__":
     with BimboReader() as br:
-        br.open_job_pages(base_url=br.base_url, parameters=br.parameters, testmode=br.testmode)
+        br.open_job_pages(base_url=br.base_url, parameters=br.parameters)
         print(br.webdriver.title)
-        br.close_with_test(testmode=False)
+        br.close_with_test(testmode=br.testmode)
