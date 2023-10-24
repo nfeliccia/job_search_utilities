@@ -1,6 +1,6 @@
 import logging
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 
 class HealthverityReader(GeneralReader):

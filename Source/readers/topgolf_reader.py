@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 TOPGOLF_URL = "https://careers.topgolf.com/jobs/"
 TOPGOLF_PARAMETERS = [

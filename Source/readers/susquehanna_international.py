@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 SUSQUEHANNA_URL = "https://careers.sig.com/search-results"
 SUSQUEHANNA_PARAMETERS = [

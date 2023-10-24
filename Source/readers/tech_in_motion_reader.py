@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 BASE_URL = "https://motionrecruitment.com/tech-jobs"
 EVENTS_URL = "https://techinmotion.com/upcoming-events"

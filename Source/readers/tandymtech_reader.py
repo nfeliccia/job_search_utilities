@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 TANDYMTECH_URL = "https://tandymtech.com/job-seekers/tech-search-results/"
 TANDYMTECH_PARAMETERS = [

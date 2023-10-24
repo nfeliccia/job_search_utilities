@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 JACOBS_URL = "https://careers.jacobs.com/job-search-results/"
 

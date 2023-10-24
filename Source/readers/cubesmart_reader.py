@@ -1,4 +1,4 @@
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 CUBESMART_URL = "https://careers.cubesmart.com/careers-home/jobs"
 CUBESMART_PARAMETERS = [

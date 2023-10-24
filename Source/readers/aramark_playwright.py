@@ -27,20 +27,21 @@ def aramark(playwright: Playwright, qth: str, keyword_list: list[str]) -> None:
     page = context.new_page()
     where_ = "Where?"
     what_ = "What?"
-    sb = "searchbox"
+    role_ = "searchbox"
     target_website = "https://careers.aramark.com/search/"
 
     page.goto(target_website)
     page.locator("#onetrust-close-btn-container").get_by_label("Close").click()
     page.get_by_test_id("widget_chatbox_popover").get_by_label("Close").click()
 
+    # One page per keyword
     pages = [context.new_page() for _ in range(len(keyword_list))]
     for i, keyword in enumerate(keyword_list):
         pages[i].goto(target_website)
-        pages[i].get_by_role(sb, name=what_).click()
-        pages[i].get_by_role(sb, name=what_).fill(keyword)
-        pages[i].get_by_role(sb, name=where_).click()
-        pages[i].get_by_role(sb, name=where_).fill(qth)
+        pages[i].get_by_role(role_, name=what_).click()
+        pages[i].get_by_role(role_, name=what_).fill(keyword)
+        pages[i].get_by_role(role_, name=where_).click()
+        pages[i].get_by_role(role_, name=where_).fill(qth)
 
     # New Page
     page2 = context.new_page()

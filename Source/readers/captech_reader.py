@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
 CAPTECH_PARAMETERS = [

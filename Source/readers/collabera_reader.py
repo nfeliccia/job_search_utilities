@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from readers_common import GeneralReader
+from readers_common_old import GeneralReader
 
 COLLABERA_URL = "https://www.collabera.com/find-a-job/search-jobs/"
 COLLABERA_PARAMETERS = [
