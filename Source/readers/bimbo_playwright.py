@@ -77,7 +77,21 @@ class BimboReader(GeneralReaderPlaywright):  #
             input("Press Enter to close the browser session.")
 
 
-if __name__ == "__main__":
-    with BimboReader() as br:
+def bimbo_reader(base_url: str = None, parameters: Iterable[dict] = None, testmode: bool = False):
+    """A wrapper function for the BimboReader class.
+
+    Args:
+    - base_url (str, optional): The base URL to start the scraping. Defaults to BIMBO_URL.
+    - parameters (Iterable[dict], optional): A list of dictionaries containing search parameters.
+                                            Defaults to BIMBO_PARAMETERS.
+    - testmode (bool, optional): A flag indicating if the instance is in test mode. Defaults to False.
+    """
+
+    with BimboReader(base_url=base_url, parameters=parameters, testmode=testmode) as br:
         page = br.open_job_pages(base_url=br.base_url, parameters=br.parameters)
         br.close_with_test(testmode=br.testmode)
+        return page
+
+
+if __name__ == "__main__":
+    bimbo_reader(base_url=BIMBO_URL, parameters=BIMBO_PARAMETERS, testmode=False)
