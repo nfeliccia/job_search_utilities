@@ -1,8 +1,6 @@
 from Data.reference_values import universal_search_terms
 from readers_common import GeneralReaderPlaywright
 
-CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
-PHILADELPHIA = "253788"
 
 def safe_click(locator, timeout=1000, error_message="Error during click operation"):
     """Attempt to click a locator with error handling and custom timeout."""
@@ -12,27 +10,27 @@ def safe_click(locator, timeout=1000, error_message="Error during click operatio
         print(f"{error_message}: {e}")
 
 
-class CaptechReader(GeneralReaderPlaywright):
-    CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
-    PHILADELPHIA = "253788"
+class CollaberaReader(GeneralReaderPlaywright):
+    COLLABERA_URL = "https://collabera.com/job-search/"
 
-    def __init__(self, testmode: bool = False):
-        super().__init__(root_website=CAPTECH_URL, testmode=testmode)
+    def __init__(self, testmode: bool = False, qth: str = None):
+        super().__init__(root_website=self.COLLABERA_URL, testmode=testmode)
+        self.qth = qth
 
     def open_location_url(self):
         # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
         page_olu = self.create_new_tab()
-        safe_click(page_olu.get_by_role("button", name="Accept"))
-        page_olu.get_by_label("Locations").select_option(self.PHILADELPHIA)
+        safe_click(page_olu.get_by_role("button", name="Accept All").click())
+        page_olu.get_by_placeholder("Location").click()
+        page_olu.get_by_placeholder("Location").fill("Philadelphia, PA")
+        page_olu.get_by_placeholder("Location").press("Enter")
 
     def search_keyword(self, keyword: str):
         page = self.create_new_tab()
         safe_click(page.get_by_role("button", name="Accept"))
-        kw_ = "Keywords"
+        kw_ = "Job Title or Keywords"
         page.get_by_placeholder(kw_).click()
         page.get_by_placeholder(kw_).fill(keyword)
-        page.get_by_placeholder(kw_).press("Enter")
-        page.get_by_label("Locations").select_option(PHILADELPHIA)
         page.get_by_role("button", name="Search", exact=True).click()
         return page.content()
 
@@ -55,7 +53,7 @@ class CaptechReader(GeneralReaderPlaywright):
 
 
 if __name__ == "__main__":
-    with CaptechReader(testmode=False) as reader:
+    with CollaberaReader(testmode=False, qth="Philadelphia, PA") as reader:
         reader.open_location_url()
         reader.open_all_keywords()
         reader.close_with_test(testmode=False)
