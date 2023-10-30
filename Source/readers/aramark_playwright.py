@@ -1,39 +1,25 @@
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
-from readers_common import GeneralReaderPlaywright
+from readers import GeneralReaderPlaywright
 
 # Constants for job categories
 CORPORATE_FIELD_SUPPORT = "Corporate & Field Support"
 INFORMATION_TECHNOLOGY = "Information Technology"
 ARAMARK_URL = "https://careers.aramark.com/search/"
-
-
-def safe_click(locator, timeout=1000, error_message="Error during click operation"):
-    """Attempt to click a locator with error handling and custom timeout."""
-    try:
-        locator.click(timeout=timeout)
-    except Exception as e:
-        print(f"{error_message}: {e}")
-
-
-def click_by_role(page, role, name, timeout=1000):
-    """Attempt to click an element by role and name with error handling."""
-    locator = page.get_by_role(role, name=name)
-    safe_click(locator, timeout)
+ARAMARK_TIMEOUT = 1000
 
 
 class AramarkReader(GeneralReaderPlaywright):
 
     def __init__(self, testmode: bool = False):
-        super().__init__(root_website=self.ARAMARK_URL, testmode=testmode)
+        super().__init__(root_website=ARAMARK_URL, testmode=testmode)
 
     def _select_job_category(self, page: Page, category: str, error_message: str):
         l_ = "label"
         ckmk = "checkmark"
-        to_ = 1000
         locator_ = page.locator(l_).filter(has_text=category).get_by_label(ckmk)
-        safe_click(locator=locator_, timeout=to_, error_message=error_message)
+        self.safe_click(locator=locator_, timeout=ARAMARK_TIMEOUT, error_message=error_message)
 
     def select_corporate_id(self, page: Page) -> str:
         """
@@ -63,47 +49,28 @@ class AramarkReader(GeneralReaderPlaywright):
 
         """
         page = self.create_new_tab()
-        role_ = "searchbox"
+        acc_ = "Accept"
+        b_ = "button"
+        err_acc = "Error closing Accept popup"
+        err_wc = "Error closing widget chatbox popup"
+        sb_ = "searchbox"
+        wcb = "widget_chatbox_popover"
         what_ = "What?"
         where_ = "Where?"
 
         # Closing the popups
-        try:
-            page.get_by_role("button", name="Accept").click(timeout=3000)
-        except Exception as e:
-            print(f"Error closing onetrust popup: {e}")
+        self.click_by_role(page=page, role=b_, name=acc_, timeout=5 * ARAMARK_TIMEOUT, error_message=err_acc)
+        wcp = page.get_by_test_id(wcb)
+        self.click_by_label(locator=wcp, label_text="Close", timeout=ARAMARK_TIMEOUT, error_message=err_wc)
 
-        try:
-            page.get_by_test_id("widget_chatbox_popover").get_by_label("Close").click(timeout=2000)
-        except Exception as e:
-            print(f"Error closing widget chatbox popup: {e}")
-
-        click_by_role(page, role_, what_)
+        # Fill in Keyword and location.
+        self.click_by_role(page=page, role=sb_, name=what_)
         if exact:
             keyword = f'"{keyword}"'
-        page.get_by_role(role_, name=what_).fill(keyword)
-        click_by_role(page, role_, what_)
-        page.get_by_role(role_, name=where_).fill(qth)
-        page.get_by_role(role_, name=where_).press("Enter")
+        page.get_by_role(sb_, name=what_).fill(keyword)
+        page.get_by_role(sb_, name=where_).fill(qth)
+        page.get_by_role(sb_, name=where_).press("Enter")
         return page.content()
-
-    def search_jobs(self, qth: str, keyword_list: list[str]):
-        # Opening the Aramark Website.
-        page = self.create_new_tab()
-        # Closing the popups
-        try:
-            page.locator("#onetrust-close-btn-container").get_by_label("Close").click(timeout=2000)
-        except Exception as e:
-            print(f"Error closing onetrust popup: {e}")
-
-        try:
-            page.get_by_test_id("widget_chatbox_popover").get_by_label("Close").click(timeout=2000)
-        except Exception as e:
-            print(f"Error closing widget chatbox popup: {e}")
-
-        # One page per keyword
-        for keyword in keyword_list:
-            self.search_keyword(keyword, qth)
 
     def get_corporate_jobs(self, qth: str) -> str:
         """
@@ -117,10 +84,13 @@ class AramarkReader(GeneralReaderPlaywright):
         """
         # New Page for additional operations
         page2 = self.create_new_tab()
+        l_ = "Location"
+
         self.select_corporate_id(page2)
         page2.get_by_role("button", name="Load More").click()
-        page2.get_by_label("Location").click()
-        page2.get_by_label("Location").fill(qth)
+
+        page2.get_by_label(l_).click()
+        page2.get_by_label(l_).fill(qth)
         page2.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
         return page2.content()
 
@@ -141,7 +111,7 @@ def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):
     with AramarkReader() as ar:
         for term in universal_search_terms:
             ar.search_keyword(term, qth=qth, exact=True)
-        ar.get_corporate_jobs(qth="Philadelphia, PA")
+        ar.get_corporate_jobs(qth=qth)
         ar.close_with_test(testmode=testmode)
 
 
