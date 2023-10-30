@@ -1,0 +1,12 @@
+CHATTY! 
+I want to write a python script to search for jobs on the  jacobs communications website. 
+I've done a few of these with you, and I've attached the results we've made in a zip file called readers.zip
+
+This website takes the input via URL . 
+https://careers.jacobs.com/job-search-results/?keyword=Data%20Scientist&location=Philadelphia%2C%20PA%2C%20USA&latitude=39.9525839&longitude=-75.1652215&radius=100
+
+The radius is radius in miles. I want this to be 50. 
+We need to create the url for keywords "Data Scientist Associate","Data Scientist Lead", "Data Scientist" , "Machine Learning" , "Python"
+Let's keep the geographic data as is. 
+
+Please use the code in readers.zip as a template

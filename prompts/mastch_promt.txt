@@ -1,0 +1,17 @@
+Greetings. I need to make a python script that searches for job openings at mastech.
+
+I have created similar readers for other urls where I am looking for jobs. 
+The code is attached in the zipfile called readers.py
+
+The job url is https://careers-mastec.icims.com/jobs/search
+
+Parameters are open via URL Parameters. 
+Here is an example.
+https://careers-mastec.icims.com/jobs/search?ss=1&searchKeyword=Data+Science&searchRelation=keyword_all
+
+First open up the general search URL . Then  open up tabs for keyword search Machine Learning, Data Science , and Python. 
+Use what has been done in the scripts on readers.zip as a template. 
+name this function mastec_reader.py
+include an if __name__=="__main__" clause to start 
+Put the meat of the code ina  function called mastech_reader with a keyword argument testmode which defaults to false.
+Before driver.quit() at the end , put in a prompt for the user to hit enter to proceed. 

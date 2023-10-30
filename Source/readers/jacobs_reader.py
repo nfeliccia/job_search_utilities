@@ -1,50 +1,39 @@
-import urllib.parse
+from typing import Iterable
 
-from . import webdriver
+from readers_common_old import GeneralReader
 
-
-def create_jacobs_url(keyword: str) -> str:
-    """Constructs a URL for job search on the Jacobs Communications website with the given keyword."""
-
-    base_url = "https://careers.jacobs.com/job-search-results/"
-
-    # Parameters for the URL
-    params = {
-        'keyword': keyword,
-        'location': 'Philadelphia, PA, USA',
-        'latitude': '39.9525839',
-        'longitude': '-75.1652215',
-        'radius': '50'
-    }
-
-    # Encoding the parameters and appending to the base URL
-    url = base_url + "?" + urllib.parse.urlencode(params)
-
-    return url
+JACOBS_URL = "https://careers.jacobs.com/job-search-results/"
 
 
-def jacobs_reader(testmode=False):
-    keywords = ["Data Scientist Associate", "Data Scientist Lead", "Data Scientist", "Machine Learning", "Python"]
+class JacobsReader(GeneralReader):
+    def __init__(self, base_url: str = None, parameters: Iterable[dict] = None, testmode: bool = False):
+        super().__init__()
+        self.testmode = testmode
 
-    # Initialize the webdriver (assuming Chrome, but can be changed)
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+        # Loadable Base URL
+        if base_url is not None:
+            self.base_url = base_url
+        else:
+            self.base_url = JACOBS_URL
 
-    # Open a blank tab
-    driver.get("about:blank")
-
-    for keyword in keywords:
-        url = create_jacobs_url(keyword)
-        print(url)
-        window_open_script = f"window.open('{url}');"  # Open a new tab with the URL
-        driver.execute_script(window_open_script)
-        driver.implicitly_wait(1.5)
-
-    if not testmode:
-        input("Press Enter to quit...")
-    driver.close()
-    driver.quit()
-
+        if parameters is not None:
+            self.parameters = parameters
+        else:
+            # Default parameters if none are provided
+            job_titles = [
+                "'Data Scientist Associate'", "'Data Scientist Lead'",
+                "'Data Scientist'", "'Machine Learning'", "'Python'"
+            ]
+            self.parameters = [{
+                'keyword': keyword,
+                'location': 'Philadelphia, PA, USA',
+                'latitude': '39.9525839',
+                'longitude': '-75.1652215',
+                'radius': '50'
+            } for keyword in job_titles]
 
 if __name__ == "__main__":
-    jacobs_reader()
+    with JacobsReader() as jr:
+        jr.open_job_pages(base_url=jr.base_url, parameters=jr.parameters, testmode=jr.testmode)
+        print(jr.webdriver.title)
+        jr.close_with_test(testmode=False)
