@@ -83,3 +83,15 @@ class GeneralReaderPlaywright:
             self.browser.close()
         if self.playwright:
             self.playwright.stop()
+
+    def close_with_test(self, testmode: bool = False) -> None:
+        """Close the browser session. Behavior varies based on the test mode.
+
+        Args:
+        - testmode (bool, optional): A flag indicating if the instance is in test mode. Defaults to False.
+        """
+
+        if testmode:
+            print("Browser session closed in test mode.")
+        else:
+            input("Press Enter to close the browser session.")
