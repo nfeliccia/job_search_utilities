@@ -1,4 +1,4 @@
-from readers_common import GeneralReaderPlaywright
+from readers_common_old import GeneralReaderPlaywright
 
 from Data.reference_values import universal_search_terms
 

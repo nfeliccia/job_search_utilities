@@ -1,5 +1,6 @@
+from readers_common_old import GeneralReaderPlaywright
+
 from Data.reference_values import universal_search_terms
-from readers_common import GeneralReaderPlaywright
 
 
 def safe_click(locator, timeout=1000, error_message="Error during click operation"):
