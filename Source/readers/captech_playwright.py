@@ -5,12 +5,6 @@ CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
 PHILADELPHIA = "253788"
 
 
-def safe_click(locator, timeout=1000, error_message="Error during click operation"):
-    """Attempt to click a locator with error handling and custom timeout."""
-    try:
-        locator.click(timeout=timeout)
-    except Exception as e:
-        print(f"{error_message}: {e}")
 
 
 class CaptechReader(GeneralReaderPlaywright):

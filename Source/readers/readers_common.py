@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 from playwright.sync_api import sync_playwright, Page, Locator
 
@@ -10,12 +11,14 @@ logging.basicConfig(level=logging.INFO,
 class GeneralReaderPlaywright:
 
     @staticmethod
-    def safe_click(locator, timeout=1000, error_message="Error during click operation"):
+    def safe_click(locator, timeout=1000, error_message="Error during click operation", sleep_time=0):
         """Attempt to click a locator with error handling and custom timeout."""
         try:
             locator.click(timeout=timeout)
         except Exception as e:
-            logging.error(f"{error_message}: {e}")
+            print(f"{error_message}: {e}")
+        else:
+            sleep(sleep_time)
 
     @staticmethod
     def click_by_role(page: Page, role: str = None, name: str = None, timeout=1000,
