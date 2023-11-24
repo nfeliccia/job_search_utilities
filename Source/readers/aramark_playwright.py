@@ -94,8 +94,6 @@ class AramarkReader(GeneralReaderPlaywright):
         return page2.content()
 
 
-
-
 def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):
     with AramarkReader() as ar:
         pages_list = []
