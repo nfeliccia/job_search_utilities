@@ -77,8 +77,33 @@ class GeneralReaderPlaywright:
 
     def setup_playwright(self):
         self.playwright = sync_playwright().start()
-        self.browser = self.playwright.chromium.launch(headless=False)  # headless=False if testmode=True
-        self.context = self.browser.new_context(viewport={'width': 1280, 'height': 720})
+
+        # Launch the browser. If you don't need persistent user data, you can omit 'user_data_dir'
+        self.browser = self.playwright.chromium.launch(headless=False)
+
+        # Configure context options
+        context_options = {
+            "viewport": {'width': 1280, 'height': 720},
+            # Include other context-specific settings here if needed
+        }
+
+        # Create a new context with the specified options
+        self.context = self.browser.new_context(**context_options)
+
+        # Set user preferences to disable autofill, etc. using an init script
+        self.context.add_init_script("""
+            const newProto = navigator.__proto__;
+            delete newProto.webdriver;  // to simulate a non-automated environment
+            navigator.__proto__ = newProto;
+
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5],
+            });
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['en-US', 'en'],
+            });
+            // Additional modifications can be added here
+        """)
 
     def create_new_tab(self, website: str = None):
         if website is None:
@@ -104,3 +129,27 @@ class GeneralReaderPlaywright:
             print("Browser session closed in test mode.")
         else:
             input("Press Enter to close the browser session.")
+
+    def click_type(self, locator, input_message: str = "", timeout: int = 1000,
+                   error_message: str = "Error during click operation",
+                   sleep_time=0, enter=False):
+        """
+        The purpose of this function is to click a locator and then type something emulating a human.
+        Args:
+            locator:
+            timeout:
+            error_message:
+            sleep_time:
+
+        Returns:
+
+        """
+        try:
+            self.safe_click(locator, timeout=timeout, error_message=error_message, sleep_time=sleep_time)
+            locator.type(input_message)
+            if enter:
+                locator.press("Enter")
+        except Exception as e:
+            print(f"{error_message}: {e}")
+        else:
+            sleep(sleep_time)

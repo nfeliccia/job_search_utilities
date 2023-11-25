@@ -55,8 +55,6 @@ class AramarkReader(GeneralReaderPlaywright):
         err_wc = "Error closing widget chatbox popup"
         sb_ = "searchbox"
         wcb = "widget_chatbox_popover"
-        what_ = "What?"
-        where_ = "Where?"
 
         # Closing the popups
         self.click_by_role(page=page, role=b_, name=acc_, timeout=5 * ARAMARK_TIMEOUT, error_message=err_acc)
@@ -64,13 +62,16 @@ class AramarkReader(GeneralReaderPlaywright):
         self.click_by_label(locator=wcp, label_text="Close", timeout=ARAMARK_TIMEOUT, error_message=err_wc)
 
         # Fill in Keyword and location.
-        self.click_by_role(page=page, role=sb_, name=what_)
+        self.click_by_role(page=page, role=sb_, name="What?")
         if exact:
             keyword = f'"{keyword}"'
-        page.get_by_role(sb_, name=what_).fill(keyword)
-        page.get_by_role(sb_, name=where_).fill(qth)
-        page.get_by_role(sb_, name=where_).press("Enter")
-        return page.content()
+        self.click_type(page.get_by_role(sb_, name="What?"), input_message=keyword, timeout=ARAMARK_TIMEOUT,
+                        sleep_time=1)
+        where_sb = page.get_by_role(sb_, name="Where?")
+        where_sb.fill(qth)
+        where_sb.press("Enter")
+        content_ = page.content()
+        return content_
 
     def get_corporate_jobs(self, qth: str) -> str:
         """
@@ -88,10 +89,10 @@ class AramarkReader(GeneralReaderPlaywright):
 
         self.select_corporate_id(page2)
         page2.get_by_role("button", name="Load More").click()
-        page2.get_by_label(l_).click()
-        page2.get_by_label(l_).fill(qth)
+        self.click_type(page2.get_by_label(l_), input_message=qth, timeout=ARAMARK_TIMEOUT, sleep_time=1)
         page2.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
-        return page2.content()
+        content_ = page2.content()
+        return content_
 
 
 def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):

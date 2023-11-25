@@ -14,20 +14,25 @@ class CollaberaReader(GeneralReaderPlaywright):
     def open_location_url(self):
         page = self.create_new_tab()
         self.safe_click(page.get_by_role("button", name="Accept All"), timeout=COLLABERA_TIMEOUT)
-        l_ = "Location"
-        page.get_by_placeholder(l_).click()
-        page.get_by_placeholder(l_).fill(self.qth)
-        page.get_by_placeholder(l_).press("Enter")
+        self.click_type(locator="Location", input_message=self.qth, timeout=COLLABERA_TIMEOUT, enter=True,
+                        sleep_time=1.5)
 
     def search_keyword(self, keyword: str) -> str:
+        """
+        This searches for a keyword and returns the page content.
+        Args:
+            keyword:
+
+        Returns:
+            str: page content html in string form.
+
+        """
         page = self.create_new_tab()
-        b_ = "button"
-        kw_ = "Job Title or Keywords"
-        self.safe_click(page.get_by_role(b_, name="Accept"), timeout=COLLABERA_TIMEOUT)
-        page.get_by_placeholder(kw_).click()
-        page.get_by_placeholder(kw_).fill(keyword)
-        page.get_by_role(b_, name="Search", exact=True).click()
-        return page.content()
+        self.safe_click(page.get_by_role("button", name="Accept"), timeout=COLLABERA_TIMEOUT)
+        self.click_type(locator=page.get_by_placeholder("Job Title or Keywords"), input_message=keyword,
+                        timeout=COLLABERA_TIMEOUT, enter=True, sleep_time=1.5)
+        sk_content = page.content()
+        return sk_content
 
 
 def collabera_reader(testmode: bool = False, qth: str = "Philadelphia, PA"):
