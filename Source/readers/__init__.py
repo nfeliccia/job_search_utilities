@@ -1,1 +1,1 @@
-from readers_common_updated import GeneralReaderPlaywright
+from readers.readers_common import GeneralReaderPlaywright

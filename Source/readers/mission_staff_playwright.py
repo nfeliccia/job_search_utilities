@@ -1,5 +1,5 @@
 from Data.reference_values import universal_search_terms
-from readers.readers_common import GeneralReaderPlaywright
+from readers import GeneralReaderPlaywright
 
 
 class MissionStaffReader(GeneralReaderPlaywright):

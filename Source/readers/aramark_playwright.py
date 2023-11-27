@@ -88,30 +88,18 @@ class AramarkReader(GeneralReaderPlaywright):
 
         self.select_corporate_id(page2)
         page2.get_by_role("button", name="Load More").click()
-
         page2.get_by_label(l_).click()
         page2.get_by_label(l_).fill(qth)
         page2.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
         return page2.content()
 
-    def close_with_test(self, testmode: bool = False) -> None:
-        """Close the browser session. Behavior varies based on the test mode.
-
-        Args:
-        - testmode (bool, optional): A flag indicating if the instance is in test mode. Defaults to False.
-        """
-
-        if testmode:
-            print("Browser session closed in test mode.")
-        else:
-            input("Press Enter to close the browser session.")
-
 
 def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):
     with AramarkReader() as ar:
+        pages_list = []
         for term in universal_search_terms:
-            ar.search_keyword(term, qth=qth, exact=True)
-        ar.get_corporate_jobs(qth=qth)
+            pages_list.append(ar.search_keyword(term, qth=qth))
+        pages_list.append(ar.get_corporate_jobs(qth=qth))
         ar.close_with_test(testmode=testmode)
 
 
