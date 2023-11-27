@@ -89,7 +89,8 @@ class AramarkReader(GeneralReaderPlaywright):
 
         self.select_corporate_id(page2)
         page2.get_by_role("button", name="Load More").click()
-        self.click_type(page2.get_by_label(l_), input_message=qth, timeout=ARAMARK_TIMEOUT, sleep_time=1)
+        page2.get_by_label(l_).fill(qth)
+        # self.click_type(page2.get_by_label(l_), input_message=qth, timeout=ARAMARK_TIMEOUT, sleep_time=1)
         page2.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
         content_ = page2.content()
         return content_

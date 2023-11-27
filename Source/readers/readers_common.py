@@ -1,7 +1,8 @@
 import logging
 from time import sleep
 
-from playwright.sync_api import sync_playwright, Page, Locator
+from playwright.sync_api import Locator, TimeoutError  # Assuming synchronous Playwright API
+from playwright.sync_api import sync_playwright, Page
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s',
@@ -11,10 +12,14 @@ logging.basicConfig(level=logging.INFO,
 class GeneralReaderPlaywright:
 
     @staticmethod
-    def safe_click(locator, timeout=1000, error_message="Error during click operation", sleep_time=0):
+    def safe_click(locator: Locator, timeout=1000, error_message="Error during click operation", sleep_time=0):
         """Attempt to click a locator with error handling and custom timeout."""
         try:
+            # Wait for the element to be visible before clicking
+            locator.wait_for(state="visible", timeout=timeout)
             locator.click(timeout=timeout)
+        except TimeoutError as e:
+            print(f"Timeout while waiting for element to be visible: {e}")
         except Exception as e:
             print(f"{error_message}: {e}")
         else:
