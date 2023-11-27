@@ -1,0 +1,30 @@
+I will need several python functions to process the ouput of reports from the "Clockify" time tracking service. 
+We'll start with just one. Lets use PANDAS 
+
+The data is in a CSV which is located in the project root directory ".\Data\time_tracking_data"
+The first thing we want to do is look in that directory and get the most recent file and work on that file. 
+
+Here is the structure of the file
+
+Project - Categorical
+Client - Categorical
+Description - String 
+Task - String
+User - Categorical
+Email - Categorical
+Tags - String
+Billable - Boolean representanted as Yes or No
+Start Date - date in the format of mm/dd/yyyy
+Start Time - time in the format of h:mm:ss AM  
+End Date - date in the format of mm/dd/yyyy
+End Time - time in the format of h:mm:ss AM  
+Duration (h) - Delta between Start and end in HH:MM:SS
+Duration (decimal) decimal hours of duration. This is going to be the column we're most interested in. 
+
+The first request is going to be pretty simple. 
+Let's load in the latest data in that folder. Assign it to a PANDAS data frame with the correct data types. 
+Let's get a table which shows the total number of hours worked per year - week combination over the timespan of the file.
+We will use the week starting on Monday! 
+Save that as an excel spreadsheet in the same folder from which we got the source file. 
+We'll name the file the same as the input file, except with  _by_week added to the root of the file name. 
+We'll name the tab in the file "by week" 

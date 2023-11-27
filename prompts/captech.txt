@@ -1,0 +1,14 @@
+Greetings. I need to make a python script that searches for job openings at captechconsulting.
+
+I have created similar readers for other urls where I am looking for jobs. 
+The code is attached in the zipfile called readers.py
+
+captechconsulting.com does the search via URL parameters
+First open up a window using selenium to this URL https://www.captechconsulting.com/careers/current-openings
+Then open up tab in that same browswer with all of the positions for Philadelphia. https://www.captechconsulting.com/careers/current-openings?page=1&location=253788  
+
+Then we want to open up url's based on keywords. The url format is as follows. 
+https://www.captechconsulting.com/careers/current-openings?page=1&keywords=Data%20Science
+
+Lets open up tabs for keyword search Machine LEarning, Data Science , and Python. 
+Use what has been done in the scripts on readers.zip as a template. 

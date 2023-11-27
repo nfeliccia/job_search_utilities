@@ -1,0 +1,49 @@
+I need a python script today called collabera.py
+
+This script will use Selenium to open urls and interact with a web  page. 
+This script must first open up the website  https://collabera.com/submit-resume/
+
+Then if the following button exists, click it. //*[@id="wt-cli-accept-all-btn"]
+
+It will take data from the reference_values.py file. 
+It will use the values in the actual_values reference values class to fill in the following.
+
+Fill the box at this xpath //*[@id="firstname"] with actual_values.first_name
+Fill the box at this xpath //*[@id="lastname"] with actual_values.last_name
+Fill the box at this xpath //*[@id="email"] with actual_values.email
+Fill the box at this xpath //*[@id="number"] with actual_values.phone
+Fill the box at this xpath //*[@id="linprofile"] with actual_values.linkedin_url
+click the box at this xpath //*[@id="exampleCheck3"] if unchecked. 
+ 
+click on the upload button at this xpath  //*[@id="wpcf7-f8654-o1"]/p/span/div/div/div/div/div/a
+and send the string of current resume path. 
+
+ask user to hit enter after clicking the captcha box. 
+
+
+create a command line input which follows the same convention as tech_in_motion.py which I've also uploaded. 
+Please use as much of tech_in_motion.py as a template for what you need to do. 
+
+
+//*[@id="wpcf7-f8654-o1"]/div[7]/p/button
+
+
+I need a script called collabera_reader.py
+Uisng Selenium, it needs to open the following URLS
+
+
+This is the format of the URLS 
+https://collabera.com/job-search/?sort_by=dateposted&industry=&keyword={keyword}&location=19124&Posteddays=0
+Where keyword is a variable.  
+Mutiple words are joined together with a '+' character. 
+Example is machine learning
+https://collabera.com/job-search/?sort_by=dateposted&industry=&keyword=Machine+Learning&location=19124&Posteddays=0
+
+
+I need the URL Created for the following keywords.
+1) Python
+2) Machine Learning
+3) Data Science
+
+Then I need each URL open in a new tab. 
+
