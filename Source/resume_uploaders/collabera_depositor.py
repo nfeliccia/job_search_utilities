@@ -1,6 +1,6 @@
 from Data.reference_values import actual_values
 from readers import GeneralReaderPlaywright
-from readers.collabera_playwright import COLLABERA_URL
+from readers.collabera_reader import COLLABERA_URL
 
 COLLABERA_TIMEOUT = 1000
 

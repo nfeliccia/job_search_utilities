@@ -5,8 +5,6 @@ CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
 PHILADELPHIA = "253788"
 
 
-
-
 class CaptechReader(GeneralReaderPlaywright):
     CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
     PHILADELPHIA = "253788"
