@@ -1,0 +1,5 @@
+{
+  "about_this_template": "This is the config template for the General Reader",
+  "standard_timeout": 1000,
+  "standard_sleep": 2
+}

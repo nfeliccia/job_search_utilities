@@ -1,13 +1,13 @@
 from Data.reference_values import universal_search_terms
-from readers import GeneralReaderPlaywright
+from common_code import GeneralReaderPlaywright
+
+
 
 CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
 PHILADELPHIA = "253788"
 
 
 class CaptechReader(GeneralReaderPlaywright):
-    CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
-    PHILADELPHIA = "253788"
 
     def __init__(self, testmode: bool = False):
         super().__init__(root_website=CAPTECH_URL, testmode=testmode)
@@ -16,7 +16,7 @@ class CaptechReader(GeneralReaderPlaywright):
         # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
         page_olu = self.create_new_tab()
         self.safe_click(page_olu.get_by_role("button", name="Accept"))
-        page_olu.get_by_label("Locations").select_option(self.PHILADELPHIA)
+        page_olu.get_by_label("Locations").select_option(PHILADELPHIA)
 
     def search_keyword(self, keyword: str) -> str:
         """

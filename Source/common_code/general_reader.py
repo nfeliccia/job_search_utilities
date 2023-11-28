@@ -1,4 +1,6 @@
+import json
 import logging
+from pathlib import Path
 from time import sleep
 
 from playwright.sync_api import Locator, TimeoutError  # Assuming synchronous Playwright API
@@ -8,11 +10,12 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
+scraping_parameters_path = Path(r".\Data\scraping_parameters_config.json")
+
 
 class GeneralReaderPlaywright:
 
-    @staticmethod
-    def safe_click(locator: Locator, timeout=1000, error_message="Error during click operation", sleep_time=0):
+    def safe_click(self, locator: Locator, timeout=1000, error_message="Error during click operation"):
         """Attempt to click a locator with error handling and custom timeout."""
         try:
             # Wait for the element to be visible before clicking
@@ -23,7 +26,7 @@ class GeneralReaderPlaywright:
         except Exception as e:
             print(f"{error_message}: {e}")
         else:
-            sleep(sleep_time)
+            sleep(self.sleep_time)
 
     @staticmethod
     def click_by_role(page: Page, role: str = None, name: str = None, timeout=1000,
@@ -73,12 +76,22 @@ class GeneralReaderPlaywright:
         self.close()  # clean up resources here
 
     def __init__(self, root_website: str = None, testmode: bool = False):
-        self.testmode = testmode
-        self.root_website = root_website
-        self.playwright = None
         self.browser = None
         self.context = None
+        self.playwright = None
+        self.root_website = root_website
+        self.sleep_time = None
+        self.standard_timeout = None
+        self.testmode = testmode
+        self.extract_constants()
         self.setup_playwright()
+
+    def extract_constants(self, spp: Path = scraping_parameters_path):
+        """Extract constants from the scraping parameters file."""
+        with open(spp, "r") as f:
+            scraping_parameters = json.load(f)
+        self.standard_timeout = scraping_parameters["standard_timeout"]
+        self.sleep_time = scraping_parameters["standard_sleep"]
 
     def setup_playwright(self):
         self.playwright = sync_playwright().start()
@@ -136,25 +149,23 @@ class GeneralReaderPlaywright:
             input("Press Enter to close the browser session.")
 
     def click_type(self, locator, input_message: str = "", timeout: int = 1000,
-                   error_message: str = "Error during click operation",
-                   sleep_time=0, enter=False):
+                   error_message: str = "Error during click operation", enter=False):
         """
         The purpose of this function is to click a locator and then type something emulating a human.
         Args:
             locator:
             timeout:
             error_message:
-            sleep_time:
 
         Returns:
 
         """
         try:
-            self.safe_click(locator, timeout=timeout, error_message=error_message, sleep_time=sleep_time)
+            self.safe_click(locator, timeout=timeout, error_message=error_message)
             locator.type(input_message)
             if enter:
                 locator.press("Enter")
         except Exception as e:
             print(f"{error_message}: {e}")
         else:
-            sleep(sleep_time)
+            sleep(self.sleep_time)

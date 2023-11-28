@@ -4,23 +4,23 @@ from playwright.sync_api import Page
 from common_code.workday_reader import WorkdayReader
 
 # Constants for job categories
-B_YOND_URL = "https://byond.wd12.myworkdayjobs.com/en-US/B-Yond/login"
-B_YOND_USERNAME = "nic@secretsmokestack.com"
+FLEXENTIAL_URL = "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login"
+FLEXENTIAL_TIMEOUT = 1000
+FLEXENTIAL_USERNAME = "nic@secretsmokestack.com"
 
 
-class BYond(WorkdayReader):
+class FlexentialReader(WorkdayReader):
 
     def __init__(self, workday_url=None, page_sleep=None, testmode: bool = False):
         super().__init__(workday_url=workday_url, testmode=testmode)
 
     def run_one_keyword(self, page: Page = None, keyword: str = None):
         # Enter the dialog for jobs
-        self.safe_click(page.get_by_role("button", name="Search for Jobs"))
+        self.safe_click(page.get_by_role(role="button", name="Search for Jobs"))
 
         # Helper method to set up location
         def setup_location(search_text_sl, option_name_sl):
-            self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message="",
-                            sleep_time=B_YOND_SLEEP)
+            self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message="", )
             page.get_by_role("button", name="Location").click()
             page.get_by_label("Search All Locations").fill(search_text_sl)
             try:
@@ -39,15 +39,23 @@ class BYond(WorkdayReader):
             setup_location(search_text, option_name)
 
         # Enter keyword and perform search
-        self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message=keyword)
-        page.get_by_role("button", name="Search", exact=True).click()
+        self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message=keyword, )
+        page.get_by_role(role="button", name="Search", exact=True).click()
 
 
-with BYond(workday_url=B_YOND_URL) as cr:
-    secret_password = keyring.get_password(service_name=B_YOND_URL, username=B_YOND_USERNAME, )
-    active_server_page = cr.login(username=B_YOND_USERNAME, password=secret_password, )
+with FlexentialReader(workday_url=FLEXENTIAL_URL) as fr:
+    # Standard password grab
+    secret_password = keyring.get_password(service_name=FLEXENTIAL_URL, username=FLEXENTIAL_USERNAME, )
+
+    # Login and get page.
+    active_server_page = fr.login(username=FLEXENTIAL_USERNAME, password=secret_password, )
+
+    # Need to press the accept cookies button
+    fr.safe_click(active_server_page.get_by_role("button", name="Accept Cookies"))
     search_for_jobs = active_server_page.locator("button[data-automation-id='searchForJobsButton']")
-    cr.safe_click(search_for_jobs)
+
+    # move on to the search for jobs.
+    fr.safe_click(search_for_jobs)
     input("Press Enter to continue...")
-    cr.logout(page=active_server_page, username=B_YOND_USERNAME, )
-    cr.close_with_test(testmode=cr.testmode)
+    fr.logout(page=active_server_page, username=FLEXENTIAL_USERNAME, )
+    fr.close_with_test(testmode=fr.testmode)

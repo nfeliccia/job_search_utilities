@@ -1,7 +1,7 @@
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
-from readers import GeneralReaderPlaywright
+from common_code import GeneralReaderPlaywright
 
 # Constants for job categories
 CORPORATE_FIELD_SUPPORT = "Corporate & Field Support"

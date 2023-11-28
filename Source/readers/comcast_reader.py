@@ -2,32 +2,21 @@ import keyring
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
-from readers import GeneralReaderPlaywright
+from common_code import WorkdayReader
 
 # Constants for job categories
 COMCAST_URL = "https://comcast.wd5.myworkdayjobs.com/en-US/Comcast_Careers/login"
 COMCAST_TIMEOUT = 1000
 COMCAST_USERNAME = "nic@secretsmokestack.com"
+COMCAST_SLEEP = 2
 
 
-class ComcastReader(GeneralReaderPlaywright):
+class ComcastReader(WorkdayReader):
 
     def __init__(self, testmode: bool = False):
-        super().__init__(root_website=COMCAST_URL, testmode=testmode)
+        super().__init__(workday_url=COMCAST_URL, page_sleep=COMCAST_SLEEP, testmode=testmode)
 
-    def login(self, username: str, password: str):
-        """
-        The purpose of this is to login to the comcast website.
-        Args:           
-            username: username
-            password: password
-        """
-        page = self.create_new_tab(website=COMCAST_URL)
-        self.click_type(page.get_by_label("Email Address"), input_message=username, sleep_time=2)
-        self.click_type(page.get_by_label("Password"), input_message=password, sleep_time=2)
-        self.safe_click(page.get_by_role("button", name="Sign In"), sleep_time=2)
-        singed_in_page = page
-        return singed_in_page
+
 
     def run_one_keyword(self, page: Page = None, keyword: str = None):
         # Enter the dialog for jobs
@@ -57,16 +46,12 @@ class ComcastReader(GeneralReaderPlaywright):
         self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message=keyword, sleep_time=2)
         page.get_by_role("button", name="Search", exact=True).click()
 
-    def logout(self, page: Page = None):
-        self.safe_click(page.get_by_role("button", name=COMCAST_USERNAME), sleep_time=2)
-        self.safe_click(page.get_by_label("Sign Out"), sleep_time=2)
-
 
 with ComcastReader() as cr:
     secret_password = keyring.get_password(service_name=COMCAST_URL, username=COMCAST_USERNAME)
     for keyword in universal_search_terms:
         active_server_page = cr.login(username=COMCAST_USERNAME, password=secret_password)
         cr.run_one_keyword(page=active_server_page, keyword=keyword)
-        cr.logout(page=active_server_page)
         input("Press Enter to continue...")
+        cr.logout(page=active_server_page, username=COMCAST_USERNAME)
     cr.close_with_test(testmode=cr.testmode)

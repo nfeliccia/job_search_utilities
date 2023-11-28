@@ -1,5 +1,7 @@
 from Data.reference_values import universal_search_terms
-from readers import GeneralReaderPlaywright
+from common_code import GeneralReaderPlaywright
+
+
 
 # Constants for job search
 COLLABERA_URL = "https://collabera.com/job-search/"

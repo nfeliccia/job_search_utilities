@@ -1,12 +1,15 @@
-from common_code.general_reader import GeneralReaderPlaywright
+import datetime
+
+from playwright.sync_api import Page
+
+from common_code import GeneralReaderPlaywright
 
 
 class WorkdayReader(GeneralReaderPlaywright):
 
-    def __init__(self, workday_url: str = None, page_sleep: float = 0.0, testmode: bool = False):
+    def __init__(self, workday_url: str = None, testmode: bool = False):
         super().__init__(root_website=workday_url, testmode=testmode)
         self.url = workday_url
-        self.sleep = page_sleep
 
     def login(self, username: str, password: str):
         """
@@ -16,8 +19,18 @@ class WorkdayReader(GeneralReaderPlaywright):
             password: password
         """
         page = self.create_new_tab(website=self.url)
-        self.click_type(page.get_by_label("Email Address"), input_message=username, sleep_time=self.sleep)
-        self.click_type(page.get_by_label("Password"), input_message=password, sleep_time=self.sleep)
-        self.safe_click(page.get_by_role("button", name="Sign In"), sleep_time=self.sleep)
+        print(f"Logging into {self.url} {datetime.datetime.now()}")
+
+        # Wait for the email to make sure page fully loaded
+        page.wait_for_selector("xpath=//label[text()='Email Address']", state="visible")
+
+        print(f"Email address visible {datetime.datetime.now()}")
+        self.click_type(page.get_by_label("Email Address"), input_message=username)
+        self.click_type(page.get_by_label("Password"), input_message=password)
+        self.safe_click(page.get_by_role("button", name="Sign In"))
         singed_in_page = page
         return singed_in_page
+
+    def logout(self, page: Page = None, username: str = None):
+        self.safe_click(page.get_by_role("button", name=username))
+        self.safe_click(page.get_by_label("Sign Out"), )
