@@ -5,14 +5,12 @@ from playwright.sync_api import Page
 from Data.reference_values import actual_values
 from common_code import GeneralReaderPlaywright
 
-BIMBOURL = "https://careers.bimbobakeriesusa.com/careers"
-BIMBO_SLEEP = 2
-
 
 class BimboJobSearcher(GeneralReaderPlaywright):
+    BIMBOURL = "https://careers.bimbobakeriesusa.com/careers"
 
     def __init__(self, testmode: bool = False):
-        super().__init__(root_website=BIMBOURL, testmode=testmode)
+        super().__init__(root_website=self.BIMBOURL, testmode=testmode)
         self.rv = actual_values
 
     def upload_for_job_check(self):
@@ -39,28 +37,33 @@ class BimboJobSearcher(GeneralReaderPlaywright):
 
     def join_talent_community(self, in_page: Page = None):
         in_page.get_by_role("button", name="join the talent community").click()
-        sleep(4 * BIMBO_SLEEP)
+        sleep(4 * self.sleep_time)
 
         in_page.get_by_placeholder("Email").click()
         # Wait for the Email input field to appear
         in_page.wait_for_selector('input[placeholder="Email"]', state="visible")
-        self.click_type(in_page.get_by_placeholder("Email"), input_message=self.rv.email, sleep_time=1)
+        self.click_type(in_page.get_by_placeholder("Email"), input_message=self.rv.email)
 
         cl_ = in_page.get_by_placeholder("Current Location")
         cc_ = in_page.get_by_placeholder("Current Company")
         ct_ = in_page.get_by_placeholder("Current Title")
 
-        self.click_type(cl_, input_message=self.rv.location, sleep_time=1)
-        self.click_type(cc_, input_message=self.rv.current_company, sleep_time=1)
-        self.click_type(ct_, input_message=self.rv.current_title, sleep_time=1)
+        self.click_type(cl_, input_message=self.rv.location)
+        self.click_type(cc_, input_message=self.rv.current_company)
+        self.click_type(ct_, input_message=self.rv.current_title)
 
         in_page.locator("[data-test-id=\"careers-talent-network-privacy-checkbox-0\"]").click()
         in_page.locator("[data-test-id=\"jtn-submit-btn\"]").click()
 
 
-with BimboJobSearcher() as bjs:
-    bjs.upload_for_job_check()
-    jtc = input("Join the talent community y/n")
-    if jtc.lower() == "y":
-        bjs.join_talent_community()
-    bjs.close_with_test(testmode=False)
+def bimbo_reader_uplaoder(testmode: bool = False):
+    with BimboJobSearcher() as bjs:
+        bjs.upload_for_job_check()
+        jtc = input("Join the talent community y/n")
+        if jtc.lower() == "y":
+            bjs.join_talent_community()
+        bjs.close_with_test(testmode=testmode)
+
+
+if __name__ == "__main__":
+    bimbo_reader_uplaoder(testmode=False)

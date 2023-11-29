@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from playwright.sync_api import Page
 
@@ -19,12 +20,12 @@ class WorkdayReader(GeneralReaderPlaywright):
             password: password
         """
         page = self.create_new_tab(website=self.url)
-        print(f"Logging into {self.url} {datetime.datetime.now()}")
+        logging.info(f"Logging into {self.url} {datetime.datetime.now()}")
 
         # Wait for the email to make sure page fully loaded
         page.wait_for_selector("xpath=//label[text()='Email Address']", state="visible")
 
-        print(f"Email address visible {datetime.datetime.now()}")
+        logging.info(f"Email address visible {datetime.datetime.now()}")
         self.click_type(page.get_by_label("Email Address"), input_message=username)
         self.click_type(page.get_by_label("Password"), input_message=password)
         self.safe_click(page.get_by_role("button", name="Sign In"))

@@ -1,23 +1,21 @@
+from time import sleep
+
 from Data.reference_values import universal_search_terms
 from common_code import GeneralReaderPlaywright
 
 
-
-# Constants for job search
-COLLABERA_URL = "https://collabera.com/job-search/"
-COLLABERA_TIMEOUT = 1000
-
-
 class CollaberaReader(GeneralReaderPlaywright):
+    COLLABERA_URL = "https://collabera.com/job-search/"
+
     def __init__(self, testmode: bool = False, qth: str = None):
-        super().__init__(root_website=COLLABERA_URL, testmode=testmode)
+        super().__init__(root_website=self.COLLABERA_URL, testmode=testmode)
         self.qth = qth
 
     def open_location_url(self):
         page = self.create_new_tab()
-        self.safe_click(page.get_by_role("button", name="Accept All"), timeout=COLLABERA_TIMEOUT)
-        self.click_type(locator="Location", input_message=self.qth, timeout=COLLABERA_TIMEOUT, enter=True,
-                        sleep_time=1.5)
+        self.safe_click(page.get_by_role("button", name="Accept All"))
+        self.click_type(locator="Location", input_message=self.qth, enter=True)
+        sleep(5)
 
     def search_keyword(self, keyword: str) -> str:
         """
@@ -30,9 +28,9 @@ class CollaberaReader(GeneralReaderPlaywright):
 
         """
         page = self.create_new_tab()
-        self.safe_click(page.get_by_role("button", name="Accept"), timeout=COLLABERA_TIMEOUT)
-        self.click_type(locator=page.get_by_placeholder("Job Title or Keywords"), input_message=keyword,
-                        timeout=COLLABERA_TIMEOUT, enter=True, sleep_time=1.5)
+        self.safe_click(page.get_by_role("button", name="Accept"), )
+        self.click_type(locator=page.get_by_placeholder("Job Title or Keywords"), input_message=keyword, enter=True)
+        sleep(1.5)
         sk_content = page.content()
         return sk_content
 

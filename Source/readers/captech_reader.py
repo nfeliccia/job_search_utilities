@@ -29,9 +29,7 @@ class CaptechReader(GeneralReaderPlaywright):
         """
         page_sk = self.create_new_tab()
         self.safe_click(page_sk.get_by_role("button", name="Accept"))
-        kw_ = page_sk.get_by_placeholder("Keywords")
-        self.click_type(kw_, input_message=keyword, sleep_time=1)
-        kw_.press("Enter")
+        self.click_type(page_sk.get_by_placeholder("Keywords"), input_message=keyword, enter=True)
         page_sk.get_by_label("Locations").select_option(PHILADELPHIA)
         page_sk.get_by_role("button", name="Search", exact=True).click()
         content = page_sk.content()
@@ -43,8 +41,12 @@ class CaptechReader(GeneralReaderPlaywright):
         return all_keyword_pages
 
 
-if __name__ == "__main__":
-    with CaptechReader(testmode=False) as reader:
+def captech_reader(testmode: bool = False):
+    with CaptechReader(testmode=testmode) as reader:
         reader.open_location_url()
         reader.open_all_keywords()
-        reader.close_with_test(testmode=False)
+        reader.close_with_test(testmode=testmode)
+
+
+if __name__ == "__main__":
+    captech_reader(testmode=True)
