@@ -15,9 +15,6 @@ scraping_parameters_path = Path(r".\Data\scraping_parameters_config.json")
 
 class GeneralReaderPlaywright:
 
-
-
-
     def __enter__(self):
         return self  # this is the object that will be bound to the variable in the `with` statement
 
