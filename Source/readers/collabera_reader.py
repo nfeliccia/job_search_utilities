@@ -1,11 +1,5 @@
-import sys
-
-sys.path.append(r'F:\job_search_utilities\\')
-sys.path.append(r'F:\job_search_utilities\Source')
-sys.path.append(r'F:\job_search_utilities\Source\common_code')
-
 from Data.reference_values import universal_search_terms
-from common_code import GeneralReaderPlaywright
+from Source import GeneralReaderPlaywright
 
 
 class CollaberaReader(GeneralReaderPlaywright):
@@ -15,10 +9,14 @@ class CollaberaReader(GeneralReaderPlaywright):
         super().__init__(root_website=self.COLLABERA_URL, testmode=testmode)
         self.qth = qth
 
+    def accept_cookies(self, page=None):
+        accept_button = page.locator("#wt-cli-accept-all-btn")
+        accept_button.wait_for_element_state("visible")
+        self.safe_click(accept_button, timeout=1000, error_message="Error during click operation")
+
     def open_location_url(self):
         page = self.create_new_tab()
-        accept_all_button = page.locator("a[id='wt-cli-accept-all-btn']")
-        self.safe_click(accept_all_button)
+        self.accept_cookies(page=page)
         self.click_type(locator="Location", input_message=self.qth, enter=True)
 
     def search_keyword(self, keyword: str) -> str:
@@ -33,6 +31,7 @@ class CollaberaReader(GeneralReaderPlaywright):
         """
         page = self.create_new_tab()
         self.click_type(locator=page.get_by_placeholder("Job Title or Keywords"), input_message=keyword, enter=True)
+        self.accept_cookies(page=page)
         sk_content = page.content()
         return sk_content
 

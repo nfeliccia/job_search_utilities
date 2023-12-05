@@ -77,10 +77,20 @@ class GeneralReaderPlaywright:
         """)
 
     def create_new_tab(self, website: str = None):
+        """
+        The purpose of this function is to create a new tab and navigate to a website.
+        IT waits until fully loaded. It returns the page.
+        Args:
+            website:
+
+        Returns:
+
+        """
         if website is None:
             website = self.root_website
         page = self.context.new_page()
         page.goto(website)
+        page.wait_for_load_state('load')
         return page
 
     def close(self):
@@ -136,6 +146,27 @@ class GeneralReaderPlaywright:
             locator.click(timeout=timeout)
         except TimeoutError as e:
             logging.error(f"Timeout while waiting for element  {locator} to be visible: {e}")
+        except Exception as e:
+            logging.error(f"{error_message}: {e}")
+        if use_sleep:
+            sleep(self.sleep_time)
+
+    def safe_click_and_type(self, locator: Locator, input_message: str = "", timeout=None,
+                            error_message="Error during click and type operation", enter=False, use_sleep=True):
+        """Attempt to click a locator, type a message, and optionally press Enter, with error handling and custom timeout."""
+
+        if timeout is None:
+            timeout = self.standard_timeout
+
+        try:
+            # Wait for the element to be visible before clicking
+            locator.wait_for(state="visible", timeout=timeout)
+            locator.click(timeout=timeout)
+            locator.type(input_message)
+            if enter:
+                locator.press("Enter")
+        except TimeoutError as e:
+            logging.error(f"Timeout while waiting for element {locator} to be visible: {e}")
         except Exception as e:
             logging.error(f"{error_message}: {e}")
         if use_sleep:

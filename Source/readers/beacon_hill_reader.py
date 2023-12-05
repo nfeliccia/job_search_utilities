@@ -1,28 +1,30 @@
-import sys
-
-sys.path.append(r'F:\job_search_utilities\\')
-sys.path.append(r'F:\job_search_utilities\Source')
-sys.path.append(r'F:\job_search_utilities\Source\common_code')
+import logging
 
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
-from common_code import GeneralReaderPlaywright
+from Source import GeneralReaderPlaywright
 
 
 class BeaconHillReader(GeneralReaderPlaywright):
-    beacon_hill_url = "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
+    BEACON_HILL_URL = "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
 
     def __init__(self, testmode: bool = False):
-        super().__init__(root_website=self.beacon_hill_url, testmode=testmode)
+        super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode)
         self.cookies_accepted = False
 
-    def open_location_url(self):
-        # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
-        page_olu = self.create_new_tab()
+    def handle_cookies(self, page: Page = None):
         if not self.cookies_accepted:
-            self.safe_click(page_olu.get_by_role("link", name="Later"), timeout=5000)
-            self.cookies_accepted = True
+            try:
+                later_ = page.get_by_role("link", name="Later")
+                self.safe_click(later_, timeout=5000)
+                self.cookies_accepted = True
+            except TimeoutError:
+                logging.error("Failed to accept cookies.")
+
+    def open_location_url(self):
+        page_olu = self.create_new_tab()
+        self.handle_cookies(page_olu)
         return page_olu
 
     def search_keyword(self, keyword: str) -> str:
@@ -41,18 +43,18 @@ class BeaconHillReader(GeneralReaderPlaywright):
         content = page_sk.content()
         return content
 
-    def open_all_keywords(self, in_page: Page = None):
-        # Opening URLs for the specified keywords
+    def open_all_keywords(self):
         all_keyword_pages = [self.search_keyword(keyword) for keyword in universal_search_terms]
         return all_keyword_pages
 
 
 def beacon_hill_reader():
+    logging.basicConfig(level=logging.INFO)
     with BeaconHillReader(testmode=False) as bhr_reader:
         bhr_reader.open_location_url()
         bhr_reader.open_all_keywords()
         bhr_reader.close_with_test(testmode=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     beacon_hill_reader()

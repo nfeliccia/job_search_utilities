@@ -1,20 +1,13 @@
-import sys
-
-sys.path.append(r'F:\job_search_utilities\\')
-sys.path.append(r'F:\job_search_utilities\Source')
-sys.path.append(r'F:\job_search_utilities\Source\common_code')
-
 from Data.reference_values import universal_search_terms
-from common_code import GeneralReaderPlaywright
-
-CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
-PHILADELPHIA = "253788"
+from Source import GeneralReaderPlaywright
 
 
 class CaptechReader(GeneralReaderPlaywright):
+    CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
+    PHILADELPHIA = "253788"
 
     def __init__(self, testmode: bool = False):
-        super().__init__(root_website=CAPTECH_URL, testmode=testmode)
+        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode)
         self.cookies_accepted = False
 
     def open_location_url(self):
@@ -22,7 +15,7 @@ class CaptechReader(GeneralReaderPlaywright):
         page_olu = self.create_new_tab()
         if not self.cookies_accepted:
             self.safe_click(page_olu.get_by_role("button", name="Accept"))
-        page_olu.get_by_label("Locations").select_option(PHILADELPHIA)
+        page_olu.get_by_label("Locations").select_option(self.PHILADELPHIA)
 
     def search_keyword(self, keyword: str) -> str:
         """
@@ -30,12 +23,12 @@ class CaptechReader(GeneralReaderPlaywright):
         Args:
             keyword: string. A word to search for.
 
-        Returns:
+        Returns:str: page content html in string form.
 
         """
         page_sk = self.create_new_tab()
         self.click_type(page_sk.get_by_placeholder("Keywords"), input_message=keyword, enter=True)
-        page_sk.get_by_label("Locations").select_option(PHILADELPHIA)
+        page_sk.get_by_label("Locations").select_option(self.PHILADELPHIA)
         page_sk.get_by_role("button", name="Search", exact=True).click()
         content = page_sk.content()
         return content

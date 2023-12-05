@@ -46,12 +46,17 @@ class CVSReader(WorkdayReader):
         page.get_by_role("button", name="Search", exact=True).click()
 
 
-with CVSReader() as cr:
-    secret_password = keyring.get_password(service_name=cr.CVS_URL, username=CVS_USERNAME)
-    active_server_page = cr.login(username=CVS_USERNAME, password=secret_password)
-    for keyword in universal_search_terms:
-        cr.run_one_keyword(keyword=keyword)
-    input("Press Enter to continue...")
-    cr.logout(page=active_server_page, username=CVS_USERNAME)
+def cvs_reader():
+    with CVSReader() as cr:
+        secret_password = keyring.get_password(service_name=cr.CVS_URL, username=CVS_USERNAME)
+        active_server_page = cr.login(username=CVS_USERNAME, password=secret_password)
+        for keyword in universal_search_terms:
+            cr.run_one_keyword(keyword=keyword)
+        input("Press Enter to continue...")
+        cr.logout(page=active_server_page, username=CVS_USERNAME)
 
-    cr.close_with_test(testmode=cr.testmode)
+        cr.close_with_test(testmode=cr.testmode)
+
+
+if __name__ == "__main__":
+    cvs_reader()

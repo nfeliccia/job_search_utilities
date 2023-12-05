@@ -1,5 +1,5 @@
 from Data.reference_values import actual_values
-from readers import GeneralReaderPlaywright
+from Source import GeneralReaderPlaywright
 
 """
 
@@ -7,7 +7,6 @@ Note, some sort of security keeps it from going through when autofilled.
 """
 
 CUBESMART_URL = "https://careers.cubesmart.com/careers-home/jobs"
-CUBESMART_SLEEP_TIME = 0.1
 
 
 class CubeSmartTalentSumbitter(GeneralReaderPlaywright):
@@ -26,22 +25,18 @@ class CubeSmartTalentSumbitter(GeneralReaderPlaywright):
 
         # Go to talent network page. This is the page where the form is located.
         page_cc.locator("header").get_by_role("link", name="Join Our Talent Network").click()
-        self.click_type(page_cc.get_by_label("First Name*"), input_message=self.rv.first_name,
-                        sleep_time=CUBESMART_SLEEP_TIME)
-        self.click_type(page_cc.get_by_label("Last Name*"), input_message=self.rv.last_name,
-                        sleep_time=CUBESMART_SLEEP_TIME)
-        self.click_type(page_cc.get_by_label("Email*"), input_message=self.rv.email, sleep_time=CUBESMART_SLEEP_TIME)
-        self.click_type(page_cc.get_by_label("Address 1"), input_message=self.rv.address,
-                        sleep_time=CUBESMART_SLEEP_TIME)
-        self.click_type(page_cc.get_by_label("City"), input_message=self.rv.city, sleep_time=CUBESMART_SLEEP_TIME)
-        self.click_type(page_cc.get_by_label("State"), input_message=self.rv.state, sleep_time=CUBESMART_SLEEP_TIME)
-        self.click_type(page_cc.get_by_label("Zip"), input_message=self.rv.zip, sleep_time=CUBESMART_SLEEP_TIME)
+        self.click_type(page_cc.get_by_label("First Name*"), input_message=self.rv.first_name)
+        self.click_type(page_cc.get_by_label("Last Name*"), input_message=self.rv.last_name)
+        self.click_type(page_cc.get_by_label("Email*"), input_message=self.rv.email)
+        self.click_type(page_cc.get_by_label("Address 1"), input_message=self.rv.address)
+        self.click_type(page_cc.get_by_label("City"), input_message=self.rv.city)
+        self.click_type(page_cc.get_by_label("State"), input_message=self.rv.state)
+        self.click_type(page_cc.get_by_label("Zip"), input_message=self.rv.zip)
         country_path = "suf-dropdown > .mat-form-field > .mat-form-field-wrapper > .mat-form-field-flex > .mat-form-field-infix"
         page_cc.locator(country_path).first.click()
         page_cc.get_by_text("United States", exact=True).click()
-        self.click_type(page_cc.get_by_label("Phone Number*"), input_message=self.rv.phone,
-                        sleep_time=CUBESMART_SLEEP_TIME)
-        self.safe_click(page_cc.get_by_label("Phone Type*").locator("span"), sleep_time=CUBESMART_SLEEP_TIME)
+        self.click_type(page_cc.get_by_label("Phone Number*"), input_message=self.rv.phone)
+        self.safe_click(page_cc.get_by_label("Phone Type*").locator("span"))
         page_cc.get_by_text("Mobile").click()
         page_cc.get_by_label("Best Communication Method").locator("span").click()
         page_cc.get_by_text("Phone", exact=True).click()
