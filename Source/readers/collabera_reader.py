@@ -1,4 +1,8 @@
-from time import sleep
+import sys
+
+sys.path.append(r'F:\job_search_utilities\\')
+sys.path.append(r'F:\job_search_utilities\Source')
+sys.path.append(r'F:\job_search_utilities\Source\common_code')
 
 from Data.reference_values import universal_search_terms
 from common_code import GeneralReaderPlaywright
@@ -13,9 +17,9 @@ class CollaberaReader(GeneralReaderPlaywright):
 
     def open_location_url(self):
         page = self.create_new_tab()
-        self.safe_click(page.get_by_role("button", name="Accept All"))
+        accept_all_button = page.locator("a[id='wt-cli-accept-all-btn']")
+        self.safe_click(accept_all_button)
         self.click_type(locator="Location", input_message=self.qth, enter=True)
-        sleep(5)
 
     def search_keyword(self, keyword: str) -> str:
         """
@@ -28,9 +32,7 @@ class CollaberaReader(GeneralReaderPlaywright):
 
         """
         page = self.create_new_tab()
-        self.safe_click(page.get_by_role("button", name="Accept"), )
         self.click_type(locator=page.get_by_placeholder("Job Title or Keywords"), input_message=keyword, enter=True)
-        sleep(1.5)
         sk_content = page.content()
         return sk_content
 

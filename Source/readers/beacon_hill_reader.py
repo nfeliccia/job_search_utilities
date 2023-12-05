@@ -1,3 +1,9 @@
+import sys
+
+sys.path.append(r'F:\job_search_utilities\\')
+sys.path.append(r'F:\job_search_utilities\Source')
+sys.path.append(r'F:\job_search_utilities\Source\common_code')
+
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
@@ -9,11 +15,14 @@ class BeaconHillReader(GeneralReaderPlaywright):
 
     def __init__(self, testmode: bool = False):
         super().__init__(root_website=self.beacon_hill_url, testmode=testmode)
+        self.cookies_accepted = False
 
     def open_location_url(self):
         # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
         page_olu = self.create_new_tab()
-        self.safe_click(page_olu.get_by_role("link", name="Later"), timeout=5000)
+        if not self.cookies_accepted:
+            self.safe_click(page_olu.get_by_role("link", name="Later"), timeout=5000)
+            self.cookies_accepted = True
         return page_olu
 
     def search_keyword(self, keyword: str) -> str:
@@ -26,7 +35,6 @@ class BeaconHillReader(GeneralReaderPlaywright):
 
         """
         page_sk = self.create_new_tab()
-        self.safe_click(page_sk.get_by_role("link", name="Later"), timeout=4000)
         kw_ = page_sk.get_by_placeholder("Keyword or Job Title")
         self.click_type(kw_, input_message=keyword, enter=True)
         page_sk.wait_for_selector("p.how_many_jobs_text:has-text('jobs available for search')", state="visible")
@@ -46,4 +54,5 @@ def beacon_hill_reader():
         bhr_reader.close_with_test(testmode=False)
 
 
-beacon_hill_reader()
+if __name__ == '__main__':
+    beacon_hill_reader()

@@ -1,4 +1,10 @@
-from time import sleep
+import sys
+
+sys.path.append(r'F:\job_search_utilities\\')
+sys.path.append(r'F:\job_search_utilities\Source')
+sys.path.append(r'F:\job_search_utilities\Source\common_code')
+
+import time
 
 from playwright.sync_api import Page
 
@@ -37,7 +43,7 @@ class BimboJobSearcher(GeneralReaderPlaywright):
 
     def join_talent_community(self, in_page: Page = None):
         in_page.get_by_role("button", name="join the talent community").click()
-        sleep(4 * self.sleep_time)
+        time.sleep(4 * self.sleep_time)
 
         in_page.get_by_placeholder("Email").click()
         # Wait for the Email input field to appear
@@ -52,18 +58,18 @@ class BimboJobSearcher(GeneralReaderPlaywright):
         self.click_type(cc_, input_message=self.rv.current_company)
         self.click_type(ct_, input_message=self.rv.current_title)
 
-        in_page.locator("[data-test-id=\"careers-talent-network-privacy-checkbox-0\"]").click()
-        in_page.locator("[data-test-id=\"jtn-submit-btn\"]").click()
+        in_page.locator(r'[data-test-id="careers-talent-network-privacy-checkbox-0"]').click()
+        in_page.locator(r'[data-test-id="jtn-submit-btn"]').click()
 
 
-def bimbo_reader_uplaoder(testmode: bool = False):
+def bimbo_reader_uploader(testmode: bool = False):
     with BimboJobSearcher() as bjs:
-        bjs.upload_for_job_check()
+        job_check_page = bjs.upload_for_job_check()
         jtc = input("Join the talent community y/n")
         if jtc.lower() == "y":
-            bjs.join_talent_community()
+            bjs.join_talent_community(in_page=job_check_page)
         bjs.close_with_test(testmode=testmode)
 
 
 if __name__ == "__main__":
-    bimbo_reader_uplaoder(testmode=False)
+    bimbo_reader_uploader(testmode=False)

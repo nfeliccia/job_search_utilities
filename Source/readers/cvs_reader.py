@@ -1,50 +1,49 @@
+import logging
+
 import keyring
-from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
-from common_code import WorkdayReader
-
-# Constants for job categories
-
+from Source import WorkdayReader
 
 CVS_USERNAME = "nic@secretsmokestack.com"
 
 
 class CVSReader(WorkdayReader):
     CVS_URL = "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers/login"
-    search_for_jobs = "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers"
+    SEARCH_FOR_JOBS = "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers"
+    LOCATIONS = [
+        ("PA - Philadelphia", "PA - Philadelphia"),
+        ("PA - Work from home", "PA - Work from home"),
+        ("PA - Blue Bell", "PA - Blue Bell"),
+        ("Work At Home-Pennsylvania", "Work At Home-Pennsylvania")
+    ]
 
     def __init__(self, testmode: bool = False):
         super().__init__(workday_url=self.CVS_URL, testmode=testmode)
 
-    def run_one_keyword(self, page: Page = None, keyword: str = None):
-        # Enter the dialog for jobs
-        rok_page = self.create_new_tab(website=self.search_for_jobs)
-        self.safe_click(rok_page.get_by_role("button", name="Search for Jobs"))
+    def setup_location(self, page, search_text, option_name):
+        self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message="")
+        self.safe_click(page.get_by_role("button", name="Location"), use_sleep=False)
+        page.get_by_label("Search All Locations").fill(search_text)
+        try:
+            page.get_by_role(role="option", name=option_name, exact=True).click()
+            button_selector = "button[data-automation-id='viewAllJobsButton']"
 
-        # Helper method to set up location
-        def setup_location(sl_search_text, sl_option_name):
-            self.click_type(rok_page.get_by_placeholder("Search for jobs or keywords"), input_message="")
-            self.safe_click(rok_page.get_by_role("button", name="Location"), use_sleep=False)
-            rok_page.get_by_label("Search All Locations").fill(sl_search_text)
-            try:
-                rok_page.get_by_role(role="option", name=sl_option_name, exact=True).click()
-            except TimeoutError:
-                print(f"TimeoutError: {sl_option_name}")
+            # Wait for the button to be visible
+            view_jobs_button = page.wait_for_selector(button_selector, state="visible")
+            view_jobs_button.click()
+        except TimeoutError:
+            logging.error(f"TimeoutError: {option_name}")
 
-        # Setup various locations
-        locations = [
-            ("PA - Philadelphia", "PA - Philadelphia"),
-            ("PA - Work from home", "PA - Work from home"),
-            ("PA - Blue Bell", "PA - Blue Bell"),
-            ("Work At Home-Pennsylvania", "Work At Home-Pennsylvania")
-        ]
-        for search_text, option_name in locations:
-            setup_location(search_text, option_name)
+    def run_one_keyword(self, keyword: str = None):
+        page = self.create_new_tab(website=self.SEARCH_FOR_JOBS)
+        self.safe_click(page.get_by_role("button", name="Search for Jobs"))
 
-        # Enter keyword and perform search
-        self.click_type(rok_page.get_by_placeholder("Search for jobs or keywords"), input_message=keyword)
-        rok_page.get_by_role("button", name="Search", exact=True).click()
+        for search_text, option_name in self.LOCATIONS:
+            self.setup_location(page, search_text, option_name)
+
+        self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message=keyword)
+        page.get_by_role("button", name="Search", exact=True).click()
 
 
 with CVSReader() as cr:

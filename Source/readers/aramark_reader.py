@@ -1,7 +1,15 @@
+# This is the reader for the Aramark website. It will search for the keywords and then get the corporate jobs.cd .
+import sys
+
+sys.path.append(r'F:\job_search_utilities\\')
+sys.path.append(r'F:\job_search_utilities\Source')
+sys.path.append(r'F:\job_search_utilities\Source\common_code')
+import os
+
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms
-from common_code import GeneralReaderPlaywright
+from Source.common_code import GeneralReaderPlaywright
 
 
 class AramarkReader(GeneralReaderPlaywright):
@@ -12,6 +20,8 @@ class AramarkReader(GeneralReaderPlaywright):
 
     def __init__(self, testmode: bool = False):
         super().__init__(root_website=self.ARAMARK_URL, testmode=testmode)
+        self.cookies_accepted = False
+        self.chatbot_closed = False
 
     def _select_job_category(self, page: Page, category: str, error_message: str) -> None:
         """
@@ -52,24 +62,34 @@ class AramarkReader(GeneralReaderPlaywright):
             exact:
 
         Returns:
-            string. HTML of the page.
+            string. HTML of the sk_page.
 
         """
-        page = self.create_new_tab()
+        sk_page = self.create_new_tab()
         # Closing the Accept popup
         # Locate the button by its ID
-        accept_button = page.locator("#onetrust-accept-btn-handler")
-        self.safe_click(accept_button, timeout=3000)
+        if not self.cookies_accepted:
+            accept_button = sk_page.locator("#onetrust-accept-btn-handler")
+            try:
+                self.safe_click(accept_button, timeout=3000)
+                self.cookies_accepted = True
+            except TimeoutError:
+                print("Cookies already accepted.")
 
         # Locate the close button by its class
-        chatbox_close_button = page.locator("button.ea1514")
-        self.safe_click(chatbox_close_button, timeout=1000)
+        if not self.chatbot_closed:
+            chatbox_close_button = sk_page.locator("button.ea1514")
+            try:
+                self.safe_click(chatbox_close_button, timeout=3000)
+                self.chatbot_closed = True
+            except TimeoutError:
+                print("Chatbox already closed.")
 
         # Fill in Keyword and location.
-        self.click_type(page.get_by_role("searchbox", name="What?"), input_message=keyword)
-        page.get_by_role("searchbox", name="Where?").fill(qth)
+        self.click_type(sk_page.get_by_role("searchbox", name="What?"), input_message=keyword)
+        sk_page.get_by_role("searchbox", name="Where?").fill(qth)
 
-        content_ = page.content()
+        content_ = sk_page.content()
         return content_
 
     def get_corporate_jobs(self, qth: str) -> str:
@@ -83,15 +103,15 @@ class AramarkReader(GeneralReaderPlaywright):
 
         """
         # New Page for additional operations
-        page2 = self.create_new_tab()
-        l_ = "Location"
+        page_corporate = self.create_new_tab()
 
-        self.select_corporate_id(page2)
-        page2.get_by_role("button", name="Load More").click()
-        page2.get_by_label(l_).fill(qth)
-        # self.click_type(page2.get_by_label(l_), input_message=qth, timeout=ARAMARK_TIMEOUT, sleep_time=1)
-        page2.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
-        content_ = page2.content()
+        self.select_corporate_id(page_corporate)
+        self.safe_click(page_corporate.get_by_role("button", name="Load More"), timeout=3000)
+
+        # Don't change this. FOr some reason the website doesn't like it if you use the clicktype
+        page_corporate.get_by_label("Location").fill(qth)
+        page_corporate.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
+        content_ = page_corporate.content()
         return content_
 
 
@@ -100,12 +120,13 @@ def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):
     This is the Aramark reader. It will search for the keywords and then get the corporate jobs.
     Additional logic is added just to check corporate jobs in the Philadelphia area.
     Args:
-        qth:
-        testmode:
+        qth: Location to search for.
+        testmode: If True, will not close the browser.
 
     Returns:
 
     """
+    os.chdir(r'F:\\job_search_utilities')
     with AramarkReader() as ar:
         pages_list = []
         for term in universal_search_terms:

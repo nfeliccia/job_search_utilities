@@ -4,7 +4,7 @@ import keyring
 from playwright.sync_api import Page
 
 from Data.reference_values import universal_search_terms, actual_values
-from common_code import WorkdayReader
+from Source import WorkdayReader
 
 
 class ComcastReader(WorkdayReader):
@@ -23,12 +23,16 @@ class ComcastReader(WorkdayReader):
 
         # Helper method to set up location
         def setup_location(search_text_sl, option_name_sl):
-            sfjok = page.get_by_placeholder("Search for jobs or keywords")
-            self.click_type(sfjok, input_message="", use_sleep=True)
-            page.get_by_role("button", name="Location").click()
+            page.get_by_role(role="button", name="Location").click()
             page.get_by_label("Search All Locations").fill(search_text_sl)
             try:
                 page.get_by_role("option", name=option_name_sl, exact=True).click()
+
+                button_selector = "button[data-automation-id='viewAllJobsButton']"
+
+                # Wait for the button to be visible
+                view_jobs_button = page.wait_for_selector(button_selector, state="visible")
+                view_jobs_button.click()
             except TimeoutError:
                 print(f"TimeoutError: {option_name_sl}")
 

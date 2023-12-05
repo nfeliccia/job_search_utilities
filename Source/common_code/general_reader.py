@@ -1,3 +1,10 @@
+import sys
+
+sys.path.append(r'F:\job_search_utilities\\')
+sys.path.append(r'F:\job_search_utilities\Source')
+sys.path.append(r'F:\job_search_utilities\Source\common_code')
+
+
 import json
 import logging
 from pathlib import Path

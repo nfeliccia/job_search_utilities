@@ -1,7 +1,11 @@
+import sys
+
+sys.path.append(r'F:\job_search_utilities\\')
+sys.path.append(r'F:\job_search_utilities\Source')
+sys.path.append(r'F:\job_search_utilities\Source\common_code')
+
 from Data.reference_values import universal_search_terms
 from common_code import GeneralReaderPlaywright
-
-
 
 CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
 PHILADELPHIA = "253788"
@@ -11,11 +15,13 @@ class CaptechReader(GeneralReaderPlaywright):
 
     def __init__(self, testmode: bool = False):
         super().__init__(root_website=CAPTECH_URL, testmode=testmode)
+        self.cookies_accepted = False
 
     def open_location_url(self):
         # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
         page_olu = self.create_new_tab()
-        self.safe_click(page_olu.get_by_role("button", name="Accept"))
+        if not self.cookies_accepted:
+            self.safe_click(page_olu.get_by_role("button", name="Accept"))
         page_olu.get_by_label("Locations").select_option(PHILADELPHIA)
 
     def search_keyword(self, keyword: str) -> str:
@@ -28,7 +34,6 @@ class CaptechReader(GeneralReaderPlaywright):
 
         """
         page_sk = self.create_new_tab()
-        self.safe_click(page_sk.get_by_role("button", name="Accept"))
         self.click_type(page_sk.get_by_placeholder("Keywords"), input_message=keyword, enter=True)
         page_sk.get_by_label("Locations").select_option(PHILADELPHIA)
         page_sk.get_by_role("button", name="Search", exact=True).click()
@@ -49,4 +54,4 @@ def captech_reader(testmode: bool = False):
 
 
 if __name__ == "__main__":
-    captech_reader(testmode=True)
+    captech_reader(testmode=False)
