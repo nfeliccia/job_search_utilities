@@ -1,5 +1,4 @@
 import logging
-import os
 
 from playwright.sync_api import Page
 
@@ -60,17 +59,31 @@ class AramarkReader(GeneralReaderPlaywright):
         """
         sk_page = self.create_new_tab()
         self.handle_popups(sk_page)
-        sb_what = sk_page.get_by_role("searchbox", name="What?")
-        self.click_type(sb_what, input_message=keyword)
-        sk_page.get_by_role("searchbox", name="Where?").fill(qth)
+        keyword_search_box = sk_page.locator('#form-keyword-4')
+        self.click_type(keyword_search_box, input_message=keyword)
+        location_search_box = sk_page.locator('#form-location-4')
+        location_search_box.fill(qth)
         content_ = sk_page.content()
         return content_
 
     def get_corporate_jobs(self, qth: str) -> str:
+        """
+        For Aramark, I decide to look at just corporate jobs b/c the HQ is in Philadelphia.
+        Args:
+            qth:
+
+        Returns:
+
+        """
         page_corporate = self.create_new_tab()
         self.handle_popups(page_corporate)
         self.select_corporate_id(page_corporate)
-        self.safe_click(page_corporate.get_by_role("button", name="Load More"), timeout=3000)
+        load_more_button = page_corporate.locator('button[name="Load More"]')
+
+        # Handle load more if more jobs are available
+        if load_more_button.is_visible():
+            self.safe_click(load_more_button, timeout=3000)
+
         page_corporate.get_by_label("Location").fill(qth)
         page_corporate.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
         content_ = page_corporate.content()
@@ -78,7 +91,6 @@ class AramarkReader(GeneralReaderPlaywright):
 
 
 def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):
-    os.chdir(r'F:\\job_search_utilities')
     with AramarkReader() as ar:
         pages_list = []
         for term in universal_search_terms:
