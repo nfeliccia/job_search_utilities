@@ -2,16 +2,14 @@ import logging
 
 from playwright.sync_api import Page
 
-from Data.reference_values import actual_values
 from Source import GeneralReaderPlaywright
 
 
 class BimboJobSearcher(GeneralReaderPlaywright):
     BIMBOURL = "https://careers.bimbobakeriesusa.com/careers"
 
-    def __init__(self, testmode: bool = False):
-        super().__init__(root_website=self.BIMBOURL, testmode=testmode)
-        self.rv = actual_values
+    def __init__(self, testmode: bool = False, customer_id: str = None):
+        super().__init__(root_website=self.BIMBOURL, testmode=testmode, customer_id=customer_id)
 
     def click_agree_button(self, page: Page):
         try:
@@ -34,7 +32,7 @@ class BimboJobSearcher(GeneralReaderPlaywright):
 
             # If the desired input is the first one, use first=0; if it's the second one, use first=1
             locator = page_pb.locator(selector).nth(0)
-            locator.set_input_files(self.rv.current_resume_path)
+            locator.set_input_files(self.customer_data.current_resume_path)
             self.click_agree_button(page_pb)
             return page_pb
         except Exception as e:
@@ -76,16 +74,18 @@ class BimboJobSearcher(GeneralReaderPlaywright):
         try:
 
             scat = self.safe_click_and_type
-            email = self.rv.email
-            qth = self.rv.location
-            curr_company = self.rv.current_company
-            curr_title = self.rv.current_title
+            email = self.customer_data.email
+            qth = self.customer_data.location
+            curr_company = self.customer_data.current_company
+            curr_title = self.customer_data.current_title
 
             # Get talent window.
             talent_page = create_talent_community_page(in_page)
-            talent_page.get_by_placeholder("Email").click()
-            talent_page.get_by_placeholder("Email").fill("")
-            scat(locator=talent_page.get_by_placeholder("Email"), input_message=email)
+            # THe email can autofill from the resume, so we need to clear it.
+            email_placeholder = talent_page.get_by_placeholder("Email")
+            email_placeholder.click()
+            email_placeholder.fill("")
+            scat(locator=email_placeholder, input_message=email)
             scat(locator=talent_page.get_by_placeholder("Current Location"), input_message=qth)
             scat(locator=talent_page.get_by_placeholder("Current Company"), input_message=curr_company)
             scat(locator=talent_page.get_by_placeholder("Current Title"), input_message=curr_title)
@@ -98,9 +98,9 @@ class BimboJobSearcher(GeneralReaderPlaywright):
             logging.error(f"Failed to join the talent community: {e}")
 
 
-def bimbo_reader_uploader(testmode: bool = False):
+def bimbo_reader_uploader(testmode: bool = False, customer_id: str = None):
     logging.basicConfig(level=logging.INFO)
-    with BimboJobSearcher() as bjs:
+    with BimboJobSearcher(customer_id=customer_id, testmode=testmode) as bjs:
         job_check_page = bjs.upload_for_job_check()
         jtc = input("Join the talent community y/n")
         if jtc.strip().lower() == 'y':
@@ -109,4 +109,5 @@ def bimbo_reader_uploader(testmode: bool = False):
 
 
 if __name__ == "__main__":
-    bimbo_reader_uploader(testmode=False)
+    nic_ = "nic@secretsmokestack.com"
+    bimbo_reader_uploader(testmode=False, customer_id=nic_)

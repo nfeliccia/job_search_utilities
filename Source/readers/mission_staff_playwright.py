@@ -1,4 +1,3 @@
-from Data.reference_values import universal_search_terms
 from Source import GeneralReaderPlaywright
 
 
@@ -11,15 +10,15 @@ class MissionStaffReader(GeneralReaderPlaywright):
 
     MISSION_STAFF_URL = "https://missionstaff.com/careers/#/"
 
-    def __init__(self, testmode: bool = False):
+    def __init__(self, customer_id: str = None, testmode: bool = False):
         """
         Initializes the MissionStaffReader instance and the underlying Playwright browser.
 
         :param testmode: A boolean indicating whether to launch the browser in headless mode.
         """
-        super().__init__(root_website=self.MISSION_STAFF_URL, testmode=testmode)
+        super().__init__(root_website=self.MISSION_STAFF_URL, customer_id=customer_id, testmode=testmode)
 
-    def search_keyword(self, keyword: str, exact: bool = False) -> str:
+    def run_one_keyword(self, keyword: str, exact: bool = False) -> str:
         """
         Performs a keyword search for job listings on the Mission Staff careers page.
 
@@ -27,6 +26,10 @@ class MissionStaffReader(GeneralReaderPlaywright):
         :param exact: A boolean indicating whether to perform an exact match search.
         :return: The HTML content of the page after performing the search.
         """
+        # Note mission staff doesn't like  quotes
+        keyword = keyword.replace('"', "")
+
+        # Start a new tab.
         page = self.create_new_tab()
         search_box = page.get_by_role("textbox", name="Keyword Search")
         self.click_type(search_box, input_message=keyword, timeout=10000)
@@ -35,15 +38,16 @@ class MissionStaffReader(GeneralReaderPlaywright):
         page.wait_for_load_state('load')
         return page.content()
 
+    def run_all_keywords(self, one_keyword_function=None):
+        super().run_all_keywords(one_keyword_function=self.run_one_keyword)
 
-def mission_staff_reader():
-    with MissionStaffReader(testmode=False) as msr:
-        for term in universal_search_terms:
-            # Mission staff doesn't like quotes in the search terms.
-            term = term.replace('"', "")
-            msr.search_keyword(term, exact=True)
+
+def mission_staff_reader(customer_id: str = None, testmode: bool = False):
+    with MissionStaffReader(customer_id=customer_id, testmode=testmode) as msr:
+        msr.run_all_keywords()
         msr.close_with_test(testmode=msr.testmode)
 
 
 if __name__ == "__main__":
-    mission_staff_reader()
+    nic_ = "nic@secretsmokestack.com"
+    mission_staff_reader(customer_id=nic_, testmode=False)

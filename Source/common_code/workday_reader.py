@@ -8,30 +8,32 @@ from Source import GeneralReaderPlaywright
 
 class WorkdayReader(GeneralReaderPlaywright):
 
-    def __init__(self, workday_url: str = None, testmode: bool = False):
-        super().__init__(root_website=workday_url, testmode=testmode)
+    def __init__(self, customer_id: str = None, workday_url: str = None, testmode: bool = False):
+        super().__init__(root_website=workday_url, testmode=testmode, customer_id=customer_id)
         self.url = workday_url
 
-    def login(self, username: str, password: str):
+    def login(self, company_name: str = None, customer_id: str = None):
         """
         The purpose of this is to login to the comcast website.
         Args:
-            username: username
-            password: password
+            company_name: company name
+            customer_id: username
         """
         page = self.create_new_tab(website=self.url)
         logging.info(f"Logging into {self.url} {datetime.datetime.now()}")
+        secret_password = self.get_secret(company_name=company_name, user_id=self.customer_data.email)
 
-        # Wait for the email to make sure page fully loaded
+        # Wait for email address to be visible
         page.wait_for_selector("xpath=//label[text()='Email Address']", state="visible")
-
         logging.info(f"Email address visible {datetime.datetime.now()}")
-        self.click_type(page.get_by_label("Email Address"), input_message=username)
-        self.click_type(page.get_by_label("Password"), input_message=password)
+
+        # Execute entry.
+        self.click_type(page.get_by_label("Email Address"), input_message=customer_id)
+        self.click_type(page.get_by_label("Password"), input_message=secret_password)
         self.safe_click(page.get_by_role("button", name="Sign In"))
         singed_in_page = page
         return singed_in_page
 
-    def logout(self, page: Page = None, username: str = None):
-        self.safe_click(page.get_by_role("button", name=username))
+    def logout(self, page: Page = None):
+        self.safe_click(page.get_by_role("button", name=self.customer_data.email))
         self.safe_click(page.get_by_label("Sign Out"), )

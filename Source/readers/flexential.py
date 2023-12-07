@@ -22,7 +22,7 @@ class FlexentialReader(WorkdayReader):
         """
         # Login and get main page.
         secret_password = keyring.get_password(service_name=self.FLEXENTIAL_URL, username=self.rv.email, )
-        flexential_page = super().login(username=self.rv.email, password=secret_password)
+        flexential_page = super().login(customer_id=self.rv.email, password=secret_password)
         accept_button = flexential_page.locator('button[data-automation-id="legalNoticeAcceptButton"]')
         self.safe_click(accept_button)
         search_for_jobs = flexential_page.locator("text=Search for Jobs").nth(0)

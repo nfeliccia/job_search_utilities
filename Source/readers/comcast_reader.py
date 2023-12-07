@@ -1,7 +1,7 @@
-import keyring
+import logging
+
 from playwright.sync_api import Page
 
-from Data.reference_values import universal_search_terms, actual_values
 from Source import WorkdayReader
 
 
@@ -16,20 +16,24 @@ class ComcastReader(WorkdayReader):
         ("PA - Philadelphia, 1717 Arch St", "PA - Philadelphia, 1717 Arch St")
     ]
 
-    def __init__(self, testmode: bool = False):
-        super().__init__(workday_url=self.COMCAST_URL, testmode=testmode)
+    def __init__(self, testmode: bool = False, customer_id: str = None):
+        super().__init__(workday_url=self.COMCAST_URL, testmode=testmode, customer_id=customer_id)
 
     def setup_location(self, in_page: Page = None, search_text: str = None, option_name: str = None):
         """
 
         Args:
-            in_page:
-            search_text:
+            in_page: A page with the locaiton drop down menu
+            search_text: text to select out of menu
             option_name:
 
         Returns:
 
         """
+        if in_page is None or search_text is None or option_name is None:
+            logging.error("Page, search text, and option name cannot be None.")
+            return
+
         in_page.get_by_role(role="button", name="Location").click()
         in_page.get_by_label("Search All Locations").fill(search_text)
         try:
@@ -52,18 +56,18 @@ class ComcastReader(WorkdayReader):
         self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message=keyword)
         page.get_by_role("button", name="Search", exact=True).click()
 
+    def run_all_keywords(self):
+        for keyword in self.customer_data.search_terms:
+            self.run_one_keyword(keyword=keyword)
 
-def read_comcast():
-    with ComcastReader() as cr:
-        username = actual_values.email
-        secret_password = keyring.get_password(service_name=cr.COMCAST_URL, username=username)
-        active_server_page = cr.login(username=username, password=secret_password)
-        for keyword in universal_search_terms:
-            cr.run_one_keyword(keyword=keyword)
-        input("Press enter to logout")
-        cr.logout(page=active_server_page, username=username)
+
+def read_comcast(testmode: bool = False, customer_id: str = None):
+    with ComcastReader(testmode=testmode, customer_id=customer_id) as cr:
+        cr.login(company_name='comcast', customer_id=cr.customer_data.email)
+        cr.run_all_keywords()
         cr.close_with_test(testmode=cr.testmode)
 
 
 if __name__ == "__main__":
-    read_comcast()
+    nic_ = "nic@secretsmokestack.com"
+    read_comcast(testmode=False, customer_id=nic_)

@@ -2,7 +2,6 @@ import logging
 
 from playwright.sync_api import Page
 
-from Data.reference_values import universal_search_terms
 from Source import GeneralReaderPlaywright
 
 
@@ -12,8 +11,8 @@ class AramarkReader(GeneralReaderPlaywright):
     INFORMATION_TECHNOLOGY = "Information Technology"
     ARAMARK_URL = "https://careers.aramark.com/search/"
 
-    def __init__(self, testmode: bool = False):
-        super().__init__(root_website=self.ARAMARK_URL, testmode=testmode)
+    def __init__(self, user_id: str = None, testmode: bool = False):
+        super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, user_id=user_id)
         self.cookies_accepted = False
         self.chatbot_closed = False
 
@@ -45,7 +44,7 @@ class AramarkReader(GeneralReaderPlaywright):
                                   error_message="Error selecting 'Information Technology'")
         return page.content()
 
-    def search_keyword(self, keyword: str, qth: str = None) -> str:
+    def search_keyword(self, keyword: str) -> str:
         """
         Search for a keyword. If qth is not None, then it will be used as the location.
         Args:
@@ -62,11 +61,12 @@ class AramarkReader(GeneralReaderPlaywright):
         keyword_search_box = sk_page.locator('#form-keyword-4')
         self.click_type(keyword_search_box, input_message=keyword)
         location_search_box = sk_page.locator('#form-location-4')
+        qth = self.customer_data.location
         location_search_box.fill(qth)
         content_ = sk_page.content()
         return content_
 
-    def get_corporate_jobs(self, qth: str) -> str:
+    def get_corporate_jobs(self) -> str:
         """
         For Aramark, I decide to look at just corporate jobs b/c the HQ is in Philadelphia.
         Args:
@@ -79,6 +79,9 @@ class AramarkReader(GeneralReaderPlaywright):
         self.handle_popups(page_corporate)
         self.select_corporate_id(page_corporate)
         load_more_button = page_corporate.locator('button[name="Load More"]')
+        qth = self.customer_data.location
+        if qth is None:
+            qth = "Philadelphia, PA"
 
         # Handle load more if more jobs are available
         if load_more_button.is_visible():
@@ -89,17 +92,29 @@ class AramarkReader(GeneralReaderPlaywright):
         content_ = page_corporate.content()
         return content_
 
+    def get_search_terms(self) -> list:
+        """
+        Get the search terms from the customer data.
+        Args:
+            page:
 
-def aramark_reader(qth: str = "Philadelphia, PA", testmode: bool = False):
-    with AramarkReader() as ar:
+        Returns:
+
+        """
         pages_list = []
-        for term in universal_search_terms:
-            keyword_result = ar.search_keyword(term, qth=qth)
+        for term in self.customer_data.search_terms:
+            keyword_result = self.search_keyword(term)
             pages_list.append(keyword_result)
-        pages_list.append(ar.get_corporate_jobs(qth=qth))
+        return pages_list
+
+
+def aramark_reader(testmode: bool = False, user_id: str = None):
+    with AramarkReader(user_id=user_id, testmode=testmode) as ar:
+        search_terms = ar.get_search_terms()
+        search_terms.append(ar.get_corporate_jobs())
         ar.close_with_test(testmode=testmode)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    aramark_reader(testmode=False)
+    aramark_reader(testmode=False, user_id="nic@secretsmokestack.com")

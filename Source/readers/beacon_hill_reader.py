@@ -9,8 +9,8 @@ from Source import GeneralReaderPlaywright
 class BeaconHillReader(GeneralReaderPlaywright):
     BEACON_HILL_URL = "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
 
-    def __init__(self, testmode: bool = False):
-        super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode)
+    def __init__(self, testmode: bool = False, customer_id: str = ""):
+        super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
 
     def handle_cookies(self, page: Page = None):
@@ -48,13 +48,14 @@ class BeaconHillReader(GeneralReaderPlaywright):
         return all_keyword_pages
 
 
-def beacon_hill_reader():
+def beacon_hill_reader(customer_id: str = ""):
     logging.basicConfig(level=logging.INFO)
-    with BeaconHillReader(testmode=False) as bhr_reader:
+    with BeaconHillReader(testmode=False, customer_id=customer_id) as bhr_reader:
         bhr_reader.open_location_url()
         bhr_reader.open_all_keywords()
         bhr_reader.close_with_test(testmode=False)
 
 
 if __name__ == "__main__":
-    beacon_hill_reader()
+    nic_ = "nic@secretsmokestack.com"
+    beacon_hill_reader(customer_id=nic_)

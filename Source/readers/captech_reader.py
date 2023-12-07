@@ -1,4 +1,3 @@
-from Data.reference_values import universal_search_terms
 from Source import GeneralReaderPlaywright
 
 
@@ -6,8 +5,8 @@ class CaptechReader(GeneralReaderPlaywright):
     CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
     PHILADELPHIA = "253788"
 
-    def __init__(self, testmode: bool = False):
-        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode)
+    def __init__(self, testmode: bool = False, customer_id: str = None):
+        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
 
     def open_location_url(self):
@@ -35,16 +34,17 @@ class CaptechReader(GeneralReaderPlaywright):
 
     def open_all_keywords(self):
         # Opening URLs for the specified keywords
-        all_keyword_pages = [self.search_keyword(keyword) for keyword in universal_search_terms]
+        all_keyword_pages = [self.search_keyword(keyword) for keyword in self.customer_data.search_terms]
         return all_keyword_pages
 
 
-def captech_reader(testmode: bool = False):
-    with CaptechReader(testmode=testmode) as reader:
+def captech_reader(testmode: bool = False, customer_id: str = None):
+    with CaptechReader(testmode=testmode, customer_id=customer_id) as reader:
         reader.open_location_url()
         reader.open_all_keywords()
         reader.close_with_test(testmode=testmode)
 
 
 if __name__ == "__main__":
-    captech_reader(testmode=False)
+    nic_ = "nic@secretsmokestack.com"
+    captech_reader(testmode=False, customer_id=nic_)

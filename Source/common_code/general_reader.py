@@ -1,17 +1,14 @@
-import sys
-
-sys.path.append(r'F:\job_search_utilities\\')
-sys.path.append(r'F:\job_search_utilities\Source')
-sys.path.append(r'F:\job_search_utilities\Source\common_code')
-
-
 import json
 import logging
 from pathlib import Path
 from time import sleep
 
+import boto3
+from botocore.exceptions import ClientError
 from playwright.sync_api import Locator, TimeoutError  # Assuming synchronous Playwright API
 from playwright.sync_api import sync_playwright
+
+from database_code.customer_data_interface import CustomerDataInterface
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s',
@@ -21,6 +18,15 @@ scraping_parameters_path = Path(r".\Data\scraping_parameters_config.json")
 
 
 class GeneralReaderPlaywright:
+    """
+     Initialize the GeneralReaderPlaywright class.
+
+     Args:
+     - user_id (str): The ID of the user. This is used to fetch the customer data from the database.
+     - root_website (str, optional): The root website that the browser will navigate to. Defaults to None.
+     - testmode (bool, optional): A flag indicating if the instance is in test mode. In test mode, certain behaviors may change, such as how the browser session is closed. Defaults to False.
+     - viewport (dict, optional): A dictionary specifying the size of the viewport. It should have 'width' and 'height' keys. If not provided, the default viewport size is {'width': 1280, 'height': 720}.
+     """
 
     def __enter__(self):
         return self  # this is the object that will be bound to the variable in the `with` statement
@@ -28,18 +34,21 @@ class GeneralReaderPlaywright:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()  # clean up resources here
 
-    def __init__(self, root_website: str = None, testmode: bool = False):
+    def __init__(self, customer_id: str, root_website: str = None, testmode: bool = False, viewport: dict = None):
         self.browser = None
         self.context = None
         self.playwright = None
         self.root_website = root_website
         self.sleep_time = None
         self.standard_timeout = None
+        self.viewport = viewport if viewport else {'width': 1280, 'height': 720}
         self.testmode = testmode
-        self.extract_constants()
+        self.extract_scraping_parameters()
         self.setup_playwright()
+        customer_data_interface = CustomerDataInterface()
+        self.customer_data = customer_data_interface.get_customer_data(customer_id=customer_id)
 
-    def extract_constants(self, spp: Path = scraping_parameters_path):
+    def extract_scraping_parameters(self, spp: Path = scraping_parameters_path):
         """Extract constants from the scraping parameters file."""
         with open(spp, "r") as f:
             scraping_parameters = json.load(f)
@@ -54,7 +63,7 @@ class GeneralReaderPlaywright:
 
         # Configure context options
         context_options = {
-            "viewport": {'width': 1280, 'height': 720},
+            "viewport": self.viewport,
             # Include other context-specific settings here if needed
         }
 
@@ -62,19 +71,10 @@ class GeneralReaderPlaywright:
         self.context = self.browser.new_context(**context_options)
 
         # Set user preferences to disable autofill, etc. using an init script
-        self.context.add_init_script("""
-            const newProto = navigator.__proto__;
-            delete newProto.webdriver;  // to simulate a non-automated environment
-            navigator.__proto__ = newProto;
-
-            Object.defineProperty(navigator, 'plugins', {
-                get: () => [1, 2, 3, 4, 5],
-            });
-            Object.defineProperty(navigator, 'languages', {
-                get: () => ['en-US', 'en'],
-            });
-            // Additional modifications can be added here
-        """)
+        init_script_path = Path(r"./Source/common_code/browser_init_script.js")
+        with open(init_script_path, 'r') as file:
+            init_script = file.read()
+        self.context.add_init_script(init_script)
 
     def create_new_tab(self, website: str = None):
         """
@@ -153,7 +153,8 @@ class GeneralReaderPlaywright:
 
     def safe_click_and_type(self, locator: Locator, input_message: str = "", timeout=None,
                             error_message="Error during click and type operation", enter=False, use_sleep=True):
-        """Attempt to click a locator, type a message, and optionally press Enter, with error handling and custom timeout."""
+        """Attempt to click a locator, type a message, and optionally press Enter, with error handling and custom
+        timeout."""
 
         if timeout is None:
             timeout = self.standard_timeout
@@ -171,3 +172,47 @@ class GeneralReaderPlaywright:
             logging.error(f"{error_message}: {e}")
         if use_sleep:
             sleep(self.sleep_time)
+
+    def get_secret(self, company_name, user_id: str = None):
+        """
+        This function gets the secret from AWS Secrets Manager.
+        Args:
+            user_id:
+
+        Returns:
+
+        """
+        secret_name = f"{company_name}_{user_id}"
+        region_name = "us-east-2"
+
+        # Create a Secrets Manager client
+        session = boto3.session.Session()
+        client = session.client(
+                service_name='secretsmanager',
+                region_name=region_name
+        )
+
+        try:
+            get_secret_value_response = client.get_secret_value(
+                    SecretId=secret_name
+            )
+        except ClientError as e:
+            # For a list of exceptions thrown, see
+            # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+            print(f"{e} happened")
+            raise e
+
+            # Decrypts secret using the associated KMS key.
+        secret = get_secret_value_response['SecretString']
+
+        # Convert the secret from a JSON string to a Python dictionary
+        secret_dict = json.loads(secret)
+
+        # Retrieve the value using the key
+        secret_value = secret_dict[secret_name]
+
+        return secret_value
+
+    def run_all_keywords(self, one_keyword_function=None):
+        for keyword in self.customer_data.search_terms:
+            one_keyword_function(keyword=keyword)

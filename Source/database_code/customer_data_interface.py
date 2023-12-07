@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import boto3
+import botocore
 
 
 @dataclass
@@ -50,33 +51,45 @@ class CustomerDataInterface:
         self.dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
         self.data_type_converter = DataTypeConverter()
 
-    def dynamodb_to_python(self, item):
+    def dynamodb_to_python(self, item) -> ReferenceValues:
         """
         Converts a DynamoDB item to a ReferenceValues instance.
+
+        Args:
+            item: an item retrieved from DynamoDB
         """
         if not isinstance(item, dict):
             logging.error(f"Item is not a dictionary: {item}")
-            return None
+            return ReferenceValues()
+
+        required_keys = ['current_resume_path', 'email', 'first_name', 'last_name', 'linkedin_url', 'phone', 'location',
+                         'current_company', 'current_title', 'address', 'city', 'state', 'zip', 'search_terms']
+        if not all(key in item for key in required_keys):
+            logging.error(f"Item is missing some required keys: {item}")
+            return ReferenceValues()
+
+        # Convert search_terms from DynamoDB format to a list of strings
+        search_terms = [term_dict.get('S') for term_dict in item.get('search_terms')]  # List comprehension
 
         rv_a = ReferenceValues(
-                current_resume_path=Path(item['current_resume_path']),
-                email=item['email'],
-                first_name=item['first_name'],
-                last_name=item['last_name'],
-                linkedin_url=item['linkedin_url'],
-                phone=item['phone'],
-                location=item['location'],
-                current_company=item['current_company'],
-                current_title=item['current_title'],
-                address=item['address'],
-                city=item['city'],
-                state=item['state'],
-                zip=item['zip'],
-                search_terms=item['search_terms']
-        )
+                current_resume_path=Path(item.get('current_resume_path')),
+                email=item.get('email'),
+                first_name=item.get('first_name'),
+                last_name=item.get('last_name'),
+                linkedin_url=item.get('linkedin_url'),
+                phone=item.get('phone'),
+                location=item.get('location'),
+                current_company=item.get('current_company'),
+                current_title=item.get('current_title'),
+                address=item.get('address'),
+                city=item.get('city'),
+                state=item.get('state'),
+                zip=item.get('zip'),
+                search_terms=search_terms)  # Use the converted search_terms list
+
         return rv_a
 
-    def get_customer_data(self, customer_id: str = None):
+    def get_customer_data(self, customer_id: str = None) -> ReferenceValues:
         """
         Retrieves the data for the customer with the given ID.
         Returns a ReferenceValues instance.
@@ -93,6 +106,10 @@ class CustomerDataInterface:
             item = response['Item']
             item_pythonized = self.dynamodb_to_python(item)
             return item_pythonized
+        except botocore.exceptions.BotoCoreError as e:
+            logging.error(f"Failed to get customer data due to a BotoCoreError: {e}")
+        except botocore.exceptions.ClientError as e:
+            logging.error(f"Failed to get customer data due to a ClientError: {e}")
         except Exception as e:
             logging.error(f"Failed to get customer data: {e}")
 
