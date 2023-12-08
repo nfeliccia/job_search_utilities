@@ -1,7 +1,7 @@
 import logging
 
 from Data.reference_values import universal_search_terms
-from readers.readers_common import GeneralReaderPlaywright
+from common_code.general_reader import GeneralReaderPlaywright
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s',

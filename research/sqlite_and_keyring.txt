@@ -1,0 +1,31 @@
+I want to migrate data from an excel workbook to an SQLite3 Database.
+I want to use python.
+The workbook is at F:\job_search_utilities\Data\secrets\password_seed.xlsx
+The information is in Sheet1
+The first row is column headers.
+All columns are string.
+create a SQLite datase at F:\job_search_utilities\Data\secrets\super_secret_database.sqlite
+create a table in there called password_table
+update that table to have the columns as the worksheet
+Please create rows for each value in the worksheet that is not headers.
+Write the python code to do this. 
+
+
+I have a sqlite database located at  F:\job_search_utilities\Data\secrets\super_secret_database.sqlite
+It has a table defined by the following DDL
+CREATE TABLE password_table ("company_name" TEXT, "login_url" TEXT, "user_id" TEXT, "password" TEXT);
+
+
+I want to use python.
+I want to use the keyring package in python.
+I want to write a python script that will do the following: 
+* iterate through the table. 
+Verify if the login_url exists as the service name argument in the database.
+if the login_url exists as the service name argument in the database, then check that the system stored password is the same as the value for that row in the password column.
+if the system stored password is the same as the value for that row in the password column, then do nothing. 
+if the system stored password is NOT the same as the value for that row in the password column, then update the password in the operating system to the value of password in the database.
+
+If the login url does not exist, create the servicename, username, and password in the operating system using python's keyring package. 
+
+after completion of the table, iterate through again and make sure that all the values in the table have the correct data in the operating system. 
+

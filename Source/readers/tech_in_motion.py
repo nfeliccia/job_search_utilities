@@ -1,12 +1,11 @@
 import time
 
+import reference_values
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
-
-import reference_values
 
 SLEEP_TIME = 0.5
 

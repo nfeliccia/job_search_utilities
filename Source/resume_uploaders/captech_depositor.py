@@ -3,7 +3,7 @@ from time import sleep
 
 from Data.reference_values import actual_values
 from readers import GeneralReaderPlaywright
-from readers.captech_playwright import CAPTECH_URL
+from readers.captech_reader import CAPTECH_URL
 
 
 class CaptechDepositor(GeneralReaderPlaywright):
