@@ -30,7 +30,7 @@ class CVSReader(WorkdayReader):
         except TimeoutError:
             logging.error(f"TimeoutError: {option_name}")
 
-    def run_one_keyword(self, keyword: str = None):
+    def search_keyword(self, keyword: str = None):
         """
         The purpose of this function is to run one keyword with the settings for CVS Health.
         Args:
@@ -54,7 +54,7 @@ class CVSReader(WorkdayReader):
         Returns:
 
         """
-        super().run_all_keywords(one_keyword_function=self.run_one_keyword)
+        super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
 def cvs_reader(customer_id: str = None, testmode: bool = False):

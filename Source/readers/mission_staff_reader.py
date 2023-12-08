@@ -17,6 +17,8 @@ class MissionStaffReader(GeneralReaderPlaywright):
         :param testmode: A boolean indicating whether to launch the browser in headless mode.
         """
         super().__init__(root_website=self.MISSION_STAFF_URL, customer_id=customer_id, testmode=testmode)
+        self.run_all_keywords()
+        self.close_with_test(testmode=testmode)
 
     def run_one_keyword(self, keyword: str, exact: bool = False) -> str:
         """
@@ -42,12 +44,7 @@ class MissionStaffReader(GeneralReaderPlaywright):
         super().run_all_keywords(one_keyword_function=self.run_one_keyword)
 
 
-def mission_staff_reader(customer_id: str = None, testmode: bool = False):
-    with MissionStaffReader(customer_id=customer_id, testmode=testmode) as msr:
-        msr.run_all_keywords()
-        msr.close_with_test(testmode=msr.testmode)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    mission_staff_reader(customer_id=nic_, testmode=False)
+    testmode = False
+    MissionStaffReader(customer_id=nic_, testmode=testmode)

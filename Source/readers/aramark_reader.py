@@ -15,6 +15,9 @@ class AramarkReader(GeneralReaderPlaywright):
         super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
         self.chatbot_closed = False
+        self.search_all_keywords()
+        self.get_corporate_jobs()
+        self.close_with_test(testmode=testmode)
 
     def handle_popups(self, page: Page):
         if not self.cookies_accepted:
@@ -92,29 +95,12 @@ class AramarkReader(GeneralReaderPlaywright):
         content_ = page_corporate.content()
         return content_
 
-    def get_search_terms(self) -> list:
-        """
-        Get the search terms from the customer data.
-        Args:
-            page:
-
-        Returns:
-
-        """
-        pages_list = []
-        for term in self.customer_data.search_terms:
-            keyword_result = self.search_keyword(term)
-            pages_list.append(keyword_result)
-        return pages_list
-
-
-def aramark_reader(testmode: bool = False, customer_id: str = None):
-    with AramarkReader(customer_id=customer_id, testmode=testmode) as ar:
-        search_terms = ar.get_search_terms()
-        search_terms.append(ar.get_corporate_jobs())
-        ar.close_with_test(testmode=testmode)
+    def search_all_keywords(self):
+        super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    aramark_reader(testmode=False, customer_id="nic@secretsmokestack.com")
+    nic_ = "nic@secretsmokestack.com"
+    testmode = False
+    AramarkReader(customer_id=nic_, testmode=testmode)

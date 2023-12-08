@@ -8,9 +8,10 @@ class PrudentialReader(GeneralReaderPlaywright):
     prudential_data_analytics_url = "https://jobs.prudential.com/us-en/job-categories/data"
     prudential_technology_page = "https://jobs.prudential.com/us-en/job-categories/technology"
 
-    def __init__(self, testmode: bool = False, qth: str = None):
-        super().__init__(root_website=self.prudential_primary_jobs, testmode=testmode)
-        self.qth = qth
+    def __init__(self, customer_id: str = None, testmode: bool = False):
+        super().__init__(customer_id=customer_id, root_website=self.prudential_primary_jobs, testmode=testmode)
+        self.search_all_keywords()
+        self.close_with_test(testmode=testmode)
 
     def initial_tab(self):
         try:
@@ -40,34 +41,46 @@ class PrudentialReader(GeneralReaderPlaywright):
 
     def search_keyword(self, keyword: str) -> str:
         """
-        This searches for a keyword and returns the page content.
+        This searches for a keyword and returns the sk_page content.
         Args:
             keyword:
 
         Returns:
-            str: page content html in string form.
+            str: sk_page content html in string form.
 
         """
 
         try:
-            page = self.create_new_tab()
-            accept_button_locator = page.locator('#onetrust-accept-btn-handler')
-            self.safe_click(accept_button_locator, error_message="Accept Cookies button not found")
-            jt_ok = page.locator('input[placeholder="Job Title or Keywords"]')
-            self.click_type(locator=jt_ok, input_message=keyword, enter=True)
-            page.wait_for_load_state('load')
-            sk_content = page.content()
+            sk_page = self.create_new_tab(self.prudential_primary_jobs)
+            logging.info("Waiting for the cookie consent popup to be visible")
+            sk_page.wait_for_selector('.onetrust-close-btn-handler', state='visible')
+            logging.info("Cookie consent popup is visible")
+            logging.info("Clicking the close button on the cookie consent popup")
+
+            # Click the close button on the cookie consent popup
+            sk_page.click('.onetrust-close-btn-handler')
+
+            logging.info("Waiting for the search box to be visible")
+            # Click on the wrapper to activate the select component
+            sk_page.click('#react-select-2--value')
+
+            sk_page.wait_for_selector('#react-select-2--value', state='visible')
+            logging.info("Search box is visible")
+            # Create a locator object for the search box using its ID
+
+            logging.info("Filling the search box with the keyword")
+            # Use the fill method to send text to the search box
+            sk_page.fill('#main-search-box', keyword)
+            sk_content = sk_page.content()
             return sk_content
         except Exception as e:
             logging.error(f"Failed to search keyword: {e}")
 
-
-def prudential_reader(testmode: bool = False, qth: str = "Philadelphia, PA"):
-    with PrudentialReader(testmode=testmode, qth=qth) as pru_reader:
-        for keyword in ["Python", "Data Scientist"]:
-            pru_reader.search_keyword(keyword)
-        pru_reader.close_with_test(testmode=testmode)
+    def search_all_keywords(self):
+        super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
 if __name__ == "__main__":
-    prudential_reader(testmode=False)
+    customer_id = "nic@secretsmokestack.com"
+    testmode = False
+    PrudentialReader(customer_id=customer_id, testmode=testmode)

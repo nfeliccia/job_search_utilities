@@ -24,7 +24,7 @@ class CyberCodersReader(GeneralReaderPlaywright):
         ccl_page.wait_for_load_state("networkidle")
         return ccl_page
 
-    def run_one_keyword(self, keyword: str):
+    def search_keyword(self, keyword: str):
         search_url = r'https://www.cybercoders.com/search/dashboard/'
         page = self.create_new_tab(search_url)
 
@@ -37,7 +37,7 @@ class CyberCodersReader(GeneralReaderPlaywright):
         return page
 
     def run_all_keywords(self):
-        super().run_all_keywords(one_keyword_function=self.run_one_keyword)
+        super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
 def cybercoders_reader(customer_id: str = None, testmode: bool = False):

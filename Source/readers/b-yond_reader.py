@@ -10,6 +10,10 @@ class BYond(WorkdayReader):
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(customer_id=customer_id, workday_url=self.B_YOND_URL, testmode=testmode)
+        active_server_page = self.byond_login()
+        self.search_for_jobs(page=active_server_page)
+        self.logout(page=active_server_page, )
+        self.close_with_test(testmode=testmode)
 
     def byond_login(self) -> Page:
         """
@@ -38,13 +42,7 @@ class BYond(WorkdayReader):
         return page
 
 
-def byond_reader(customer_id: str = None, testmode: bool = False):
-    with BYond(customer_id=customer_id, testmode=testmode) as beyond_reader:
-        active_server_page = beyond_reader.byond_login()
-        beyond_reader.search_for_jobs(page=active_server_page)
-        beyond_reader.logout(page=active_server_page, )
-        beyond_reader.close_with_test(testmode=beyond_reader.testmode)
-
-
 if __name__ == '__main__':
-    byond_reader(customer_id="nic@secretsmokestack.com", testmode=False)
+    nic_ = "nic@secretsmokestack.com"
+    testmode = False
+    BYond(customer_id=nic_, testmode=testmode)

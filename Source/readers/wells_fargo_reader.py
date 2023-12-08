@@ -47,7 +47,7 @@ def wells_fargo_reader(testmode: bool = False):
     with WellsFargoReader(testmode=testmode) as wf_reader:
         for keyword in universal_search_terms:
             jobs_page = wf_reader.initial_tab()
-            wf_reader.run_one_keyword(in_page=jobs_page, keyword=keyword)
+            wf_reader.search_keyword(in_page=jobs_page, keyword=keyword)
         wf_reader.close_with_test(testmode=testmode)
 
 

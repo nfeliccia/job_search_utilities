@@ -111,6 +111,7 @@ class GeneralReaderPlaywright:
             print("Browser session closed in test mode.")
         else:
             input("Press Enter to close the browser session.")
+        self.close()
 
     def click_type(self, locator, input_message: str = "", timeout: int = 1000,
                    error_message: str = "Error during click operation", enter=False, use_sleep=True) -> None:

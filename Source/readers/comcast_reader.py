@@ -45,7 +45,7 @@ class ComcastReader(WorkdayReader):
         except TimeoutError:
             print(f"TimeoutError: {option_name}")
 
-    def run_one_keyword(self, keyword: str = None):
+    def search_keyword(self, keyword: str = None):
         # Enter the dialog for jobs
         page = self.create_new_tab(website=self.search_url)
 
@@ -58,7 +58,7 @@ class ComcastReader(WorkdayReader):
 
     def run_all_keywords(self):
         for keyword in self.customer_data.search_terms:
-            self.run_one_keyword(keyword=keyword)
+            self.search_keyword(keyword=keyword)
 
 
 def read_comcast(testmode: bool = False, customer_id: str = None):
