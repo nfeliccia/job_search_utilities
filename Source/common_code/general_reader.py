@@ -1,5 +1,6 @@
 import json
 import logging
+import random
 from pathlib import Path
 from time import sleep
 
@@ -8,7 +9,7 @@ from botocore.exceptions import ClientError
 from playwright.sync_api import Locator, TimeoutError  # Assuming synchronous Playwright API
 from playwright.sync_api import sync_playwright
 
-from database_code.customer_data_interface import CustomerDataInterface
+from Source.database_code.customer_data_interface import CustomerDataInterface
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s',
@@ -45,17 +46,17 @@ class GeneralReaderPlaywright:
         self.testmode = testmode
         self.extract_scraping_parameters()
         self.setup_playwright()
-        customer_data_interface = CustomerDataInterface()
-        self.customer_data = customer_data_interface.get_customer_data(customer_id=customer_id)
+        self.customer_data = CustomerDataInterface().get_customer_data(customer_id=customer_id)
 
-    def extract_scraping_parameters(self, spp: Path = scraping_parameters_path):
-        """Extract constants from the scraping parameters file."""
+    def extract_scraping_parameters(self, spp: Path = scraping_parameters_path) -> None:
+        """Extract constants from the scraping parameters file. This file should be in JSON format.
+        This file is stored locally. Maybe someday it can be editable by the user."""
         with open(spp, "r") as f:
             scraping_parameters = json.load(f)
         self.standard_timeout = scraping_parameters["standard_timeout"]
         self.sleep_time = scraping_parameters["standard_sleep"]
 
-    def setup_playwright(self):
+    def setup_playwright(self) -> None:
         self.playwright = sync_playwright().start()
 
         # Launch the browser. If you don't need persistent user data, you can omit 'user_data_dir'
@@ -112,17 +113,20 @@ class GeneralReaderPlaywright:
             input("Press Enter to close the browser session.")
 
     def click_type(self, locator, input_message: str = "", timeout: int = 1000,
-                   error_message: str = "Error during click operation", enter=False, use_sleep=True):
+                   error_message: str = "Error during click operation", enter=False, use_sleep=True) -> None:
         """
         The purpose of this function is to click a locator and then type something emulating a human.
         Args:
-            locator:
-            timeout:
-            error_message:
-
+            use_sleep: Wait after typing - default is True  to mimic human behavior.
+            enter: press enter when done
+            locator: Playwright Locator object  - this is the element to click
+            timeout: Passable time out.
+            error_message: Default error message to pass hing goes wrong.
+            input_message: The message to type. Default is empty string.
         Returns:
 
         """
+
         try:
             self.safe_click(locator, timeout=timeout, error_message=error_message)
             locator.type(input_message)
@@ -132,7 +136,7 @@ class GeneralReaderPlaywright:
             print(f"{error_message}: {e}")
 
         if use_sleep:
-            sleep(self.sleep_time)
+            self.vari_sleep(self.sleep_time, variance_percentage=10)
 
     def safe_click(self, locator: Locator, timeout=None, error_message="Error during click operation", use_sleep=True):
         """Attempt to click a locator with error handling and custom timeout."""
@@ -149,7 +153,7 @@ class GeneralReaderPlaywright:
         except Exception as e:
             logging.error(f"{error_message}: {e}")
         if use_sleep:
-            sleep(self.sleep_time)
+            self.vari_sleep(self.sleep_time, variance_percentage=10)
 
     def safe_click_and_type(self, locator: Locator, input_message: str = "", timeout=None,
                             error_message="Error during click and type operation", enter=False, use_sleep=True):
@@ -171,13 +175,14 @@ class GeneralReaderPlaywright:
         except Exception as e:
             logging.error(f"{error_message}: {e}")
         if use_sleep:
-            sleep(self.sleep_time)
+            self.vari_sleep(self.sleep_time, variance_percentage=10)
 
     def get_secret(self, company_name, user_id: str = None):
         """
         This function gets the secret from AWS Secrets Manager.
         Args:
-            user_id:
+            company_name: Company name. Used to make the first half of the identifier.
+            user_id: User ID. Used to make the second half of the identifier.
 
         Returns:
 
@@ -187,32 +192,49 @@ class GeneralReaderPlaywright:
 
         # Create a Secrets Manager client
         session = boto3.session.Session()
-        client = session.client(
-                service_name='secretsmanager',
-                region_name=region_name
-        )
+        client = session.client(service_name='secretsmanager', region_name=region_name)
 
         try:
-            get_secret_value_response = client.get_secret_value(
-                    SecretId=secret_name
-            )
+            logging.info(f"Retrieving secret '{secret_name}' from AWS Secrets Manager...")
+            get_secret_value_response = client.get_secret_value(SecretId=secret_name)
         except ClientError as e:
-            # For a list of exceptions thrown, see
-            # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
-            print(f"{e} happened")
+            logging.error(f"Error retrieving secret '{secret_name}': {e}")
             raise e
 
-            # Decrypts secret using the associated KMS key.
+        # Decrypts secret using the associated KMS key.
         secret = get_secret_value_response['SecretString']
 
         # Convert the secret from a JSON string to a Python dictionary
         secret_dict = json.loads(secret)
 
         # Retrieve the value using the key
-        secret_value = secret_dict[secret_name]
-
+        secret_value = secret_dict.get(secret_name)
+        logging.info(f"Successfully retrieved secret '{secret_name}'.")
         return secret_value
 
-    def run_all_keywords(self, one_keyword_function=None):
+    def run_all_keywords(self, one_keyword_function=None) -> None:
+        """
+        This function creates a global function to loop through all the keywords.
+        Each website has different HTML. Therefore each website needs a different function.
+        Args:
+            one_keyword_function: A function unique to each website.
+
+        Returns:
+
+        """
         for keyword in self.customer_data.search_terms:
             one_keyword_function(keyword=keyword)
+
+    def vari_sleep(self, base_sleep_time, variance_percentage):
+        """
+        Sleeps for a variable amount of time based on the base sleep time and a percentage variance.
+
+        Args:
+            base_sleep_time (float): The base amount of time to sleep in seconds.
+            variance_percentage (int): The percentage of variance to apply to the base sleep time.
+        """
+        variance = base_sleep_time * (variance_percentage / 100)
+        actual_sleep_time = base_sleep_time + random.uniform(-variance, variance)
+        if actual_sleep_time < 0:
+            actual_sleep_time = 0
+        sleep(actual_sleep_time)

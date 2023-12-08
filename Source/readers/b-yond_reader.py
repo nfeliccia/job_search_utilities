@@ -16,11 +16,9 @@ class BYond(WorkdayReader):
         Login to the byond website.
         Returns: Playwright Page Object
         """
-
         B_YOND_USERNAME = self.customer_data.email
-        secret_password = self.get_secret(company_name='b_yond', user_id=B_YOND_USERNAME, )
         try:
-            active_server_page = self.login(customer_id=B_YOND_USERNAME, password=secret_password, )
+            active_server_page = self.login(customer_id=B_YOND_USERNAME, company_name='b_yond')
             return active_server_page
         except Exception as e:
             logging.error(f"Failed to login: {e}")
@@ -44,7 +42,7 @@ def byond_reader(customer_id: str = None, testmode: bool = False):
     with BYond(customer_id=customer_id, testmode=testmode) as beyond_reader:
         active_server_page = beyond_reader.byond_login()
         beyond_reader.search_for_jobs(page=active_server_page)
-        beyond_reader.logout(page=active_server_page, username=customer_id, )
+        beyond_reader.logout(page=active_server_page, )
         beyond_reader.close_with_test(testmode=beyond_reader.testmode)
 
 

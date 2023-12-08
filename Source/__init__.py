@@ -1,5 +1,5 @@
-from common_code.general_reader import GeneralReaderPlaywright
-from common_code.workday_reader import WorkdayReader
+from Source.common_code.general_reader import GeneralReaderPlaywright
+from Source.common_code.workday_reader import WorkdayReader
 
 GeneralReaderPlaywright
 

@@ -11,8 +11,8 @@ class AramarkReader(GeneralReaderPlaywright):
     INFORMATION_TECHNOLOGY = "Information Technology"
     ARAMARK_URL = "https://careers.aramark.com/search/"
 
-    def __init__(self, user_id: str = None, testmode: bool = False):
-        super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, user_id=user_id)
+    def __init__(self, customer_id: str = None, testmode: bool = False):
+        super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
         self.chatbot_closed = False
 
@@ -108,8 +108,8 @@ class AramarkReader(GeneralReaderPlaywright):
         return pages_list
 
 
-def aramark_reader(testmode: bool = False, user_id: str = None):
-    with AramarkReader(user_id=user_id, testmode=testmode) as ar:
+def aramark_reader(testmode: bool = False, customer_id: str = None):
+    with AramarkReader(customer_id=customer_id, testmode=testmode) as ar:
         search_terms = ar.get_search_terms()
         search_terms.append(ar.get_corporate_jobs())
         ar.close_with_test(testmode=testmode)
@@ -117,4 +117,4 @@ def aramark_reader(testmode: bool = False, user_id: str = None):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    aramark_reader(testmode=False, user_id="nic@secretsmokestack.com")
+    aramark_reader(testmode=False, customer_id="nic@secretsmokestack.com")

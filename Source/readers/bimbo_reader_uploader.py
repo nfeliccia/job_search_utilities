@@ -14,9 +14,14 @@ class BimboJobSearcher(GeneralReaderPlaywright):
     def click_agree_button(self, page: Page):
         try:
             agree_button = page.locator('role=button[name="I Agree"]')
-            self.safe_click(agree_button)
+            if agree_button.is_visible():
+                self.safe_click(agree_button)
+            else:
+                logging.warning("'I Agree' button not visible")
+        except TimeoutError as e:
+            logging.error(f"Timeout while waiting for 'I Agree' button: {e}")
         except Exception as e:
-            logging.error(f"Failed to click on 'I Agree' button: {e}")
+            logging.error(f"Unexpected error clicking on 'I Agree' button: {e}")
 
     def upload_for_job_check(self):
         """
@@ -40,60 +45,40 @@ class BimboJobSearcher(GeneralReaderPlaywright):
 
     def join_talent_community(self, in_page: Page = None):
         """
-        This contains all the code to join the talent community.
+        Joins the talent community.
         Args:
-            in_page:
-
-        Returns:
-
+            in_page: Page object to interact with.
         """
-
-        def create_talent_community_page(page: Page):
-            """
-            This method creates a new tab and navigates to the talent community page.
-            Args:
-                page:
-
-            Returns:
-
-            """
-            try:
-                page = self.create_new_tab(page.url)
-                join_tn_link = page.query_selector('a[data-test-id="join-tn-link"]')
-
-                if join_tn_link:
-                    join_tn_link.click()
-                    logging.info("Navigated to 'Join Talent Network'")
-                else:
-                    logging.error("Link not found")
-                return page
-
-            except Exception as e:
-                logging.error(f"An error occurred: {e}")
-
+        talent_community_url = "https://careers.bimbobakeriesusa.com/careers/join?domain=grupobimbo.com"
         try:
+            # Reuse the existing page if it's already on the talent community URL
+            talent_page = self.create_new_tab(talent_community_url)
 
-            scat = self.safe_click_and_type
-            email = self.customer_data.email
-            qth = self.customer_data.location
-            curr_company = self.customer_data.current_company
-            curr_title = self.customer_data.current_title
+            # Check for the "Join Talent Network" link
+            join_tn_link = talent_page.query_selector('a[data-test-id="join-tn-link"]')
+            if join_tn_link:
+                join_tn_link.click()
+                logging.info("Navigated to 'Join Talent Network'")
+            else:
+                logging.error("Link not found")
 
-            # Get talent window.
-            talent_page = create_talent_community_page(in_page)
-            # THe email can autofill from the resume, so we need to clear it.
-            email_placeholder = talent_page.get_by_placeholder("Email")
-            email_placeholder.click()
-            email_placeholder.fill("")
-            scat(locator=email_placeholder, input_message=email)
-            scat(locator=talent_page.get_by_placeholder("Current Location"), input_message=qth)
-            scat(locator=talent_page.get_by_placeholder("Current Company"), input_message=curr_company)
-            scat(locator=talent_page.get_by_placeholder("Current Title"), input_message=curr_title)
-            npc = talent_page.locator('i[data-test-id="careers-talent-network-privacy-checkbox-0"]')
-            scat(locator=npc)
-            sub_locator = talent_page.locator('button[data-test-id="jtn-submit-btn"]')
-            scat(locator=sub_locator)
-            logging.info("Submitted to talent. ")
+            # Centralize locator creation
+            location_locator = talent_page.get_by_placeholder("Current Location")
+            company_locator = talent_page.get_by_placeholder("Current Company")
+            title_locator = talent_page.get_by_placeholder("Current Title")
+            privacy_checkbox = talent_page.locator('i[data-test-id="careers-talent-network-privacy-checkbox-0"]')
+            submit_button = talent_page.locator('button[data-test-id="jtn-submit-btn"]')
+
+            # Fill in the form
+
+            self.safe_click_and_type(locator=location_locator, input_message=self.customer_data.location)
+            self.safe_click_and_type(locator=company_locator, input_message=self.customer_data.current_company)
+            self.safe_click_and_type(locator=title_locator, input_message=self.customer_data.current_title)
+            self.safe_click_and_type(locator=privacy_checkbox)
+            self.safe_click_and_type(locator=submit_button)
+
+            logging.info("Submitted to talent community.")
+
         except Exception as e:
             logging.error(f"Failed to join the talent community: {e}")
 
