@@ -1,4 +1,5 @@
 import logging
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -8,20 +9,20 @@ import botocore
 
 @dataclass
 class ReferenceValues:
-    current_resume_path: Path
+    address: str
+    city: str
+    current_company: str
+    current_resume_path: str
+    current_title: str
     email: str
     first_name: str
     last_name: str
     linkedin_url: str
-    phone: str
     location: str
-    current_company: str
-    current_title: str
-    address: str
-    city: str
+    phone: str
+    search_terms: list
     state: str
     zip: str
-    search_terms: list
 
 
 class DataTypeConverter:
@@ -51,6 +52,27 @@ class CustomerDataInterface:
         self.dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
         self.data_type_converter = DataTypeConverter()
 
+    def download_resume_from_s3(self, s3_url):
+        # Check if the path is an S3 URL
+        if not s3_url.startswith('s3://'):
+            return s3_url  # Return the original path if it's not an S3 URL
+
+        # Parse the S3 URL
+        s3_url_parts = s3_url.replace("s3://", "").split("/")
+        bucket = s3_url_parts[0]
+        key = "/".join(s3_url_parts[1:])
+
+        # Create a temporary file
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+        tfn = temp_file.name
+        temp_file.close()  # Close the file handle to avoid resource leaks
+
+        # Download the file from S3
+        s3 = boto3.client('s3')
+        s3.download_file(bucket, key, tfn)
+        temp_file.close()  # Close the file handle to avoid resource leaks
+        return tfn
+
     def dynamodb_to_python(self, item) -> ReferenceValues:
         """
         Converts a DynamoDB item to a ReferenceValues instance.
@@ -72,20 +94,21 @@ class CustomerDataInterface:
         search_terms = [term_dict.get('S') for term_dict in item.get('search_terms')]  # List comprehension
 
         rv_a = ReferenceValues(
-                current_resume_path=Path(item.get('current_resume_path')),
+                address=item.get('address'),
+                city=item.get('city'),
+                current_company=item.get('current_company'),
+                current_resume_path=item.get('current_resume_path'),
+                current_title=item.get('current_title'),
                 email=item.get('email'),
                 first_name=item.get('first_name'),
                 last_name=item.get('last_name'),
                 linkedin_url=item.get('linkedin_url'),
-                phone=item.get('phone'),
                 location=item.get('location'),
-                current_company=item.get('current_company'),
-                current_title=item.get('current_title'),
-                address=item.get('address'),
-                city=item.get('city'),
+                phone=item.get('phone'),
+                search_terms=search_terms,
                 state=item.get('state'),
                 zip=item.get('zip'),
-                search_terms=search_terms)  # Use the converted search_terms list
+        )  # Use the converted search_terms list
 
         return rv_a
 
@@ -98,13 +121,17 @@ class CustomerDataInterface:
             raise ValueError("Customer ID cannot be None")
         try:
             table = self.dynamodb.Table('customer_data')
-            response = table.get_item(
-                    Key={
-                        'customer_id': customer_id
-                    }
-            )
+            response = table.get_item(Key={'customer_id': customer_id})
             item = response['Item']
             item_pythonized = self.dynamodb_to_python(item)
+
+            # Check and download the resume from S3 if necessary
+            resume_s3_path = item_pythonized.current_resume_path
+            if resume_s3_path.startswith("s3://"):
+                item_pythonized.current_resume_path = self.download_resume_from_s3(resume_s3_path)
+            else:
+                item_pythonized.current_resume_path = Path(resume_s3_path)  # Convert to Path object if not S3 path
+
             return item_pythonized
         except botocore.exceptions.BotoCoreError as e:
             logging.error(f"Failed to get customer data due to a BotoCoreError: {e}")

@@ -95,4 +95,5 @@ def bimbo_reader_uploader(testmode: bool = False, customer_id: str = None):
 
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    bimbo_reader_uploader(testmode=False, customer_id=nic_)
+    testmode = False
+    bimbo_reader_uploader(testmode=testmode, customer_id=nic_)
