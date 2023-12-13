@@ -1,3 +1,3 @@
-from readers.aramark_reader import aramark_reader
-from readers.comcast_reader import read_comcast
-from readers.fedex_reader_uploader import fedex_reader_uploader
+from readers.aramark_reader import AramarkReader
+from readers.b_yond_reader import BYondReader
+from readers.beacon_hill_reader import BeaconHillReader

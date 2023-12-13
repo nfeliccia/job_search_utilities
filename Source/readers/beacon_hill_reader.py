@@ -12,6 +12,9 @@ class BeaconHillReader(GeneralReaderPlaywright):
     def __init__(self, testmode: bool = False, customer_id: str = ""):
         super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
+        self.open_location_url()
+        self.open_all_keywords()
+        self.close_with_test(testmode=False)
 
     def handle_cookies(self, page: Page = None):
         if not self.cookies_accepted:
@@ -49,27 +52,22 @@ class BeaconHillReader(GeneralReaderPlaywright):
             lm_ = page_sk.locator(".facetwp-icon.locate-me")
             self.safe_click(lm_, timeout=2000)
             kl_ = page_sk.locator(".facetwp-location")
-            self.click_type(kl_, input_message=self.customer_data.location, enter=True, timeout=2000)
+            self.safe_click(kl_, timeout=2000)
+            kl_.press("Enter")
+
 
         page_sk.wait_for_selector("p.how_many_jobs_text:has-text('jobs available for search')", state="visible")
         content = page_sk.content()
         return content
 
     def open_all_keywords(self):
-        all_keyword_pages = [self.search_keyword(keyword, use_location=False) for keyword in universal_search_terms]
         more_keyword_pages = [self.search_keyword(keyword, use_location=True) for keyword in universal_search_terms]
+        all_keyword_pages = [self.search_keyword(keyword, use_location=False) for keyword in universal_search_terms]
         all_keyword_pages.extend(more_keyword_pages)
         return all_keyword_pages
 
 
-def beacon_hill_reader(customer_id: str = ""):
-    logging.basicConfig(level=logging.INFO)
-    with BeaconHillReader(testmode=False, customer_id=customer_id) as bhr_reader:
-        bhr_reader.open_location_url()
-        bhr_reader.open_all_keywords()
-        bhr_reader.close_with_test(testmode=False)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    beacon_hill_reader(customer_id=nic_)
+    testmode = False
+    BeaconHillReader(testmode=testmode, customer_id=nic_)

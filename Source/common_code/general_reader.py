@@ -66,8 +66,9 @@ class GeneralReaderPlaywright:
         context_options = {
             "viewport": self.viewport,
             # Include other context-specific settings here if needed
+            "geolocation": {'latitude': 40.04, 'longitude': -75.1},  # Mock geolocation
+            "permissions": ['geolocation']  # Grant permission to access geolocation
         }
-
         # Create a new context with the specified options
         self.context = self.browser.new_context(**context_options)
 

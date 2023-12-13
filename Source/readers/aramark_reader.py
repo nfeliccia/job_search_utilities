@@ -10,6 +10,7 @@ class AramarkReader(GeneralReaderPlaywright):
     CORPORATE_FIELD_SUPPORT = "Corporate & Field Support"
     INFORMATION_TECHNOLOGY = "Information Technology"
     ARAMARK_URL = "https://careers.aramark.com/search/"
+    company_name = "aramark"
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, customer_id=customer_id)

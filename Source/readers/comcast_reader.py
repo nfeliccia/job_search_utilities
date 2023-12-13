@@ -18,6 +18,9 @@ class ComcastReader(WorkdayReader):
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(workday_url=self.COMCAST_URL, testmode=testmode, customer_id=customer_id)
+        self.login(company_name='comcast', customer_id=self.customer_data.email)
+        self.run_all_keywords()
+        self.close_with_test(testmode=testmode)
 
     def setup_location(self, in_page: Page = None, search_text: str = None, option_name: str = None):
         """
@@ -37,7 +40,8 @@ class ComcastReader(WorkdayReader):
         in_page.get_by_role(role="button", name="Location").click()
         in_page.get_by_label("Search All Locations").fill(search_text)
         try:
-            in_page.get_by_role("option", name=option_name, exact=True).click()
+            option_ = in_page.get_by_role("option", name=option_name, exact=True)
+            self.safe_click(option_, timeout=3000, use_sleep=False)
             button_selector = "button[data-automation-id='viewAllJobsButton']"
             # Wait for the button to be visible
             view_jobs_button = in_page.wait_for_selector(button_selector, state="visible")
@@ -61,13 +65,7 @@ class ComcastReader(WorkdayReader):
             self.search_keyword(keyword=keyword)
 
 
-def read_comcast(testmode: bool = False, customer_id: str = None):
-    with ComcastReader(testmode=testmode, customer_id=customer_id) as cr:
-        cr.login(company_name='comcast', customer_id=cr.customer_data.email)
-        cr.run_all_keywords()
-        cr.close_with_test(testmode=cr.testmode)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    read_comcast(testmode=False, customer_id=nic_)
+    testmode = False
+    ComcastReader(testmode=testmode, customer_id=nic_)
