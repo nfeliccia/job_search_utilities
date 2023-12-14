@@ -2,12 +2,12 @@ import logging
 
 from playwright.sync_api import Page
 
-from Data.reference_values import universal_search_terms
 from Source import GeneralReaderPlaywright
 
 
 class BeaconHillReader(GeneralReaderPlaywright):
     BEACON_HILL_URL = "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
+    company_name = "beacon_hill"
 
     def __init__(self, testmode: bool = False, customer_id: str = ""):
         super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode, customer_id=customer_id)
@@ -33,11 +33,12 @@ class BeaconHillReader(GeneralReaderPlaywright):
     def search_keyword(self, keyword: str, use_location: bool = False) -> str:
         """
         The purpose of this code is to search an individual keyword. It will open a new tab and search for the keyword.
-        Becuase remote jobs aer shown we'll pass through twice. Once without location and once with location.
+        Because remote jobs aer shown we'll pass through twice. Once without location and once with location.
         Args:
             keyword: string. A word to search for.
 
         Returns:
+            str" page content html in string form.
 
         """
         page_sk = self.create_new_tab()
@@ -48,21 +49,29 @@ class BeaconHillReader(GeneralReaderPlaywright):
         kw_ = page_sk.get_by_placeholder("Keyword or Job Title")
         self.click_type(kw_, input_message=keyword, enter=kw_enter, timeout=2000)
 
+        # SO this website uses the location of the browser. Just clicking in the location box loads in the location.
         if use_location:
             lm_ = page_sk.locator(".facetwp-icon.locate-me")
-            self.safe_click(lm_, timeout=2000)
             kl_ = page_sk.locator(".facetwp-location")
+            self.safe_click(lm_, timeout=2000)
             self.safe_click(kl_, timeout=2000)
             kl_.press("Enter")
-
 
         page_sk.wait_for_selector("p.how_many_jobs_text:has-text('jobs available for search')", state="visible")
         content = page_sk.content()
         return content
 
-    def open_all_keywords(self):
-        more_keyword_pages = [self.search_keyword(keyword, use_location=True) for keyword in universal_search_terms]
-        all_keyword_pages = [self.search_keyword(keyword, use_location=False) for keyword in universal_search_terms]
+    def open_all_keywords(self) -> list:
+        """
+        The purpose of this code is to open all keywords and return a list of pages.
+        Returns:
+
+        """
+        st_ = self.customer_data.search_terms
+        # Beacon hill doesn't have a lot of jobs, except for python developer, so we run once without locatin
+        # and then we run again with location.
+        more_keyword_pages = [self.search_keyword(keyword, use_location=True) for keyword in st_]
+        all_keyword_pages = [self.search_keyword(keyword, use_location=False) for keyword in st_]
         all_keyword_pages.extend(more_keyword_pages)
         return all_keyword_pages
 

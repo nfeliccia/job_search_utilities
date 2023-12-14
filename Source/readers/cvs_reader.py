@@ -15,6 +15,11 @@ class CVSReader(WorkdayReader):
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(workday_url=self.CVS_URL, testmode=testmode, customer_id=customer_id)
+        active_server_page = self.login(company_name='cvs', customer_id=self.customer_data.email)
+        self.run_all_keywords()
+        input("Press enter to logout")
+        self.logout(page=active_server_page)
+        self.close_with_test(testmode=testmode)
 
     def setup_location(self, page, search_text, option_name):
         self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message="")
@@ -57,16 +62,7 @@ class CVSReader(WorkdayReader):
         super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
-def cvs_reader(customer_id: str = None, testmode: bool = False):
-    with CVSReader(customer_id=customer_id, testmode=testmode) as cr:
-        active_server_page = cr.login(company_name='cvs', customer_id=cr.customer_data.email)
-        cr.run_all_keywords()
-        input("Press enter to logout")
-        cr.logout(page=active_server_page)
-        cr.close_with_test(testmode=cr.testmode)
-
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    cvs_reader(customer_id=nic_, testmode=False)
+    testmode = False
+    CVSReader(customer_id=nic_, testmode=testmode)

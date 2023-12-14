@@ -3,9 +3,13 @@ from Source import GeneralReaderPlaywright
 
 class CyberCodersReader(GeneralReaderPlaywright):
     CYBERCODERS_URL = "https://www.cybercoders.com/"
+    company_name = 'cyber_coders'
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.CYBERCODERS_URL, testmode=testmode, customer_id=customer_id)
+        self.cyber_coders_login()
+        self.run_all_keywords()
+        self.close_with_test(testmode=self.testmode)
 
     def cyber_coders_login(self):
         company_name = 'cyber_coders'
@@ -40,13 +44,7 @@ class CyberCodersReader(GeneralReaderPlaywright):
         super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
-def cybercoders_reader(customer_id: str = None, testmode: bool = False):
-    with CyberCodersReader(customer_id=customer_id, testmode=testmode) as cr:
-        cr.cyber_coders_login()
-        cr.run_all_keywords()
-        cr.close_with_test(testmode=cr.testmode)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    cybercoders_reader(customer_id=nic_)
+    testmode = False
+    CyberCodersReader(customer_id=nic_, testmode=testmode)

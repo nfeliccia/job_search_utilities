@@ -10,6 +10,9 @@ class FedexReaderUploader(WorkdayReader):
 
     def __init__(self, customer_id=None, testmode: bool = False):
         super().__init__(customer_id=customer_id, testmode=testmode, workday_url=self.FEDEX_URL, )
+        initial_page = self.fedex_login()
+        self.upload_resume_for_match(in_page=initial_page)
+        self.close_with_test(testmode=self.testmode)
 
     def fedex_login(self):
         """
@@ -42,13 +45,7 @@ class FedexReaderUploader(WorkdayReader):
         in_page.get_by_role(role="button", name="Get Jobs").click()
 
 
-def fedex_reader_uploader(customer_id: str = None, testmode: bool = False):
-    with FedexReaderUploader(customer_id=customer_id, testmode=testmode) as fru:
-        initial_page = fru.fedex_login()
-        fru.upload_resume_for_match(in_page=initial_page)
-        fru.close_with_test(testmode=fru.testmode)
-
-
 if __name__ == '__main__':
     nic_ = "nic@secretsmokestack.com"
-    fedex_reader_uploader(customer_id=nic_, testmode=False)
+    testmode = False
+    FedexReaderUploader(customer_id=nic_, testmode=testmode)

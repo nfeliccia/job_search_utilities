@@ -40,7 +40,10 @@ class CollaberaReader(GeneralReaderPlaywright):
             logging.error("Keyword cannot be None or an empty string.")
             return ""
         page = self.create_new_tab()
-        self.click_type(locator=page.get_by_placeholder("Job Title or Keywords"), input_message=keyword, enter=True)
+        jt_or_k = page.get_by_placeholder("Job Title or Keywords")
+        l_ = page.locator('input[name="location"]')
+        self.click_type(locator=jt_or_k, input_message=keyword, enter=False)
+        self.click_type(locator=l_, input_message=self.customer_data.location, enter=True)
         self.accept_cookies(page=page)
         sk_content = page.content()
         return sk_content
@@ -49,7 +52,6 @@ class CollaberaReader(GeneralReaderPlaywright):
         pages_list = []
         for keyword in self.customer_data.search_terms:
             pages_list.append(self.search_keyword(keyword))
-
         return pages_list
 
 

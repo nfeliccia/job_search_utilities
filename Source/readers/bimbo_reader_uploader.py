@@ -7,9 +7,23 @@ from Source import GeneralReaderPlaywright
 
 class BimboJobSearcher(GeneralReaderPlaywright):
     BIMBOURL = "https://careers.bimbobakeriesusa.com/careers"
+    TALENT_COMMUNITY_URL = "https://careers.bimbobakeriesusa.com/careers/join?domain=grupobimbo.com"
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.BIMBOURL, testmode=testmode, customer_id=customer_id)
+        self.testmode = testmode
+        self.bimbo_primary_loop()
+
+    def bimbo_primary_loop(self):
+        """
+        This is the main loop for the bimbo job searcher. It will search for jobs, upload the resume, and then
+        join the talent community.
+        """
+        job_check_page = self.upload_for_job_check()
+        jtc = input("Join the talent community y/n")
+        if jtc.strip().lower() == 'y':
+            self.join_talent_community(in_page=job_check_page)
+        self.close_with_test(testmode=self.testmode)
 
     def click_agree_button(self, page: Page):
         try:
@@ -29,7 +43,6 @@ class BimboJobSearcher(GeneralReaderPlaywright):
         Returns:
 
         """
-
         try:
             page_pb = self.create_new_tab()
             selector = '.dropzone-container input[type="file"]'
@@ -49,10 +62,10 @@ class BimboJobSearcher(GeneralReaderPlaywright):
         Args:
             in_page: Page object to interact with.
         """
-        talent_community_url = "https://careers.bimbobakeriesusa.com/careers/join?domain=grupobimbo.com"
+
         try:
             # Reuse the existing page if it's already on the talent community URL
-            talent_page = self.create_new_tab(talent_community_url)
+            talent_page = self.create_new_tab(self.TALENT_COMMUNITY_URL)
 
             # Check for the "Join Talent Network" link
             join_tn_link = talent_page.query_selector('a[data-test-id="join-tn-link"]')
@@ -63,6 +76,7 @@ class BimboJobSearcher(GeneralReaderPlaywright):
                 logging.error("Link not found")
 
             # Centralize locator creation
+            email_selector = talent_page.locator('input[aria-label="Email"]')
             location_locator = talent_page.get_by_placeholder("Current Location")
             company_locator = talent_page.get_by_placeholder("Current Company")
             title_locator = talent_page.get_by_placeholder("Current Title")
@@ -70,7 +84,8 @@ class BimboJobSearcher(GeneralReaderPlaywright):
             submit_button = talent_page.locator('button[data-test-id="jtn-submit-btn"]')
 
             # Fill in the form
-
+            email_selector.fill("")
+            self.safe_click_and_type(locator=email_selector, input_message=self.customer_data.email)
             self.safe_click_and_type(locator=location_locator, input_message=self.customer_data.location)
             self.safe_click_and_type(locator=company_locator, input_message=self.customer_data.current_company)
             self.safe_click_and_type(locator=title_locator, input_message=self.customer_data.current_title)
@@ -83,17 +98,7 @@ class BimboJobSearcher(GeneralReaderPlaywright):
             logging.error(f"Failed to join the talent community: {e}")
 
 
-def bimbo_reader_uploader(testmode: bool = False, customer_id: str = None):
-    logging.basicConfig(level=logging.INFO)
-    with BimboJobSearcher(customer_id=customer_id, testmode=testmode) as bjs:
-        job_check_page = bjs.upload_for_job_check()
-        jtc = input("Join the talent community y/n")
-        if jtc.strip().lower() == 'y':
-            bjs.join_talent_community(in_page=job_check_page)
-        bjs.close_with_test(testmode=testmode)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
     testmode = False
-    bimbo_reader_uploader(testmode=testmode, customer_id=nic_)
+    BimboJobSearcher(customer_id=nic_, testmode=testmode)

@@ -14,11 +14,13 @@ class AramarkReader(GeneralReaderPlaywright):
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, customer_id=customer_id)
+        logging.info(f"Customer ID: {customer_id} AramarkReader initialized.")
         self.cookies_accepted = False
         self.chatbot_closed = False
         self.search_all_keywords()
         self.get_corporate_jobs()
         self.close_with_test(testmode=testmode)
+        logging.info(f"Customer ID: {customer_id} AramarkReader closed.")
 
     def handle_popups(self, page: Page):
         if not self.cookies_accepted:
@@ -27,7 +29,7 @@ class AramarkReader(GeneralReaderPlaywright):
                 self.safe_click(accept_button, timeout=3000)
                 self.cookies_accepted = True
             except TimeoutError:
-                logging.error("Failed to accept cookies.")
+                logging.error(f"{self.company_name} Failed to accept cookies.")
 
         if not self.chatbot_closed:
             chatbox_close_button = page.locator("button.ea1514")
@@ -35,7 +37,7 @@ class AramarkReader(GeneralReaderPlaywright):
                 self.safe_click(chatbox_close_button, timeout=3000)
                 self.chatbot_closed = True
             except TimeoutError:
-                logging.error("Failed to close chatbox.")
+                logging.error(f"{self.company_name} Failed to close chatbox.")
 
     def _select_job_category(self, page: Page, category: str, error_message: str) -> None:
         locator_ = page.locator("label").filter(has_text=category).get_by_label("checkmark")
