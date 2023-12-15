@@ -1,5 +1,7 @@
 import logging
 
+from playwright.sync_api import Page
+
 from Source import WorkdayReader
 
 
@@ -21,7 +23,17 @@ class CVSReader(WorkdayReader):
         self.logout(page=active_server_page)
         self.close_with_test(testmode=testmode)
 
-    def setup_location(self, page, search_text, option_name):
+    def setup_location(self, page: Page = None, search_text: str = None, option_name: str = None):
+        """
+        The purpose of this function is to setup the location for the CVS website, in the Workday style.
+        Args:
+            page:
+            search_text:
+            option_name:
+
+        Returns:
+
+        """
         self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message="")
         self.safe_click(page.get_by_role("button", name="Location"), use_sleep=False)
         page.get_by_label("Search All Locations").fill(search_text)

@@ -35,9 +35,17 @@ class GeneralReaderPlaywright:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()  # clean up resources here
 
-    def __init__(self, customer_id: str, root_website: str = None, testmode: bool = False, viewport: dict = None):
+    def __repr__(self):
+        repr_string = (f"GeneralReaderPlaywright(customer_id={self.customer_id},root_website={self.root_website}, "
+                       f"testmode={self.testmode}, viewport={self.viewport})")
+        return repr_string
+
+    def __init__(self, customer_id: str, company_name: str = None, root_website: str = None, testmode: bool = False,
+                 viewport: dict = None):
         self.browser = None
         self.context = None
+        self.company_name = company_name
+        self.customer_id = customer_id
         self.playwright = None
         self.root_website = root_website
         self.sleep_time = None
@@ -47,6 +55,18 @@ class GeneralReaderPlaywright:
         self.extract_scraping_parameters()
         self.setup_playwright()
         self.customer_data = CustomerDataInterface().get_customer_data(customer_id=customer_id)
+        self.confirm_successful_setup()
+
+    def confirm_successful_setup(self):
+        """
+        This function confirms that the setup was successful by checking if the browser and context are initialized.
+        If they are not, it raises an exception.
+        """
+        if self.browser is None or self.context is None:
+            raise Exception("Browser or context not initialized.")
+        logging.info("Browser and context initialized successfully.")
+        logging.info(f"Customer ID: {self.customer_id} {self.company_name} initialized.")
+        return True
 
     def extract_scraping_parameters(self, spp: Path = scraping_parameters_path) -> None:
         """Extract constants from the scraping parameters file. This file should be in JSON format.
@@ -63,6 +83,7 @@ class GeneralReaderPlaywright:
         self.browser = self.playwright.chromium.launch(headless=False)
 
         # Configure context options
+        # The geolocation option is used to mock the geolocation. Some websites use the location.
         context_options = {
             "viewport": self.viewport,
             # Include other context-specific settings here if needed
@@ -111,7 +132,7 @@ class GeneralReaderPlaywright:
         if testmode:
             print("Browser session closed in test mode.")
         else:
-            input("Press Enter to close the browser session.")
+            input(f"Press Enter to close the browser session. {self.company_name}")
         self.close()
 
     def click_type(self, locator, input_message: str = "", timeout: int = 1000,

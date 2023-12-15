@@ -9,6 +9,7 @@ class MissionStaffReader(GeneralReaderPlaywright):
     """
 
     MISSION_STAFF_URL = "https://missionstaff.com/careers/#/"
+    company_name = "mission_staff"
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         """
@@ -16,7 +17,8 @@ class MissionStaffReader(GeneralReaderPlaywright):
 
         :param testmode: A boolean indicating whether to launch the browser in headless mode.
         """
-        super().__init__(root_website=self.MISSION_STAFF_URL, customer_id=customer_id, testmode=testmode)
+        super().__init__(root_website=self.MISSION_STAFF_URL, customer_id=customer_id, testmode=testmode,
+                         company_name=self.company_name, )
         self.run_all_keywords()
         self.close_with_test(testmode=testmode)
 

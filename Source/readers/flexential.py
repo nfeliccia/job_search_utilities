@@ -4,9 +4,11 @@ from common_code.workday_reader import WorkdayReader
 class FlexentialReader(WorkdayReader):
     FLEXENTIAL_URL = "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login"
     FELXENTIAL_SEARCH_URL = "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career"
+    company_name = "flexential"
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
-        super().__init__(workday_url=self.FLEXENTIAL_URL, testmode=testmode, customer_id=customer_id, )
+        super().__init__(workday_url=self.FLEXENTIAL_URL, testmode=testmode, customer_id=customer_id,
+                         company_name=self.company_name, )
         self.flexential_login()
         self.run_all_keywords()
         self.close_with_test(testmode=testmode)

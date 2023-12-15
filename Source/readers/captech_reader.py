@@ -4,9 +4,11 @@ from Source import GeneralReaderPlaywright
 class CaptechReader(GeneralReaderPlaywright):
     CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
     PHILADELPHIA = "253788"
+    company_name = "captech"
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
-        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode, customer_id=customer_id)
+        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode,
+                         company_name=self.company_name, customer_id=customer_id)
         self.cookies_accepted = False
         self.open_location_url()
         self.open_all_keywords()
@@ -29,9 +31,11 @@ class CaptechReader(GeneralReaderPlaywright):
 
         """
         page_sk = self.create_new_tab()
-        self.click_type(page_sk.get_by_placeholder("Keywords"), input_message=keyword, enter=True)
+        kw_ = page_sk.get_by_placeholder("Keywords")
+        self.click_type(kw_, input_message=keyword, enter=True)
         page_sk.get_by_label("Locations").select_option(self.PHILADELPHIA)
-        page_sk.get_by_role("button", name="Search", exact=True).click()
+        button_ = page_sk.get_by_role("button", name="Search", exact=True)
+        self.safe_click(button_, timeout=10000)
         content = page_sk.content()
         return content
 

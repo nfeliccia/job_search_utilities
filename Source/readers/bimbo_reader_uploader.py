@@ -8,9 +8,11 @@ from Source import GeneralReaderPlaywright
 class BimboJobSearcher(GeneralReaderPlaywright):
     BIMBOURL = "https://careers.bimbobakeriesusa.com/careers"
     TALENT_COMMUNITY_URL = "https://careers.bimbobakeriesusa.com/careers/join?domain=grupobimbo.com"
+    company_name = "bimbo"
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
-        super().__init__(root_website=self.BIMBOURL, testmode=testmode, customer_id=customer_id)
+        super().__init__(root_website=self.BIMBOURL, testmode=testmode, company_name=self.company_name,
+                         customer_id=customer_id)
         self.testmode = testmode
         self.bimbo_primary_loop()
 

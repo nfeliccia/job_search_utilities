@@ -7,3 +7,6 @@ from readers.collabera_reader import CollaberaReader
 from readers.comcast_reader import ComcastReader
 from readers.cvs_reader import CVSReader
 from readers.cybercoders_reader import CyberCodersReader
+from readers.fedex_reader_uploader import FedexReaderUploader
+from readers.flexential import FlexentialReader
+from readers.mission_staff_reader import MissionStaffReader

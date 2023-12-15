@@ -30,11 +30,12 @@ class BYondReader(WorkdayReader):
 
     def search_for_jobs(self, page: Page = None) -> Page:
         """
-        Search for jobs.
+        Byond has a simple one pager that doesen't need the more complicated logic.
         Args:
             page: Playwright Page Object
 
         Returns:
+            Page: Playwright Page Object
 
         """
         search_for_jobs = page.locator("button[data-automation-id='navigationItem-Search for Jobs']")

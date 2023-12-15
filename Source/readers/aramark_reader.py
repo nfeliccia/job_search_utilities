@@ -13,8 +13,8 @@ class AramarkReader(GeneralReaderPlaywright):
     company_name = "aramark"
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
-        super().__init__(root_website=self.ARAMARK_URL, testmode=testmode, customer_id=customer_id)
-        logging.info(f"Customer ID: {customer_id} AramarkReader initialized.")
+        super().__init__(root_website=self.ARAMARK_URL, company_name=self.company_name, testmode=testmode,
+                         customer_id=customer_id)
         self.cookies_accepted = False
         self.chatbot_closed = False
         self.search_all_keywords()
@@ -23,6 +23,14 @@ class AramarkReader(GeneralReaderPlaywright):
         logging.info(f"Customer ID: {customer_id} AramarkReader closed.")
 
     def handle_popups(self, page: Page):
+        """
+        THe purpose of this function is to handle the popups that appear when you first visit the site.
+        Args:
+            page: Page object from playwright
+
+        Returns:
+
+        """
         if not self.cookies_accepted:
             accept_button = page.locator("#onetrust-accept-btn-handler")
             try:
@@ -40,10 +48,30 @@ class AramarkReader(GeneralReaderPlaywright):
                 logging.error(f"{self.company_name} Failed to close chatbox.")
 
     def _select_job_category(self, page: Page, category: str, error_message: str) -> None:
+        """
+        Selects a job category from the list of job categories. This is used to filter the jobs.
+        Aramark has a list of job categories that are checkboxes. This function will select the category
+        Args:
+            page: Page object from playwright
+            category: name of the category to select
+            error_message: error message to log if the category cannot be selected
+
+        Returns:
+
+        """
         locator_ = page.locator("label").filter(has_text=category).get_by_label("checkmark")
         self.safe_click(locator=locator_, error_message=error_message)
 
     def select_corporate_id(self, page: Page) -> str:
+        """
+        This is part of the custom search for Aramark. It will select the corporate and field support and
+        Args:
+            page: Page object from playwright
+
+        Returns:
+            str: content of the page after selecting the corporate and field support and information technology
+
+        """
         self._select_job_category(page, self.CORPORATE_FIELD_SUPPORT,
                                   error_message="Error selecting 'Corporate & Field Support'")
         self._select_job_category(page, self.INFORMATION_TECHNOLOGY,
@@ -66,17 +94,15 @@ class AramarkReader(GeneralReaderPlaywright):
         self.handle_popups(sk_page)
         keyword_search_box = sk_page.locator('#form-keyword-4')
         self.click_type(keyword_search_box, input_message=keyword)
+        # Don't try click type here won't work.
         location_search_box = sk_page.locator('#form-location-4')
-        qth = self.customer_data.location
-        location_search_box.fill(qth)
+        location_search_box.fill(self.customer_data.location)
         content_ = sk_page.content()
         return content_
 
     def get_corporate_jobs(self) -> str:
         """
         For Aramark, I decide to look at just corporate jobs b/c the HQ is in Philadelphia.
-        Args:
-            qth:
 
         Returns:
 
@@ -85,15 +111,12 @@ class AramarkReader(GeneralReaderPlaywright):
         self.handle_popups(page_corporate)
         self.select_corporate_id(page_corporate)
         load_more_button = page_corporate.locator('button[name="Load More"]')
-        qth = self.customer_data.location
-        if qth is None:
-            qth = "Philadelphia, PA"
 
         # Handle load more if more jobs are available
         if load_more_button.is_visible():
             self.safe_click(load_more_button, timeout=3000)
 
-        page_corporate.get_by_label("Location").fill(qth)
+        page_corporate.get_by_label("Location").fill(self.customer_data.location)
         page_corporate.locator("label").filter(has_text="Salaried").get_by_label("checkmark").click()
         content_ = page_corporate.content()
         return content_

@@ -1,17 +1,33 @@
-import os
+import importlib
 
-from readers import BeaconHillReader, BYondReader, AramarkReader, BimboJobSearcher, CaptechReader, CollaberaReader, \
-    ComcastReader, CVSReader, CyberCodersReader
+# Full list of reader class names
+reader_class_names = [
+    "AramarkReader", "BYondReader", "BeaconHillReader", "BimboJobSearcher",
+    "CaptechReader", "CollaberaReader", "ComcastReader", "CVSReader",
+    "CyberCodersReader", "FedexReaderUploader", "FlexentialReader", "MissionStaffReader"
+]
 
-os.chdir(r"f:\job_search_utilities")
-nic_ = "nic@secretsmokestack.com"
-testmode = False
-AramarkReader(customer_id=nic_, testmode=testmode)
-BYondReader(customer_id=nic_, testmode=testmode)
-BeaconHillReader(testmode=testmode, customer_id=nic_)
-BimboJobSearcher(customer_id=nic_, testmode=testmode)
-CaptechReader(customer_id=nic_, testmode=testmode)
-CollaberaReader(customer_id=nic_, testmode=testmode)
-ComcastReader(customer_id=nic_, testmode=testmode)
-CVSReader(customer_id=nic_, testmode=testmode)
-CyberCodersReader(customer_id=nic_, testmode=testmode)
+# Module where these classes are defined
+module_name = "readers"
+
+# Dynamically import classes and create instances
+reader_instances = []
+for class_name in reader_class_names[-1:]:
+    try:
+        # Import the module
+        module = importlib.import_module(module_name)
+
+        # Get the class
+        reader_class = getattr(module, class_name)
+
+        # Create an instance of the class (assuming no arguments for the constructor)
+        # Modify this part if you need to pass parameters from your AWS DynamoDB database
+        instance = reader_class()
+        reader_instances.append(instance)
+
+    except AttributeError:
+        print(f"Class {class_name} not found in module {module_name}")
+    except Exception as e:
+        print(f"Error occurred while importing class {class_name}: {e}")
+
+# Now, reader_instances contains instances of each reader class
