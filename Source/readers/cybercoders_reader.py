@@ -3,9 +3,13 @@ from Source import GeneralReaderPlaywright
 
 class CyberCodersReader(GeneralReaderPlaywright):
     CYBERCODERS_URL = "https://www.cybercoders.com/"
+    company_name = 'cyber_coders'
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.CYBERCODERS_URL, testmode=testmode, customer_id=customer_id)
+        self.cyber_coders_login()
+        self.run_all_keywords()
+        self.close_with_test(testmode=self.testmode)
 
     def cyber_coders_login(self):
         company_name = 'cyber_coders'
@@ -25,28 +29,31 @@ class CyberCodersReader(GeneralReaderPlaywright):
         return ccl_page
 
     def search_keyword(self, keyword: str):
-        search_url = r'https://www.cybercoders.com/search/dashboard/'
-        page = self.create_new_tab(search_url)
+        """
+        This function searches for a keyword on the CyberCoders website.  It is called by the run_all_keywords function
+        Cybercoders has a search on their man website.
+        Args:
+            keyword:
 
-        search_input = page.locator("#global-search-terms")
+        Returns:
+
+        """
+        search_url = r'https://www.cybercoders.com/search/dashboard/'
+        sk_page = self.create_new_tab(search_url)
+
+        search_input = sk_page.locator("#global-search-terms")
+        location_input = sk_page.locator("#global-search-location")
         self.safe_click_and_type(search_input, keyword)
-        location_input = page.locator("#global-search-location")
         self.safe_click_and_type(locator=location_input, input_message=self.customer_data.location)
-        search_button_selector = page.locator("button.hidden-search-icon[type='submit']")
+        search_button_selector = sk_page.locator("button.hidden-search-icon[type='submit']")
         self.safe_click(search_button_selector, timeout=5000)
-        return page
+        return sk_page
 
     def run_all_keywords(self):
         super().run_all_keywords(one_keyword_function=self.search_keyword)
 
 
-def cybercoders_reader(customer_id: str = None, testmode: bool = False):
-    with CyberCodersReader(customer_id=customer_id, testmode=testmode) as cr:
-        cr.cyber_coders_login()
-        cr.run_all_keywords()
-        cr.close_with_test(testmode=cr.testmode)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    cybercoders_reader(customer_id=nic_)
+    testmode = False
+    CyberCodersReader(customer_id=nic_, testmode=testmode)

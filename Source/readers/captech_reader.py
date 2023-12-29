@@ -4,10 +4,15 @@ from Source import GeneralReaderPlaywright
 class CaptechReader(GeneralReaderPlaywright):
     CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
     PHILADELPHIA = "253788"
+    company_name = "captech"
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
-        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode, customer_id=customer_id)
+        super().__init__(root_website=self.CAPTECH_URL, testmode=testmode,
+                         company_name=self.company_name, customer_id=customer_id)
         self.cookies_accepted = False
+        self.open_location_url()
+        self.open_all_keywords()
+        self.close_with_test(testmode=testmode)
 
     def open_location_url(self):
         # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
@@ -26,9 +31,11 @@ class CaptechReader(GeneralReaderPlaywright):
 
         """
         page_sk = self.create_new_tab()
-        self.click_type(page_sk.get_by_placeholder("Keywords"), input_message=keyword, enter=True)
+        kw_ = page_sk.get_by_placeholder("Keywords")
+        self.click_type(kw_, input_message=keyword, enter=True)
         page_sk.get_by_label("Locations").select_option(self.PHILADELPHIA)
-        page_sk.get_by_role("button", name="Search", exact=True).click()
+        button_ = page_sk.get_by_role("button", name="Search", exact=True)
+        self.safe_click(button_, timeout=10000)
         content = page_sk.content()
         return content
 
@@ -38,13 +45,7 @@ class CaptechReader(GeneralReaderPlaywright):
         return all_keyword_pages
 
 
-def captech_reader(testmode: bool = False, customer_id: str = None):
-    with CaptechReader(testmode=testmode, customer_id=customer_id) as reader:
-        reader.open_location_url()
-        reader.open_all_keywords()
-        reader.close_with_test(testmode=testmode)
-
-
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
-    captech_reader(testmode=False, customer_id=nic_)
+    testmode_ = False
+    CaptechReader(testmode=testmode_, customer_id=nic_)

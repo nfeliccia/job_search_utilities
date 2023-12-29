@@ -5,8 +5,9 @@ from playwright.sync_api import Page
 from Source import WorkdayReader
 
 
-class BYond(WorkdayReader):
+class BYondReader(WorkdayReader):
     B_YOND_URL = "https://byond.wd12.myworkdayjobs.com/en-US/B-Yond/login"
+    company_name = 'b-yond'
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(customer_id=customer_id, workday_url=self.B_YOND_URL, testmode=testmode)
@@ -29,11 +30,12 @@ class BYond(WorkdayReader):
 
     def search_for_jobs(self, page: Page = None) -> Page:
         """
-        Search for jobs.
+        Byond has a simple one pager that doesen't need the more complicated logic.
         Args:
             page: Playwright Page Object
 
         Returns:
+            Page: Playwright Page Object
 
         """
         search_for_jobs = page.locator("button[data-automation-id='navigationItem-Search for Jobs']")
@@ -45,4 +47,4 @@ class BYond(WorkdayReader):
 if __name__ == '__main__':
     nic_ = "nic@secretsmokestack.com"
     testmode = False
-    BYond(customer_id=nic_, testmode=testmode)
+    BYondReader(customer_id=nic_, testmode=testmode)

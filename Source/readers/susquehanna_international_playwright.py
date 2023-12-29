@@ -1,6 +1,5 @@
 import logging
 
-from Data.reference_values import universal_search_terms
 from common_code.general_reader import GeneralReaderPlaywright
 
 logging.basicConfig(level=logging.INFO,
@@ -9,39 +8,35 @@ logging.basicConfig(level=logging.INFO,
 
 
 class SusquehannaInternationalReader(GeneralReaderPlaywright):
-    def __init__(self, testmode: bool = False):
-        super().__init__(root_website='https://careers.sig.com/', testmode=testmode)
+    company_name = "Susquehanna International"
+    company_website = 'https://careers.sig.com/'
 
-    def open_search_tab(self):
+    def __init__(self, testmode: bool = False, customer_id: str = None):
+        super().__init__(root_website=self.company_website, company_name=self.company_name, testmode=testmode,
+                         customer_id=customer_id)
+        self.run_all_keywords()
+        self.close_with_test(testmode=testmode)
+
+    def run_one_keyword(self, keyword: str):
         page = self.create_new_tab()
-        return page
-
-    def accept_cookies(self, page):
+        # First handle the cookies.
         allow_button = page.get_by_role("button", name="Allow")
         if allow_button.is_visible():
             self.safe_click(allow_button)
 
-    def perform_search(self, page, term):
         search_input = page.get_by_placeholder("Search job title or location")
-        self.safe_click(search_input)
-        search_input.fill(term)
-
+        self.click_type(search_input, keyword, timeout=3000)
         search_button = page.get_by_label("Search", exact=True)
         self.safe_click(search_button)
-
-    def process_results(self, page, term):
+        page.wait_for_load_state('load')
         # Logic to wait for and process search results goes here
-        logging.info(f"Completed search for: {term}")
+        logging.info(f"Completed search for: {keyword}")
 
-    def search_jobs(self, search_terms):
-        for term in search_terms:
-            page = self.open_search_tab()
-            self.accept_cookies(page)
-            self.perform_search(page, term)
-            self.process_results(page, term)
+    def run_all_keywords(self, one_keyword_function=None):
+        super().run_all_keywords(one_keyword_function=self.run_one_keyword)
 
 
 if __name__ == '__main__':
-    with SusquehannaInternationalReader(testmode=True) as reader:
-        reader.search_jobs(universal_search_terms)
-        reader.close_with_test()
+    nic_ = "nic@secretsmokestack.com"
+    testmode = False
+    SusquehannaInternationalReader(testmode=testmode, customer_id=nic_)

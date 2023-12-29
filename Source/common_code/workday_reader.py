@@ -8,8 +8,10 @@ from Source import GeneralReaderPlaywright
 
 class WorkdayReader(GeneralReaderPlaywright):
 
-    def __init__(self, customer_id: str = None, workday_url: str = None, testmode: bool = False):
-        super().__init__(root_website=workday_url, testmode=testmode, customer_id=customer_id)
+    def __init__(self, customer_id: str = None, workday_url: str = None, testmode: bool = False,
+                 company_name: str = None):
+        super().__init__(root_website=workday_url, testmode=testmode, customer_id=customer_id,
+                         company_name=company_name)
         self.url = workday_url
 
     def login(self, company_name: str = None, customer_id: str = None):
@@ -24,7 +26,6 @@ class WorkdayReader(GeneralReaderPlaywright):
 
         page = self.create_new_tab(website=self.url)
         logging.info(f"Logging into {self.url} {datetime.datetime.now()}")
-
 
         # Wait for email address to be visible
         page.wait_for_selector("xpath=//label[text()='Email Address']", state="visible")
