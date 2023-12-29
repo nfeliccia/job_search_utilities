@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import random
 from pathlib import Path
 from time import sleep
@@ -71,8 +72,20 @@ class GeneralReaderPlaywright:
     def extract_scraping_parameters(self, spp: Path = scraping_parameters_path) -> None:
         """Extract constants from the scraping parameters file. This file should be in JSON format.
         This file is stored locally. Maybe someday it can be editable by the user."""
-        with open(spp, "r") as f:
-            scraping_parameters = json.load(f)
+
+        # Reset to project directory. This is necessary because the scraping parameters file is stored locally.
+        curent_working_directory = Path.cwd()
+        if curent_working_directory != Path(r"F:\job_search_utilities\\"):
+            os.chdir(r"F:\job_search_utilities\\")
+            logging.info(f"Changed working directory to {Path.cwd()}")
+
+        try:
+            with open(spp, "r") as f:
+                scraping_parameters = json.load(f)
+        except FileNotFoundError as e:
+            logging.error(f"Scraping parameters file not found: {e}")
+            raise e
+
         self.standard_timeout = scraping_parameters["standard_timeout"]
         self.sleep_time = scraping_parameters["standard_sleep"]
 
