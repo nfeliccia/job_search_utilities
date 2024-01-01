@@ -1,15 +1,19 @@
 import logging
 
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class PrudentialReader(GeneralReaderPlaywright):
-    prudential_primary_jobs = "https://jobs.prudential.com/us-en/"
-    prudential_data_analytics_url = "https://jobs.prudential.com/us-en/job-categories/data"
-    prudential_technology_page = "https://jobs.prudential.com/us-en/job-categories/technology"
+    print(F"Still under Development")
+    company_name = "prudential"
+    prudential_primary_jobs = company_data_table[company_name]["prudential_primary_jobs"]
+    prudential_data_analytics_url = company_data_table[company_name]["prudential_data_analytics_url"]
+    prudential_technology_page = company_data_table[company_name]["prudential_technology_page"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
-        super().__init__(customer_id=customer_id, root_website=self.prudential_primary_jobs, testmode=testmode)
+        super().__init__(company_name=self.company_name, customer_id=customer_id,
+                         root_website=self.prudential_primary_jobs, testmode=testmode)
         self.search_all_keywords()
         self.close_with_test(testmode=testmode)
 

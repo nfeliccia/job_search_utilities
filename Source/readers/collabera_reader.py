@@ -1,10 +1,12 @@
 import logging
 
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class CollaberaReader(GeneralReaderPlaywright):
-    COLLABERA_URL = "https://collabera.com/job-search/"
+    company_name = "collabera"
+    COLLABERA_URL = company_data_table[company_name]["COLLABERA_URL"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.COLLABERA_URL, testmode=testmode, customer_id=customer_id)

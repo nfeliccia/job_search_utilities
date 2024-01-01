@@ -3,18 +3,17 @@ import logging
 from playwright.sync_api import Page
 
 from Source import WorkdayReader
+from database_code.company_data_table_reader import company_data_table
 
 
 class ComcastReader(WorkdayReader):
     # Constants for websites to use. These are the same for all instances of this class.
-    COMCAST_URL = "https://comcast.wd5.myworkdayjobs.com/en-US/Comcast_Careers/login"
-    search_url = "https://comcast.wd5.myworkdayjobs.com/en-US/Comcast_Careers"
-    LOCATIONS = [
-        ("PA - Philadelphia, 1701 John F Kennedy Blvd", "PA - Philadelphia, 1701 John F Kennedy Blvd"),
-        ("PA - Virtual - C", "PA - Virtual - C"),
-        ("PA - Virtual - C+", "PA - Virtual - C+"),
-        ("PA - Philadelphia, 1717 Arch St", "PA - Philadelphia, 1717 Arch St")
-    ]
+    company = "comcast"
+
+    company_ = company_data_table[company]
+    COMCAST_URL = company_["COMCAST_URL"]
+    search_url = company_["search_url"]
+    LOCATIONS = company_["LOCATIONS"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(workday_url=self.COMCAST_URL, testmode=testmode, customer_id=customer_id)

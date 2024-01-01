@@ -4,11 +4,13 @@ import logging
 from playwright.sync_api import Page
 
 from Source import WorkdayReader
+from database_code.company_data_table_reader import company_data_table
 
 
 class FedexReaderUploader(WorkdayReader):
-    FEDEX_URL = "https://careers.fedex.com/fedex/auth/1/login"
+
     company_name = "fedex"
+    FEDEX_URL = company_data_table[company_name]["FEDEX_URL"]
 
     def __init__(self, customer_id=None, testmode: bool = False):
         super().__init__(customer_id=customer_id, company_name=self.company_name, testmode=testmode,

@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO,
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 scraping_parameters_path = Path(r".\Data\scraping_parameters_config.json")
-
+from Source.database_code.company_data_table_reader import company_data_table
 
 class GeneralReaderPlaywright:
     """
@@ -57,6 +57,8 @@ class GeneralReaderPlaywright:
         self.setup_playwright()
         self.customer_data = CustomerDataInterface().get_customer_data(customer_id=customer_id)
         self.confirm_successful_setup()
+        self.company_data_table = company_data_table
+        os.chdir(Path(r"F:\job_search_utilities\\"))
 
     def confirm_successful_setup(self):
         """

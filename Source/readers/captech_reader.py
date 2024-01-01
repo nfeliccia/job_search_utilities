@@ -1,10 +1,13 @@
 from Source import GeneralReaderPlaywright
 
+from database_code.company_data_table_reader import company_data_table
+
 
 class CaptechReader(GeneralReaderPlaywright):
-    CAPTECH_URL = "https://www.captechconsulting.com/careers/current-openings/"
-    PHILADELPHIA = "253788"
     company_name = "captech"
+    CAPTECH_URL = company_data_table["captech"]["CAPTECH_URL"]
+    PHILADELPHIA = company_data_table["captech"]["PHILADELPHIA"]
+
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.CAPTECH_URL, testmode=testmode,

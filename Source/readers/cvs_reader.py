@@ -3,17 +3,14 @@ import logging
 from playwright.sync_api import Page
 
 from Source import WorkdayReader
+from database_code.company_data_table_reader import company_data_table
 
 
 class CVSReader(WorkdayReader):
-    CVS_URL = "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers/login"
-    SEARCH_FOR_JOBS = "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers"
-    LOCATIONS = [
-        ("PA - Philadelphia", "PA - Philadelphia"),
-        ("PA - Work from home", "PA - Work from home"),
-        ("PA - Blue Bell", "PA - Blue Bell"),
-        ("Work At Home-Pennsylvania", "Work At Home-Pennsylvania")
-    ]
+    company = "cvs"
+    CVS_URL = company_data_table[company]["CVS_URL"]
+    SEARCH_FOR_JOBS = company_data_table[company]["SEARCH_FOR_JOBS"]
+    LOCATIONS = company_data_table[company]["LOCATIONS"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(workday_url=self.CVS_URL, testmode=testmode, customer_id=customer_id)

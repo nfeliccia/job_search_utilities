@@ -1,19 +1,20 @@
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class CyberCodersReader(GeneralReaderPlaywright):
-    CYBERCODERS_URL = "https://www.cybercoders.com/"
-    company_name = 'cyber_coders'
+    company_name = "cyber_coders"
+    CYBERCODERS_URL = company_data_table[company_name]["CYBERCODERS_URL"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
-        super().__init__(root_website=self.CYBERCODERS_URL, testmode=testmode, customer_id=customer_id)
+        super().__init__(root_website=self.CYBERCODERS_URL, testmode=testmode, customer_id=customer_id,
+                         company_name=self.company_name)
         self.cyber_coders_login()
         self.run_all_keywords()
         self.close_with_test(testmode=self.testmode)
 
     def cyber_coders_login(self):
-        company_name = 'cyber_coders'
-        secret_password = self.get_secret(company_name=company_name, user_id=self.customer_data.email)
+        secret_password = self.get_secret(company_name=self.company_name, user_id=self.customer_data.email)
         ccl_page = self.create_new_tab()
         ddl_ = ccl_page.locator("#dropdown-login").get_by_text("Login")
         ddl_.click()

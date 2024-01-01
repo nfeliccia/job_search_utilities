@@ -1,4 +1,5 @@
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class MissionStaffReader(GeneralReaderPlaywright):
@@ -8,8 +9,8 @@ class MissionStaffReader(GeneralReaderPlaywright):
     Inherits from GeneralReaderPlaywright and provides methods for job searching and filtering.
     """
 
-    MISSION_STAFF_URL = "https://missionstaff.com/careers/#/"
     company_name = "mission_staff"
+    MISSION_STAFF_URL = company_data_table[company_name]["MISSION_STAFF_URL"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         """

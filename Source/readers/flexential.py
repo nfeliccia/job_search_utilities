@@ -1,10 +1,10 @@
 from common_code.workday_reader import WorkdayReader
-
+from database_code.company_data_table_reader import company_data_table
 
 class FlexentialReader(WorkdayReader):
-    FLEXENTIAL_URL = "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login"
-    FELXENTIAL_SEARCH_URL = "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career"
     company_name = "flexential"
+    FLEXENTIAL_URL = company_data_table[company_name]["FLEXENTIAL_URL"]
+    FELXENTIAL_SEARCH_URL = company_data_table[company_name]["FELXENTIAL_SEARCH_URL"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(workday_url=self.FLEXENTIAL_URL, testmode=testmode, customer_id=customer_id,

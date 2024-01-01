@@ -3,14 +3,17 @@ import logging
 from playwright.sync_api import Page
 
 from Source import GeneralReaderPlaywright
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class AramarkReader(GeneralReaderPlaywright):
     # Constants for job categories
-    CORPORATE_FIELD_SUPPORT = "Corporate & Field Support"
-    INFORMATION_TECHNOLOGY = "Information Technology"
-    ARAMARK_URL = "https://careers.aramark.com/search/"
     company_name = "aramark"
+    cdt = company_data_table[company_name]
+
+    CORPORATE_FIELD_SUPPORT = cdt["CORPORATE_FIELD_SUPPORT"]
+    INFORMATION_TECHNOLOGY = cdt["INFORMATION_TECHNOLOGY"]
+    ARAMARK_URL = cdt["ARAMARK_URL"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(root_website=self.ARAMARK_URL, company_name=self.company_name, testmode=testmode,

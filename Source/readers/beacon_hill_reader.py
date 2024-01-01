@@ -3,10 +3,11 @@ import logging
 from playwright.sync_api import Page
 
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class BeaconHillReader(GeneralReaderPlaywright):
-    BEACON_HILL_URL = "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
+    BEACON_HILL_URL = company_data_table["beacon_hill"]["BEACON_HILL_URL"]
     company_name = "beacon_hill"
 
     def __init__(self, testmode: bool = False, customer_id: str = ""):

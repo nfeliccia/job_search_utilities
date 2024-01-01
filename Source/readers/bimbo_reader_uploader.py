@@ -3,15 +3,17 @@ import logging
 from playwright.sync_api import Page
 
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class BimboJobSearcher(GeneralReaderPlaywright):
-    BIMBOURL = "https://careers.bimbobakeriesusa.com/careers"
-    TALENT_COMMUNITY_URL = "https://careers.bimbobakeriesusa.com/careers/join?domain=grupobimbo.com"
+
     company_name = "bimbo"
+    BIMBO_URL = company_data_table["bimbo"]["BIMBOURL"]
+    TALENT_COMMUNITY_URL = company_data_table["bimbo"]["TALENT_COMMUNITY_URL"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
-        super().__init__(root_website=self.BIMBOURL, testmode=testmode, company_name=self.company_name,
+        super().__init__(root_website=self.BIMBO_URL, testmode=testmode, company_name=self.company_name,
                          customer_id=customer_id)
         self.testmode = testmode
         self.bimbo_primary_loop()

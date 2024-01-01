@@ -1,6 +1,7 @@
 import logging
 
 from common_code.general_reader import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s',
@@ -9,7 +10,7 @@ logging.basicConfig(level=logging.INFO,
 
 class SusquehannaInternationalReader(GeneralReaderPlaywright):
     company_name = "Susquehanna International"
-    company_website = 'https://careers.sig.com/'
+    company_website = company_data_table[company_name]["company_website"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.company_website, company_name=self.company_name, testmode=testmode,
