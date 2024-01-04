@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import random
 from pathlib import Path
 from time import sleep
@@ -17,7 +16,8 @@ logging.basicConfig(level=logging.INFO,
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 scraping_parameters_path = Path(r".\Data\scraping_parameters_config.json")
-from Source.database_code.company_data_table_reader import company_data_table
+broswer_init_script_path = Path(r".\Source\common_code\browser_init_script.js")
+
 
 class GeneralReaderPlaywright:
     """
@@ -43,22 +43,19 @@ class GeneralReaderPlaywright:
 
     def __init__(self, customer_id: str, company_name: str = None, root_website: str = None, testmode: bool = False,
                  viewport: dict = None):
-        self.browser = None
-        self.context = None
-        self.company_name = company_name
         self.customer_id = customer_id
-        self.playwright = None
+        self.company_name = company_name
         self.root_website = root_website
-        self.sleep_time = None
-        self.standard_timeout = None
-        self.viewport = viewport if viewport else {'width': 1280, 'height': 720}
         self.testmode = testmode
-        self.extract_scraping_parameters()
+        self.viewport = viewport if viewport else {'width': 1280, 'height': 720}
+        self.data_interface = CustomerDataInterface()
+        self.scraping_parameters_path = scraping_parameters_path
+        self.init_script_path = broswer_init_script_path
+
         self.setup_playwright()
-        self.customer_data = CustomerDataInterface().get_customer_data(customer_id=customer_id)
+        self.load_scraping_parameters()
+        self.customer_data = self.data_interface.get_customer_data(customer_id=customer_id)
         self.confirm_successful_setup()
-        self.company_data_table = company_data_table
-        os.chdir(Path(r"F:\job_search_utilities\\"))
 
     def confirm_successful_setup(self):
         """
@@ -71,25 +68,15 @@ class GeneralReaderPlaywright:
         logging.info(f"Customer ID: {self.customer_id} {self.company_name} initialized.")
         return True
 
-    def extract_scraping_parameters(self, spp: Path = scraping_parameters_path) -> None:
-        """Extract constants from the scraping parameters file. This file should be in JSON format.
-        This file is stored locally. Maybe someday it can be editable by the user."""
-
-        # Reset to project directory. This is necessary because the scraping parameters file is stored locally.
-        curent_working_directory = Path.cwd()
-        if curent_working_directory != Path(r"F:\job_search_utilities\\"):
-            os.chdir(r"F:\job_search_utilities\\")
-            logging.info(f"Changed working directory to {Path.cwd()}")
-
+    def load_scraping_parameters(self):
         try:
-            with open(spp, "r") as f:
+            with open(self.scraping_parameters_path, "r") as f:
                 scraping_parameters = json.load(f)
+            self.standard_timeout = scraping_parameters["standard_timeout"]
+            self.sleep_time = scraping_parameters["standard_sleep"]
         except FileNotFoundError as e:
             logging.error(f"Scraping parameters file not found: {e}")
             raise e
-
-        self.standard_timeout = scraping_parameters["standard_timeout"]
-        self.sleep_time = scraping_parameters["standard_sleep"]
 
     def setup_playwright(self) -> None:
         self.playwright = sync_playwright().start()
@@ -216,38 +203,35 @@ class GeneralReaderPlaywright:
             self.vari_sleep(self.sleep_time, variance_percentage=10)
 
     def get_secret(self, company_name, user_id: str = None):
-        """
-        This function gets the secret from AWS Secrets Manager.
-        Args:
-            company_name: Company name. Used to make the first half of the identifier.
-            user_id: User ID. Used to make the second half of the identifier.
+        if not company_name or not user_id:
+            raise ValueError("Company name and user ID must be provided")
 
-        Returns:
-
-        """
         secret_name = f"{company_name}_{user_id}"
         region_name = "us-east-2"
 
-        # Create a Secrets Manager client
+        # Consider using dependency injection for the AWS client
         session = boto3.session.Session()
         client = session.client(service_name='secretsmanager', region_name=region_name)
 
         try:
-            logging.info(f"Retrieving secret '{secret_name}' from AWS Secrets Manager...")
+            logging.info(f"Retrieving secret for '{secret_name}'...")
             get_secret_value_response = client.get_secret_value(SecretId=secret_name)
         except ClientError as e:
-            logging.error(f"Error retrieving secret '{secret_name}': {e}")
-            raise e
+            logging.error(f"Error retrieving secret: {e}")
+            raise Exception(f"Error retrieving secret for {company_name}") from e
 
-        # Decrypts secret using the associated KMS key.
-        secret = get_secret_value_response['SecretString']
+        secret = get_secret_value_response.get('SecretString')
+        if not secret:
+            raise Exception(f"Secret '{secret_name}' not found or has no string value")
 
-        # Convert the secret from a JSON string to a Python dictionary
         secret_dict = json.loads(secret)
+        secret_value = secret_dict.get(secret_name)  # Consider making this key a parameter
 
-        # Retrieve the value using the key
-        secret_value = secret_dict.get(secret_name)
-        logging.info(f"Successfully retrieved secret '{secret_name}'.")
+        if secret_value is None:
+            logging.warning(f"Secret '{secret_name}' does not contain the expected key.")
+            return None
+
+        logging.info(f"Successfully retrieved secret for '{secret_name}'.")
         return secret_value
 
     def run_all_keywords(self, one_keyword_function=None) -> None:
@@ -268,11 +252,24 @@ class GeneralReaderPlaywright:
         Sleeps for a variable amount of time based on the base sleep time and a percentage variance.
 
         Args:
-            base_sleep_time (float): The base amount of time to sleep in seconds.
-            variance_percentage (int): The percentage of variance to apply to the base sleep time.
+            base_sleep_time (float): The base amount of time to sleep in seconds. Should be non-negative.
+            variance_percentage (int): The percentage of variance to apply to the base sleep time. Should be between 0 and 100.
+
+        Note:
+            If the calculated sleep time is negative, it defaults to 0.
+            An extremely high variance percentage may lead to unexpectedly long sleep durations.
         """
+        if base_sleep_time < 0:
+            logging.warning("Base sleep time is negative. Resetting to 0.")
+            base_sleep_time = 0
+
+        if not 0 <= variance_percentage <= 100:
+            logging.warning("Variance percentage is out of bounds. Resetting to a reasonable value.")
+            variance_percentage = max(0, min(variance_percentage, 100))
+
         variance = base_sleep_time * (variance_percentage / 100)
-        actual_sleep_time = base_sleep_time + random.uniform(-variance, variance)
-        if actual_sleep_time < 0:
-            actual_sleep_time = 0
+        actual_sleep_time = int(base_sleep_time + random.uniform(-variance, variance))
+        actual_sleep_time = max(0, actual_sleep_time)  # Ensure non-negative sleep time
+
+        logging.debug(f"Sleeping for {actual_sleep_time} seconds.")
         sleep(actual_sleep_time)

@@ -3,7 +3,7 @@ import logging
 from playwright.sync_api import Page
 
 from Source import WorkdayReader
-from database_code.company_data_table_reader import company_data_table
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class ComcastReader(WorkdayReader):

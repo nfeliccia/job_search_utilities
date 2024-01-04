@@ -3,14 +3,14 @@ import logging
 from playwright.sync_api import Page
 
 from Source import GeneralReaderPlaywright
-from database_code.company_data_table_reader import company_data_table
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class BimboJobSearcher(GeneralReaderPlaywright):
 
     company_name = "bimbo"
-    BIMBO_URL = company_data_table["bimbo"]["BIMBOURL"]
-    TALENT_COMMUNITY_URL = company_data_table["bimbo"]["TALENT_COMMUNITY_URL"]
+    BIMBO_URL = company_data_table[company_name]["bimbo_url"]
+    TALENT_COMMUNITY_URL = company_data_table[company_name]["bimbo_talent_url"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.BIMBO_URL, testmode=testmode, company_name=self.company_name,

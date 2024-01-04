@@ -1,0 +1,94 @@
+{
+  "aramark": {
+    "CORPORATE_FIELD_SUPPORT": "Corporate & Field Support",
+    "INFORMATION_TECHNOLOGY": "Information Technology",
+    "url": "https://careers.aramark.com/search/",
+    "company_name": "aramark"
+  },
+  "b-yond": {
+    "url": "https://byond.wd12.myworkdayjobs.com/en-US/B-Yond/login"
+  },
+  "beacon_hill": {
+    "url": "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
+  },
+  "bimbo": {
+    "bimbo_url": "https://careers.bimbobakeriesusa.com/careers",
+    "bimbo_talent_url": "https://careers.bimbobakeriesusa.com/careers/join?domain=grupobimbo.com"
+  },
+  "captech": {
+    "CAPTECH_URL": "https://www.captechconsulting.com/careers/current-openings/",
+    "PHILADELPHIA": "253788"
+  },
+  "collabera": {
+    "url": "https://collabera.com/job-search/"
+  },
+  "comcast": {
+    "COMCAST_URL": "https://comcast.wd5.myworkdayjobs.com/en-US/Comcast_Careers/login",
+    "search_url": "https://comcast.wd5.myworkdayjobs.com/en-US/Comcast_Careers",
+    "LOCATIONS": [
+      [
+        "PA - Philadelphia, 1701 John F Kennedy Blvd",
+        "PA - Philadelphia, 1701 John F Kennedy Blvd"
+      ],
+      [
+        "PA - Virtual - C",
+        "PA - Virtual - C"
+      ],
+      [
+        "PA - Virtual - C+",
+        "PA - Virtual - C+"
+      ],
+      [
+        "PA - Philadelphia, 1717 Arch St",
+        "PA - Philadelphia, 1717 Arch St"
+      ],
+      [
+        "PA - Philadelphia, 1800 Arch St",
+        "PA - Philadelphia, 1800 Arch St"
+      ]
+    ]
+  },
+  "cvs": {
+    "url": "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers/login",
+    "search_jobs": "https://cvshealth.wd1.myworkdayjobs.com/en-US/CVS_Health_Careers",
+    "locations": [
+      [
+        "PA - Philadelphia",
+        "PA - Philadelphia"
+      ],
+      [
+        "PA - Work from home",
+        "PA - Work from home"
+      ],
+      [
+        "PA - Blue Bell",
+        "PA - Blue Bell"
+      ],
+      [
+        "Work At Home-Pennsylvania",
+        "Work At Home-Pennsylvania"
+      ]
+    ]
+  },
+  "cyber_coders": {
+    "url": "https://www.cybercoders.com/"
+  },
+  "fedex": {
+    "url": "https://careers.fedex.com/fedex/auth/1/login"
+  },
+  "flexential": {
+    "FLEXENTIAL_URL": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login",
+    "FELXENTIAL_SEARCH_URL": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career"
+  },
+  "mission_staff": {
+    "MISSION_STAFF_URL": "https://missionstaff.com/careers/#/"
+  },
+  "prudential": {
+    "prudential_primary_jobs": "https://jobs.prudential.com/us-en/",
+    "prudential_data_analytics_url": "https://jobs.prudential.com/us-en/job-categories/data",
+    "prudential_technology_page": "https://jobs.prudential.com/us-en/job-categories/technology"
+  },
+  "susquehanna_international": {
+    "company_website": "https://careers.sig.com/"
+  }
+}

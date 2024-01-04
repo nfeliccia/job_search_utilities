@@ -3,17 +3,25 @@ import logging
 from playwright.sync_api import Page
 
 from Source import WorkdayReader
-from database_code.company_data_table_reader import company_data_table
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class CVSReader(WorkdayReader):
     company = "cvs"
-    CVS_URL = company_data_table[company]["CVS_URL"]
-    SEARCH_FOR_JOBS = company_data_table[company]["SEARCH_FOR_JOBS"]
-    LOCATIONS = company_data_table[company]["LOCATIONS"]
+    CVS_URL = company_data_table[company]["url"]
+    SEARCH_FOR_JOBS = company_data_table[company]["search_jobs"]
+    LOCATIONS = company_data_table[company]["locations"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(workday_url=self.CVS_URL, testmode=testmode, customer_id=customer_id)
+        self.run_cvs()
+
+    def run_cvs(self):
+        """
+        This is the function that runs the CVS search.
+        Returns:
+
+        """
         active_server_page = self.login(company_name='cvs', customer_id=self.customer_data.email)
         self.run_all_keywords()
         input("Press enter to logout")
@@ -33,8 +41,8 @@ class CVSReader(WorkdayReader):
         """
         self.click_type(page.get_by_placeholder("Search for jobs or keywords"), input_message="")
         self.safe_click(page.get_by_role("button", name="Location"), use_sleep=False)
-        page.get_by_label("Search All Locations").fill(search_text)
         try:
+            page.get_by_label("Search All Locations").fill(search_text)
             page.get_by_role(role="option", name=option_name, exact=True).click()
             button_selector = "button[data-automation-id='viewAllJobsButton']"
 

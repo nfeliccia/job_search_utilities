@@ -3,12 +3,12 @@ import logging
 from playwright.sync_api import Page
 
 from Source import WorkdayReader
-from database_code.company_data_table_reader import company_data_table
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class BYondReader(WorkdayReader):
     company_name = 'b-yond'
-    B_YOND_URL = company_data_table[company_name]["B_YOND_URL"]
+    B_YOND_URL = company_data_table[company_name]["url"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(customer_id=customer_id, workday_url=self.B_YOND_URL, testmode=testmode)

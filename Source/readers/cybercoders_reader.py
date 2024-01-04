@@ -1,14 +1,17 @@
 from Source import GeneralReaderPlaywright
-from database_code.company_data_table_reader import company_data_table
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class CyberCodersReader(GeneralReaderPlaywright):
     company_name = "cyber_coders"
-    CYBERCODERS_URL = company_data_table[company_name]["CYBERCODERS_URL"]
+    CYBERCODERS_URL = company_data_table[company_name]["url"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.CYBERCODERS_URL, testmode=testmode, customer_id=customer_id,
                          company_name=self.company_name)
+        self.run_cybercoders()
+
+    def run_cybercoders(self):
         self.cyber_coders_login()
         self.run_all_keywords()
         self.close_with_test(testmode=self.testmode)

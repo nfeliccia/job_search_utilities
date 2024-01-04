@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import boto3
-import botocore
+from botocore.exceptions import BotoCoreError, ClientError
 
 
 @dataclass
@@ -48,30 +48,21 @@ class DataTypeConverter:
 class CustomerDataInterface:
     """Class for interacting with a DynamoDB database."""
 
-    def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
+    def __init__(self, dynamodb=None, s3=None):
+        self.dynamodb = dynamodb or boto3.resource('dynamodb', region_name='us-east-2')
+        self.s3 = s3 or boto3.client('s3')
         self.data_type_converter = DataTypeConverter()
 
     def download_resume_from_s3(self, s3_url):
-        # Check if the path is an S3 URL
         if not s3_url.startswith('s3://'):
-            return s3_url  # Return the original path if it's not an S3 URL
+            return Path(s3_url)
 
-        # Parse the S3 URL
         s3_url_parts = s3_url.replace("s3://", "").split("/")
-        bucket = s3_url_parts[0]
-        key = "/".join(s3_url_parts[1:])
+        bucket, key = s3_url_parts[0], "/".join(s3_url_parts[1:])
 
-        # Create a temporary file
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-        tfn = temp_file.name
-        temp_file.close()  # Close the file handle to avoid resource leaks
-
-        # Download the file from S3
-        s3 = boto3.client('s3')
-        s3.download_file(bucket, key, tfn)
-        temp_file.close()  # Close the file handle to avoid resource leaks
-        return tfn
+        with tempfile.NamedTemporaryFile(delete=True, suffix='.docx') as temp_file:
+            self.s3.download_file(bucket, key, temp_file.name)
+            return Path(temp_file.name)
 
     def dynamodb_to_python(self, item) -> ReferenceValues:
         """
@@ -91,7 +82,12 @@ class CustomerDataInterface:
             return ReferenceValues()
 
         # Convert search_terms from DynamoDB format to a list of strings
-        search_terms = [term_dict.get('S') for term_dict in item.get('search_terms')]  # List comprehension
+        search_terms = []
+        for term_dict in item.get('search_terms'):
+            try:
+                search_terms.append(term_dict.get('S'))
+            except AttributeError:
+                logging.warning(f"Failed to convert all search_terms to a list of strings {term_dict}")
 
         rv_a = ReferenceValues(
                 address=item.get('address'),
@@ -133,11 +129,7 @@ class CustomerDataInterface:
                 item_pythonized.current_resume_path = Path(resume_s3_path)  # Convert to Path object if not S3 path
 
             return item_pythonized
-        except botocore.exceptions.BotoCoreError as e:
-            logging.error(f"Failed to get customer data due to a BotoCoreError: {e}")
-        except botocore.exceptions.ClientError as e:
-            logging.error(f"Failed to get customer data due to a ClientError: {e}")
-        except Exception as e:
+        except (BotoCoreError, ClientError) as e:
             logging.error(f"Failed to get customer data: {e}")
 
     def update_customer_data(self, customer_id: str = None, updates: dict = None):
@@ -150,30 +142,23 @@ class CustomerDataInterface:
             raise ValueError("Customer ID and updates cannot be None")
         try:
             table = self.dynamodb.Table('customer_data')
-            update_expression = "SET " + ", ".join(f"{k} = :{k}" for k in updates.keys())
-            expression_attribute_values = {f":{k}": self.data_type_converter.to_dynamodb(v) for k, v in updates.items()}
+            update_expression = "SET " + ", ".join(f"#{k} = :{k}" for k in updates)
+            expression_attribute_names = {f"#{k}": k for k in updates}
+            expression_attribute_values = {f":{k}": v for k, v in updates.items()}
+
             table.update_item(
-                    Key={
-                        'customer_id': customer_id
-                    },
+                    Key={'customer_id': customer_id},
                     UpdateExpression=update_expression,
+                    ExpressionAttributeNames=expression_attribute_names,
                     ExpressionAttributeValues=expression_attribute_values,
                     ReturnValues="UPDATED_NEW"
             )
-        except Exception as e:
+        except (BotoCoreError, ClientError) as e:
             logging.error(f"Failed to update customer data: {e}")
 
-    def get_tables(self, dump_to_console: bool = True):
-        """
-        Retrieves the names of all tables in the DynamoDB database.
-        If dump_to_console is True, also prints the table names to the console.
-        Returns a list of table names.
-        """
+    def get_tables(self):
         try:
-            table_names = [table.name for table in self.dynamodb.tables.all()]
-            if dump_to_console:
-                for table_name in table_names:
-                    print(table_name)
-            return table_names
-        except Exception as e:
+            return [table.name for table in self.dynamodb.tables.all()]
+        except (BotoCoreError, ClientError) as e:
             logging.error(f"Failed to get tables: {e}")
+            return []

@@ -3,33 +3,45 @@ import logging
 from playwright.sync_api import Page
 
 from Source import GeneralReaderPlaywright
-from database_code.company_data_table_reader import company_data_table
+from Source.database_code.company_data_table_reader import company_data_table
 
 
 class BeaconHillReader(GeneralReaderPlaywright):
-    BEACON_HILL_URL = company_data_table["beacon_hill"]["BEACON_HILL_URL"]
     company_name = "beacon_hill"
+    BEACON_HILL_URL = company_data_table[company_name]["url"]
 
     def __init__(self, testmode: bool = False, customer_id: str = ""):
         super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
-        self.open_location_url()
-        self.open_all_keywords()
-        self.close_with_test(testmode=False)
+        self.beacon_scrape()
 
-    def handle_cookies(self, page: Page = None):
-        if not self.cookies_accepted:
-            try:
-                later_ = page.get_by_role("link", name="Later")
-                self.safe_click(later_, timeout=5000)
-                self.cookies_accepted = True
-            except TimeoutError:
-                logging.error("Failed to accept cookies.")
-
-    def open_location_url(self):
+    def beacon_scrape(self):
+        """
+        Begin the scraping process.
+        """
         page_olu = self.create_new_tab()
         self.handle_cookies(page_olu)
-        return page_olu
+        self.open_all_keywords()
+        self.close_with_test(testmode=self.testmode)
+
+    def handle_cookies(self, page: Page):
+        """
+        Handles the cookie consent prompt on the page by clicking the 'Later' link.
+
+        Args:
+            page (Page): The Playwright page object on which to handle cookies.
+        """
+        if self.cookies_accepted:
+            return
+
+        try:
+            later_link = page.get_by_role("link", name="Later")
+            self.safe_click(later_link, timeout=5000)
+            self.cookies_accepted = True
+        except TimeoutError as e:
+            logging.error(f"Timeout error occurred while trying to handle cookies: {e}")
+        except Exception as e:
+            logging.error(f"Error occurred while trying to handle cookies: {e}")
 
     def search_keyword(self, keyword: str, use_location: bool = False) -> str:
         """
@@ -64,16 +76,23 @@ class BeaconHillReader(GeneralReaderPlaywright):
 
     def open_all_keywords(self) -> list:
         """
-        The purpose of this code is to open all keywords and return a list of pages.
-        Returns:
+        Searches for each keyword in the customer data's search terms, both with and without location,
+        and returns a list of page contents for these searches.
 
+        Returns:
+            list: A list of page contents from keyword searches.
         """
-        st_ = self.customer_data.search_terms
-        # Beacon hill doesn't have a lot of jobs, except for python developer, so we run once without locatin
-        # and then we run again with location.
-        more_keyword_pages = [self.search_keyword(keyword, use_location=True) for keyword in st_]
-        all_keyword_pages = [self.search_keyword(keyword, use_location=False) for keyword in st_]
-        all_keyword_pages.extend(more_keyword_pages)
+        search_terms = self.customer_data.search_terms
+        all_keyword_pages = []
+        for keyword in search_terms:
+            try:
+                # Search without location
+                all_keyword_pages.append(self.search_keyword(keyword, use_location=False))
+                # Search with location
+                all_keyword_pages.append(self.search_keyword(keyword, use_location=True))
+            except Exception as e:
+                logging.error(f"Error searching for keyword '{keyword}': {e}")
+
         return all_keyword_pages
 
 

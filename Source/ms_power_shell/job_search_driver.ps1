@@ -1,9 +1,17 @@
 ﻿# Navigate to your project directory
-Set-Location "F:\job_search_utilities\"
 
 # Update the PATH
 $env:PATH += ";F:\job_search_utilities;F:\job_search_utilities\Source;F:\job_search_utilities\Scripts"
 & "F:\job_search_utilities\Scripts\activate.ps1"
-python "F:\job_search_utilities\Source\readers\aramark_reader.py"
+Set-Location "F:\job_search_utilities\"
+# python "F:\job_search_utilities\Source\readers\aramark_reader.py"
+# python "F:\job_search_utilities\Source\readers\b_yond_reader.py"
+# python "F:\job_search_utilities\Source\readers\beacon_hill_reader.py"
+# python "F:\job_search_utilities\Source\readers\bimbo_reader_uploader.py"
+# python "F:\job_search_utilities\Source\readers\captech_reader.py"
+# python "F:\job_search_utilities\Source\readers\collabera_reader.py"
+# python "F:\job_search_utilities\Source\readers\comcast_reader.py"
+# python "F:\job_search_utilities\Source\readers\cvs_reader.py"
+python "F:\job_search_utilities\Source\readers\fedex_reader_uploader.py"
 # Deactivate the virtual environment
 & ".\Scripts\deactivate.bat"
