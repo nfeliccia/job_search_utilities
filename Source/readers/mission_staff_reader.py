@@ -10,7 +10,7 @@ class MissionStaffReader(GeneralReaderPlaywright):
     """
 
     company_name = "mission_staff"
-    MISSION_STAFF_URL = company_data_table[company_name]["MISSION_STAFF_URL"]
+    MISSION_STAFF_URL = company_data_table[company_name]["url"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         """

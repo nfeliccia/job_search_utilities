@@ -1,9 +1,10 @@
 from Source import GeneralReaderPlaywright
+from database_code.company_data_table_reader import company_data_table
 
 
 class JunoReader(GeneralReaderPlaywright):
     company_name = "juno"
-    jobs_website = "https://www.junosearchpartners.com/work"
+    jobs_website = company_data_table[company_name]["url"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(root_website=self.jobs_website, company_name=self.company_name, testmode=testmode,

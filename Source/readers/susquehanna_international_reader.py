@@ -9,8 +9,8 @@ logging.basicConfig(level=logging.INFO,
 
 
 class SusquehannaInternationalReader(GeneralReaderPlaywright):
-    company_name = "Susquehanna International"
-    company_website = company_data_table[company_name]["company_website"]
+    company_name = "susquehanna_international"
+    company_website = company_data_table[company_name]["url"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.company_website, company_name=self.company_name, testmode=testmode,

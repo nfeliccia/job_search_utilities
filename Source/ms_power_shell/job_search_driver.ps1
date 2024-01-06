@@ -12,6 +12,11 @@ Set-Location "F:\job_search_utilities\"
 # python "F:\job_search_utilities\Source\readers\collabera_reader.py"
 # python "F:\job_search_utilities\Source\readers\comcast_reader.py"
 # python "F:\job_search_utilities\Source\readers\cvs_reader.py"
-python "F:\job_search_utilities\Source\readers\fedex_reader_uploader.py"
+# python "F:\job_search_utilities\Source\readers\fedex_reader_uploader.py"
+# python "F:\job_search_utilities\Source\readers\flexential.py"
+# python "F:\job_search_utilities\Source\readers\juno_reader.py"
+# python "F:\job_search_utilities\Source\readers\mission_staff_reader.py"
+# python "F:\job_search_utilities\Source\readers\susquehanna_international_reader.py"
+
 # Deactivate the virtual environment
 & ".\Scripts\deactivate.bat"

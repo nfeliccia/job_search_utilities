@@ -1,9 +1,6 @@
 from time import sleep
 
-from Data.reference_values import actual_values
-from common_code import GeneralReaderPlaywright
-
-rv = actual_values
+from Source import GeneralReaderPlaywright
 
 
 class BeaconHillUploader(GeneralReaderPlaywright):

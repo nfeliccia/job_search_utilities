@@ -1,14 +1,17 @@
-from common_code.workday_reader import WorkdayReader
-from database_code.company_data_table_reader import company_data_table
+from Source.common_code.workday_reader import WorkdayReader
+from Source.database_code.company_data_table_reader import company_data_table
+
 
 class FlexentialReader(WorkdayReader):
     company_name = "flexential"
-    FLEXENTIAL_URL = company_data_table[company_name]["FLEXENTIAL_URL"]
-    FELXENTIAL_SEARCH_URL = company_data_table[company_name]["FELXENTIAL_SEARCH_URL"]
+    FLEXENTIAL_URL = company_data_table[company_name]["url"]
+    FELXENTIAL_SEARCH_URL = company_data_table[company_name]["search_url"]
 
     def __init__(self, customer_id: str = None, testmode: bool = False):
         super().__init__(workday_url=self.FLEXENTIAL_URL, testmode=testmode, customer_id=customer_id,
                          company_name=self.company_name, )
+
+    def run_flexential(self):
         self.flexential_login()
         self.run_all_keywords()
         self.close_with_test(testmode=testmode)
@@ -31,11 +34,15 @@ class FlexentialReader(WorkdayReader):
         self.safe_click(search_for_jobs, timeout=10000)
 
     def search_keyword(self, keyword: str = None):
+        if keyword is None:
+            return
+
+        #  Search for jobs.
         sk_page = self.create_new_tab(website=self.FELXENTIAL_SEARCH_URL)
         search_for_jobs = sk_page.get_by_placeholder("Search for jobs or keywords")
         self.click_type(search_for_jobs, input_message=keyword, timeout=10000)
-        sb_ = sk_page.get_by_role("button", name="Search", exact=True)
-        self.safe_click(sb_, timeout=10000)
+        search_button = sk_page.get_by_role("button", name="Search", exact=True)
+        self.safe_click(search_button, timeout=10000)
 
     def run_all_keywords(self):
         super().run_all_keywords(one_keyword_function=self.search_keyword)
@@ -44,4 +51,5 @@ class FlexentialReader(WorkdayReader):
 if __name__ == '__main__':
     nic_ = "nic@secretsmokestack.com"
     testmode = False
-    FlexentialReader(customer_id=nic_, testmode=testmode)
+    fr = FlexentialReader(customer_id=nic_, testmode=testmode)
+    fr.run_flexential()

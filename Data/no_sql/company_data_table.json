@@ -77,11 +77,11 @@
     "url": "https://careers.fedex.com/fedex/auth/1/login"
   },
   "flexential": {
-    "FLEXENTIAL_URL": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login",
-    "FELXENTIAL_SEARCH_URL": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career"
+    "url": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login",
+    "search_url": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career"
   },
   "mission_staff": {
-    "MISSION_STAFF_URL": "https://missionstaff.com/careers/#/"
+    "url": "https://missionstaff.com/careers/#/"
   },
   "prudential": {
     "prudential_primary_jobs": "https://jobs.prudential.com/us-en/",
@@ -89,6 +89,9 @@
     "prudential_technology_page": "https://jobs.prudential.com/us-en/job-categories/technology"
   },
   "susquehanna_international": {
-    "company_website": "https://careers.sig.com/"
+    "url": "https://careers.sig.com/"
+  },
+  "juno": {
+    "url": "https://www.junosearchpartners.com/work"
   }
 }
