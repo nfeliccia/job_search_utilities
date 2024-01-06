@@ -5,11 +5,11 @@ from Source.database_code.company_data_table_reader import company_data_table
 class CyberCodersReader(GeneralReaderPlaywright):
     company_name = "cyber_coders"
     CYBERCODERS_URL = company_data_table[company_name]["url"]
+    upload_resume = company_data_table[company_name]["upload_resume"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(root_website=self.CYBERCODERS_URL, testmode=testmode, customer_id=customer_id,
                          company_name=self.company_name)
-        self.run_cybercoders()
 
     def run_cybercoders(self):
         self.cyber_coders_login()
@@ -56,8 +56,22 @@ class CyberCodersReader(GeneralReaderPlaywright):
     def run_all_keywords(self):
         super().run_all_keywords(one_keyword_function=self.search_keyword)
 
+    def resume_upload(self):
+        self.cyber_coders_login()
+        ru_page = self.create_new_tab(website=self.upload_resume)
+        # Target the input element using its ID
+        # Upload the file
+        file_input = ru_page.locator("input[name='File']").nth(0)
+        file_input.set_input_files(self.customer_data.current_resume_path)
+
+        upload_input_button = ru_page.locator("#upload-input")
+        self.safe_click(upload_input_button)
+        self.close_with_test(testmode=self.testmode)
+
 
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
     testmode = False
-    CyberCodersReader(customer_id=nic_, testmode=testmode)
+    ccr = CyberCodersReader(customer_id=nic_, testmode=testmode)
+    ccr.run_cybercoders()
+    ccr.resume_upload()

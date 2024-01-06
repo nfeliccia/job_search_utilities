@@ -1,3 +1,7 @@
+"""
+As of 1/6/2024  the only way to upload the resume was for the user to manually upload it in an application
+"""
+
 import logging
 
 from playwright.sync_api import Page
@@ -10,14 +14,15 @@ class ComcastReader(WorkdayReader):
     # Constants for websites to use. These are the same for all instances of this class.
     company = "comcast"
 
-    company_ = company_data_table[company]
-    COMCAST_URL = company_["COMCAST_URL"]
-    search_url = company_["search_url"]
-    LOCATIONS = company_["LOCATIONS"]
+    COMCAST_URL = company_data_table[company]["COMCAST_URL"]
+    search_url = company_data_table[company]["search_url"]
+    LOCATIONS = company_data_table[company]["LOCATIONS"]
 
     def __init__(self, testmode: bool = False, customer_id: str = None):
         super().__init__(workday_url=self.COMCAST_URL, testmode=testmode, customer_id=customer_id)
         self.login(company_name='comcast', customer_id=self.customer_data.email)
+
+    def run_comcastwords(self):
         self.run_all_keywords()
         self.close_with_test(testmode=testmode)
 
@@ -67,4 +72,5 @@ class ComcastReader(WorkdayReader):
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
     testmode = False
-    ComcastReader(testmode=testmode, customer_id=nic_)
+    cr = ComcastReader(testmode=testmode, customer_id=nic_)
+    cr.run_comcastwords()

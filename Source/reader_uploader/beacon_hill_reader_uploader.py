@@ -9,11 +9,11 @@ from Source.database_code.company_data_table_reader import company_data_table
 class BeaconHillReader(GeneralReaderPlaywright):
     company_name = "beacon_hill"
     BEACON_HILL_URL = company_data_table[company_name]["url"]
+    upload_resume_url = company_data_table[company_name]["upload_resume"]
 
     def __init__(self, testmode: bool = False, customer_id: str = ""):
         super().__init__(root_website=self.BEACON_HILL_URL, testmode=testmode, customer_id=customer_id)
         self.cookies_accepted = False
-        self.beacon_scrape()
 
     def beacon_scrape(self):
         """
@@ -95,8 +95,32 @@ class BeaconHillReader(GeneralReaderPlaywright):
 
         return all_keyword_pages
 
+    def submit_resume(self):
+        # Since the base URL already contains the location, we can just use the create_new_tab method without arguments.
+        page_sr = self.create_new_tab(self.upload_resume_url)
+        self.safe_click(page_sr.get_by_role("link", name="Later"), timeout=5000)
+
+        rv = self.customer_data
+
+        # Fill in the name fields.
+        # //*[@id="input_3_2"]
+        self.click_type(locator=page_sr.locator("xpath=//*[@id='input_3_1_3']"), input_message=rv.first_name)
+        self.click_type(locator=page_sr.locator("xpath=//*[@id='input_3_1_6']"), input_message=rv.last_name)
+        self.click_type(locator=page_sr.locator("xpath=//*[@id='input_3_2']"), input_message=rv.email)
+        self.click_type(locator=page_sr.locator("xpath=//*[@id='input_3_3']"), input_message=rv.phone)
+
+        page_sr.get_by_label("In what field is your primary").select_option("Technology")
+        page_sr.locator("#input_3_15").select_option("Philadelphia, PA (Temp and Perm)")
+
+        page_sr.set_input_files('input[name="input_4"]', rv.current_resume_path)
+        page_sr.click("#gform_submit_button_3")
+
+
+
 
 if __name__ == "__main__":
     nic_ = "nic@secretsmokestack.com"
     testmode = False
-    BeaconHillReader(testmode=testmode, customer_id=nic_)
+    bhr = BeaconHillReader(testmode=testmode, customer_id=nic_)
+    bhr.submit_resume()
+    bhr.close_with_test(testmode=testmode)

@@ -9,7 +9,8 @@
     "url": "https://byond.wd12.myworkdayjobs.com/en-US/B-Yond/login"
   },
   "beacon_hill": {
-    "url": "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job"
+    "url": "https://www.beaconhillstaffing.com/Job-Seekers/Find-a-Job",
+    "upload_resume": "https://jobs.beaconhillstaffing.com/submit-resume/"
   },
   "bimbo": {
     "bimbo_url": "https://careers.bimbobakeriesusa.com/careers",
@@ -17,10 +18,12 @@
   },
   "captech": {
     "CAPTECH_URL": "https://www.captechconsulting.com/careers/current-openings/",
-    "PHILADELPHIA": "253788"
+    "PHILADELPHIA": "253788",
+    "captech_talent_community": "https://join.smartrecruiters.com/CapTechConsulting/55db2334-66b1-4e85-bba9-c9b54526f9c5-captech-connections"
   },
   "collabera": {
-    "url": "https://collabera.com/job-search/"
+    "url": "https://collabera.com/job-search/",
+    "upload_resume": "https://collabera.com/submit-resume/"
   },
   "comcast": {
     "COMCAST_URL": "https://comcast.wd5.myworkdayjobs.com/en-US/Comcast_Careers/login",
@@ -71,14 +74,16 @@
     ]
   },
   "cyber_coders": {
-    "url": "https://www.cybercoders.com/"
+    "url": "https://www.cybercoders.com/",
+    "upload_resume": "https://www.cybercoders.com/UserProfile/MyResumes/"
   },
   "fedex": {
     "url": "https://careers.fedex.com/fedex/auth/1/login"
   },
   "flexential": {
     "url": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/login",
-    "search_url": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career"
+    "search_url": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career",
+    "upload_url": "https://flexential.wd5.myworkdayjobs.com/en-US/flexential_career/introduceYourself"
   },
   "mission_staff": {
     "url": "https://missionstaff.com/careers/#/"
@@ -93,5 +98,8 @@
   },
   "juno": {
     "url": "https://www.junosearchpartners.com/work"
+  },
+  "cube_smart": {
+    "url": "https://careers.cubesmart.com/careers-home/jobs?view=personalization"
   }
 }
